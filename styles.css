@@ -223,8 +223,8 @@ body.loading #loadingScreen {
 
 /* Loading Container */
 .loading-container {
-    display: grid;
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-direction: row;
     gap: 4rem;
     width: 100%;
     max-width: 1400px;
@@ -278,11 +278,12 @@ body.loading #loadingScreen {
     justify-content: center;
     align-items: center;
     position: relative;
-    padding: 3rem 2.5rem;
+    padding: 2rem;
     z-index: 2;
-    max-width: 700px;
+    flex: 1;
     min-height: 500px;
-    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .dynamic-bg {
@@ -381,8 +382,11 @@ body.loading #loadingScreen {
 
 .brand-logo {
     position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 .logo-hexagon {
@@ -807,13 +811,12 @@ body.loading #loadingScreen {
     }
     
     .loading-container {
-        grid-template-columns: 1fr !important;
-        grid-template-rows: auto 1fr !important;
+        flex-direction: column !important;
         gap: 1.5rem !important;
         padding: 1.5rem !important;
         max-width: 100% !important;
         width: 100% !important;
-        align-items: stretch !important;
+        align-items: center !important;
     }
     
     .student-profile-panel {
