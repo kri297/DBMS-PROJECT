@@ -276,12 +276,13 @@ body.loading #loadingScreen {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     position: relative;
     padding: 3rem 2.5rem;
     z-index: 2;
     max-width: 700px;
     min-height: 500px;
+    width: 100%;
 }
 
 .dynamic-bg {
@@ -368,10 +369,14 @@ body.loading #loadingScreen {
 
 /* Central Branding */
 .central-branding {
-    text-align: left;
+    text-align: center;
     z-index: 3;
     margin-bottom: 2.5rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .brand-logo {
@@ -775,11 +780,11 @@ body.loading #loadingScreen {
     .loading-main-panel {
         max-width: 450px;
         padding: 1.5rem;
-        align-items: flex-start;
+        align-items: center;
     }
     
     .central-branding {
-        text-align: left;
+        text-align: center;
         margin-bottom: 2rem;
     }
     
@@ -797,7 +802,7 @@ body.loading #loadingScreen {
 /* Small tablets and large phones */
 @media screen and (max-width: 768px) {
     .loading-screen {
-        align-items: flex-start !important;
+        align-items: center !important;
         padding: 0 !important;
     }
     
