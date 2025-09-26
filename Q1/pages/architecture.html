@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three-Schema Architecture | DBMS Fundamentals</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/architecture.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home.html"><h2><i class="fas fa-database"></i> DBMS Fundamentals</h2></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../home.html" class="nav-link">Home</a></li>
+                <li><a href="architecture.html" class="nav-link active">Three-Schema Architecture</a></li>
+                <li><a href="schema-instance.html" class="nav-link">Schema vs Instance</a></li>
+                <li><a href="advantages.html" class="nav-link">DBMS Advantages</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-nav">
+                <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                <span><i class="fas fa-chevron-right"></i></span>
+                <span>Three-Schema Architecture</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Three-Schema Architecture</h1>
+            <p class="page-subtitle">Understanding the fundamental architecture that provides data independence through multiple abstraction levels</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="content-container">
+            <!-- Overview Section -->
+            <section class="overview-section">
+                <h2>Architecture Overview</h2>
+                <p class="lead">The Three-Schema Architecture, also known as the ANSI/SPARC architecture, is a framework that separates the database into three distinct levels of abstraction. This separation provides data independence and allows different users to view the same data in different ways.</p>
+                
+                <div class="architecture-visual">
+                    <div class="schema-level external-level">
+                        <div class="level-header">
+                            <h3><i class="fas fa-users"></i> External Level</h3>
+                            <span class="level-tag">User Views</span>
+                        </div>
+                        <div class="level-content">
+                            <p>Individual user perspectives and applications</p>
+                            <div class="level-examples">
+                                <div class="example-item">Student View</div>
+                                <div class="example-item">Faculty View</div>
+                                <div class="example-item">Admin View</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="schema-arrow">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>External/Conceptual Mapping</span>
+                    </div>
+
+                    <div class="schema-level conceptual-level">
+                        <div class="level-header">
+                            <h3><i class="fas fa-sitemap"></i> Conceptual Level</h3>
+                            <span class="level-tag">Logical Structure</span>
+                        </div>
+                        <div class="level-content">
+                            <p>Complete logical view of the entire database</p>
+                            <div class="level-examples">
+                                <div class="example-item">Entity Relationships</div>
+                                <div class="example-item">Constraints</div>
+                                <div class="example-item">Security Rules</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="schema-arrow">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Conceptual/Internal Mapping</span>
+                    </div>
+
+                    <div class="schema-level internal-level">
+                        <div class="level-header">
+                            <h3><i class="fas fa-hdd"></i> Internal Level</h3>
+                            <span class="level-tag">Physical Storage</span>
+                        </div>
+                        <div class="level-content">
+                            <p>Physical storage structure and access methods</p>
+                            <div class="level-examples">
+                                <div class="example-item">File Organization</div>
+                                <div class="example-item">Indexing</div>
+                                <div class="example-item">Storage Allocation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Independence Section -->
+            <section class="independence-section">
+                <h2>Data Independence Benefits</h2>
+                <div class="independence-grid">
+                    <div class="independence-card logical">
+                        <div class="card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Logical Data Independence</h3>
+                        <p>Changes to the conceptual schema don't affect external schemas or application programs.</p>
+                        <div class="example-scenario">
+                            <h4>Example Scenario:</h4>
+                            <p>Adding a new table or modifying existing table structure without affecting user views.</p>
+                        </div>
+                    </div>
+
+                    <div class="independence-card physical">
+                        <div class="card-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>Physical Data Independence</h3>
+                        <p>Changes to internal schema don't affect conceptual or external schemas.</p>
+                        <div class="example-scenario">
+                            <h4>Example Scenario:</h4>
+                            <p>Changing file organization or adding indexes without affecting logical structure.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Example Section -->
+            <section class="interactive-section">
+                <h2>Interactive University Database Example</h2>
+                <p>Explore how the same university database appears at different schema levels:</p>
+                
+                <div class="schema-tabs">
+                    <button class="tab-btn active" data-schema="external">External Level</button>
+                    <button class="tab-btn" data-schema="conceptual">Conceptual Level</button>
+                    <button class="tab-btn" data-schema="internal">Internal Level</button>
+                </div>
+
+                <div class="schema-content">
+                    <div class="schema-view active" id="external-view">
+                        <h3>Student Information System View</h3>
+                        <div class="view-demo">
+                            <div class="demo-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Name</th>
+                                            <th>Major</th>
+                                            <th>GPA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-row" onclick="highlightRow(this)">
+                                            <td>S001</td>
+                                            <td>Rajesh Kumar</td>
+                                            <td>Computer Science</td>
+                                            <td>3.8</td>
+                                        </tr>
+                                        <tr class="table-row" onclick="highlightRow(this)">
+                                            <td>S002</td>
+                                            <td>Priya Sharma</td>
+                                            <td>Mathematics</td>
+                                            <td>3.9</td>
+                                        </tr>
+                                        <tr class="table-row" onclick="highlightRow(this)">
+                                            <td>S003</td>
+                                            <td>Arjun Patel</td>
+                                            <td>Data Science</td>
+                                            <td>3.7</td>
+                                        </tr>
+                                        <tr class="table-row" onclick="highlightRow(this)">
+                                            <td>S004</td>
+                                            <td>Ananya Reddy</td>
+                                            <td>Information Technology</td>
+                                            <td>3.95</td>
+                                        </tr>
+                                        <tr class="table-row" onclick="highlightRow(this)">
+                                            <td>S005</td>
+                                            <td>Vikram Singh</td>
+                                            <td>Artificial Intelligence</td>
+                                            <td>3.85</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="view-description">This view shows only information relevant to student services staff.</p>
+                        </div>
+                    </div>
+
+                    <div class="schema-view" id="conceptual-view">
+                        <h3>Complete Logical Database Schema</h3>
+                        <div class="view-demo">
+                            <div class="er-diagram">
+                                <div class="entity student-entity clickable-entity" onclick="highlightEntity(this)">
+                                    <h4>STUDENT</h4>
+                                    <ul>
+                                        <li><u>StudentID</u> (PK)</li>
+                                        <li>FirstName</li>
+                                        <li>LastName</li>
+                                        <li>Email</li>
+                                        <li>PhoneNumber</li>
+                                        <li>Address</li>
+                                        <li>MajorID (FK)</li>
+                                        <li>AdmissionYear</li>
+                                        <li>CGPA</li>
+                                    </ul>
+                                </div>
+                                <div class="relationship animated-relationship" onclick="highlightRelationship(this)">
+                                    <span>enrolls in</span>
+                                    <div class="relationship-details">
+                                        <small>Many-to-Many</small>
+                                    </div>
+                                </div>
+                                <div class="entity course-entity clickable-entity" onclick="highlightEntity(this)">
+                                    <h4>COURSE</h4>
+                                    <ul>
+                                        <li><u>CourseID</u> (PK)</li>
+                                        <li>CourseName</li>
+                                        <li>Credits</li>
+                                        <li>DepartmentID (FK)</li>
+                                        <li>Semester</li>
+                                        <li>Prerequisites</li>
+                                        <li>MaxEnrollment</li>
+                                    </ul>
+                                </div>
+                                <div class="entity department-entity clickable-entity" onclick="highlightEntity(this)">
+                                    <h4>DEPARTMENT</h4>
+                                    <ul>
+                                        <li><u>DepartmentID</u> (PK)</li>
+                                        <li>DepartmentName</li>
+                                        <li>HOD_Name</li>
+                                        <li>Building</li>
+                                        <li>ContactEmail</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p class="view-description">Complete logical structure with all entities, relationships, and constraints.</p>
+                        </div>
+                    </div>
+
+                    <div class="schema-view" id="internal-view">
+                        <h3>Physical Storage Implementation</h3>
+                        <div class="view-demo">
+                            <div class="storage-details">
+                                <div class="storage-item clickable-storage" onclick="showStorageDetails('file')">
+                                    <h4><i class="fas fa-file"></i> File Organization</h4>
+                                    <p>STUDENT table stored as heap file with clustered index on StudentID for efficient data access in Indian university system</p>
+                                </div>
+                                <div class="storage-item clickable-storage" onclick="showStorageDetails('index')">
+                                    <h4><i class="fas fa-list"></i> Index Structures</h4>
+                                    <p>B+ tree index on StudentID, hash index on Email for quick student lookup across multiple campuses</p>
+                                </div>
+                                <div class="storage-item clickable-storage" onclick="showStorageDetails('buffer')">
+                                    <h4><i class="fas fa-memory"></i> Buffer Management</h4>
+                                    <p>LRU replacement policy, 64KB page size optimized for handling large student datasets efficiently</p>
+                                </div>
+                                <div class="storage-item clickable-storage" onclick="showStorageDetails('backup')">
+                                    <h4><i class="fas fa-shield-alt"></i> Data Security & Backup</h4>
+                                    <p>Encrypted storage with daily backups to ensure student data privacy compliance with Indian IT regulations</p>
+                                </div>
+                            </div>
+                            <p class="view-description">Physical implementation details invisible to upper levels.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-World Benefits Section -->
+            <section class="benefits-section">
+                <h2>Real-World Business Benefits</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Enhanced Security</h3>
+                        <p>Users only see data relevant to their role, improving security and reducing complexity.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <h3>System Flexibility</h3>
+                        <p>Database structure can evolve without breaking existing applications.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h3>Multiple User Views</h3>
+                        <p>Different departments can have customized views of the same data.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h3>Performance Optimization</h3>
+                        <p>Physical storage can be optimized without affecting logical design.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <section class="page-navigation">
+                <div class="nav-buttons">
+                    <a href="../home.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                    <a href="schema-instance.html" class="nav-btn next">
+                        Schema vs Instance <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-database"></i> DBMS Fundamentals</h3>
+                    <p>Professional database management system learning platform.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Learning Modules</h4>
+                    <ul>
+                        <li><a href="architecture.html">Three-Schema Architecture</a></li>
+                        <li><a href="schema-instance.html">Schema vs Instance</a></li>
+                        <li><a href="advantages.html">DBMS Advantages</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 DBMS Fundamentals Learning Platform. Educational Content.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/architecture.js"></script>
+</body>
+</html>

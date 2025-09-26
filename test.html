@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test DBMS Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .hero-card {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .hero-card:hover {
+            transform: translateY(-5px);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>DBMS Platform Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Direct Button Clicks</h2>
+        <button onclick="openModule('Q1/home.html')">Open Q1 (Button)</button>
+        <button onclick="openModule('Q2/advanced-er-builder.html')">Open Q2 (Button)</button>
+        <button onclick="openModule('Q3/index.html')">Open Q3 (Button)</button>
+        <button onclick="openModule('Q4/index.html')">Open Q4 (Button)</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Hero Cards</h2>
+        <div class="hero-card" data-module="fundamentals">
+            <h3>DBMS Fundamentals</h3>
+            <p>Click to test</p>
+        </div>
+        <div class="hero-card" data-module="er-builder">
+            <h3>ER Builder</h3>
+            <p>Click to test</p>
+        </div>
+        <div class="hero-card" data-module="relational">
+            <h3>Relational Algebra</h3>
+            <p>Click to test</p>
+        </div>
+        <div class="hero-card" data-module="transactions">
+            <h3>Transactions</h3>
+            <p>Click to test</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: File Path Check</h2>
+        <button onclick="checkFiles()">Check if Q1-Q4 folders exist</button>
+        <div id="fileCheck"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function checkFiles() {
+            const paths = ['Q1/home.html', 'Q2/advanced-er-builder.html', 'Q3/index.html', 'Q4/index.html'];
+            const results = document.getElementById('fileCheck');
+            results.innerHTML = '<h4>Checking file paths:</h4>';
+            
+            paths.forEach(path => {
+                // Try to create an image element to test if path is accessible
+                const link = document.createElement('a');
+                link.href = path;
+                link.textContent = path + ' - ';
+                link.style.display = 'block';
+                link.onclick = function(e) {
+                    e.preventDefault();
+                    alert('Trying to open: ' + path);
+                    openModule(path);
+                };
+                results.appendChild(link);
+            });
+        }
+
+        // Test if script.js loaded properly
+        console.log('Test page loaded');
+        console.log('openModule function available:', typeof openModule);
+        console.log('modules object:', typeof modules !== 'undefined' ? modules : 'undefined');
+    </script>
+</body>
+</html>

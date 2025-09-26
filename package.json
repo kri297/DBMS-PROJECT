@@ -1,0 +1,32 @@
+{
+  "name": "dbms-learning-platform",
+  "version": "1.0.0",
+  "description": "Interactive DBMS Learning Platform with 4 comprehensive modules",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build step required'",
+    "start": "echo 'Static site ready for deployment'"
+  },
+  "keywords": [
+    "DBMS",
+    "Database",
+    "Learning",
+    "ER-Diagram",
+    "Relational-Algebra",
+    "Transaction-Management",
+    "SQL",
+    "Education"
+  ],
+  "author": "DBMS Learning Platform",
+  "license": "Educational",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/dbms-project.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

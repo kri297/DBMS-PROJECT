@@ -1,0 +1,4665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced ER Diagram Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Enhanced Toolbar */
+        .toolbar {
+            width: 280px;
+            background: white;
+            border-right: 3px solid #ddd;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .toolbar-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .toolbar-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .toolbar-content {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .tool-section {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+        }
+
+        .section-content {
+            padding: 15px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .tool-item {
+            padding: 15px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            cursor: move;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .tool-item:hover {
+            border-color: #667eea;
+            background: linear-gradient(145deg, #f8f9ff 0%, #e3f2fd 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 8px 16px rgba(102, 126, 234, 0.3),
+                0 4px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .tool-item:hover::before {
+            left: 100%;
+        }
+
+        .tool-item:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .tool-item .icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        /* Entity Types */
+        .tool-item[data-type="entity"] { border-color: #4CAF50; }
+        .tool-item[data-type="weak-entity"] { border-color: #FF9800; }
+        .tool-item[data-type="associative-entity"] { border-color: #9C27B0; }
+
+        /* Attribute Types */
+        .tool-item[data-type="simple-attribute"] { border-color: #2196F3; }
+        .tool-item[data-type="composite-attribute"] { border-color: #00BCD4; }
+        .tool-item[data-type="derived-attribute"] { border-color: #FF5722; }
+        .tool-item[data-type="multivalued-attribute"] { border-color: #795548; }
+        .tool-item[data-type="key-attribute"] { border-color: #FFC107; }
+
+        /* Relationship Types */
+        .tool-item[data-type="relationship"] { border-color: #E91E63; }
+        .tool-item[data-type="weak-relationship"] { border-color: #673AB7; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn.active {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            position: relative;
+            background: white;
+            overflow: hidden;
+        }
+        
+        /* Zoom Controls */
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .zoom-controls button {
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .zoom-controls button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .zoom-controls button:active {
+            transform: scale(0.95);
+        }
+        
+        .zoom-controls #zoomLevel {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 45px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .zoom-controls .separator {
+            width: 1px;
+            height: 30px;
+            background: rgba(102, 126, 234, 0.3);
+            margin: 0 5px;
+        }
+        
+        .zoom-controls button:disabled {
+            background: linear-gradient(145deg, #ccc 0%, #999 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .zoom-controls button:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Enhanced Schema Modal */
+        .enhanced-schema-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .enhanced-schema-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .schema-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .schema-header h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .schema-options {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .schema-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .schema-options select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .schema-options input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+        }
+        
+        .schema-output {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .output-header {
+            background: #f1f3f4;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .output-header span {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .copy-btn, .download-btn {
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover, .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        #enhancedSchemaOutput {
+            flex: 1;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+            overflow: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #212529;
+            border: none;
+            white-space: pre-wrap;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: default;
+            background: 
+                linear-gradient(90deg, rgba(102, 126, 234, 0.08) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(102, 126, 234, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 126, 234, 0.04) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(102, 126, 234, 0.04) 1px, transparent 1px);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            background-position: 0 0, 0 0, 0 0, 0 0;
+            transform-origin: 0 0;
+        }
+
+        /* SVG Canvas for connections */
+        .svg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Element Styles */
+        .diagram-element {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        /* Force proper sizing for attributes */
+        .diagram-element.attribute {
+            width: 70px !important;
+            height: 70px !important;
+            min-width: 70px !important;
+            max-width: 70px !important;
+        }
+
+        /* Force proper sizing for relationships */
+        .diagram-element.relationship,
+        .diagram-element.weak-relationship {
+            width: 80px !important;
+            height: 80px !important;
+            min-width: 80px !important;
+            max-width: 80px !important;
+        }
+
+        /* Force proper sizing for associative entities */
+        .diagram-element.associative-entity {
+            width: 80px !important;
+            height: 80px !important;
+            min-width: 80px !important;
+            max-width: 80px !important;
+        }
+
+        .diagram-element:hover {
+            transform: scale(1.05);
+            z-index: 3;
+            filter: brightness(1.1) saturate(1.1);
+        }
+
+        .diagram-element.selected {
+            box-shadow: 
+                0 0 0 3px #e74c3c,
+                0 0 15px rgba(231, 76, 60, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+            transform: scale(1.02);
+        }
+
+        .diagram-element.connecting {
+            animation: connectPulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes connectPulse {
+            0% { 
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+                transform: scale(1);
+            }
+            100% { 
+                box-shadow: 0 0 0 8px rgba(52, 152, 219, 0.2);
+                transform: scale(1.02);
+            }
+        }
+
+        /* Entity Styles */
+        .entity {
+            background: linear-gradient(145deg, #4CAF50 0%, #45a049 50%, #388e3c 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 12px 18px;
+            min-width: 100px;
+            max-width: 120px;
+            height: auto;
+            text-align: center;
+            font-weight: 700;
+            font-size: 11px;
+            box-shadow: 
+                0 4px 8px rgba(76, 175, 80, 0.4),
+                0 2px 4px rgba(76, 175, 80, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            position: relative;
+            word-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .entity::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(145deg, #66bb6a, #388e3c);
+            border-radius: 14px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .entity:hover::before {
+            opacity: 1;
+        }
+
+        .weak-entity {
+            background: linear-gradient(145deg, #FF9800 0%, #f57c00 50%, #e65100 100%);
+            border: 2px double rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 4px 8px rgba(255, 152, 0, 0.4),
+                0 2px 4px rgba(255, 152, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .associative-entity {
+            background: linear-gradient(145deg, #9C27B0 0%, #7B1FA2 50%, #4a148c 100%);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 4px 8px rgba(156, 39, 176, 0.4),
+                0 2px 4px rgba(156, 39, 176, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        /* Attribute Styles */
+        .attribute {
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            position: relative;
+            transition: all 0.3s ease;
+            line-height: 1.1;
+            padding: 2px;
+        }
+
+        .attribute:hover {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .simple-attribute {
+            background: linear-gradient(145deg, #2196F3 0%, #1976D2 50%, #0d47a1 100%);
+            box-shadow: 
+                0 3px 6px rgba(33, 150, 243, 0.4),
+                0 1px 3px rgba(33, 150, 243, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .composite-attribute {
+            background: linear-gradient(145deg, #00BCD4 0%, #0097A7 50%, #00695c 100%);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 3px 6px rgba(0, 188, 212, 0.4),
+                0 1px 3px rgba(0, 188, 212, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .composite-attribute::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+        }
+
+        .derived-attribute {
+            background: linear-gradient(145deg, #FF5722 0%, #D84315 50%, #bf360c 100%);
+            border: 2px dashed rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 3px 6px rgba(255, 87, 34, 0.4),
+                0 1px 3px rgba(255, 87, 34, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            animation: derivedPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes derivedPulse {
+            0% { border-color: rgba(255, 255, 255, 0.5); }
+            100% { border-color: rgba(255, 255, 255, 1); }
+        }
+
+        .multivalued-attribute {
+            background: linear-gradient(145deg, #795548 0%, #5D4037 50%, #3e2723 100%);
+            border: 3px double rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 3px 6px rgba(121, 85, 72, 0.4),
+                0 1px 3px rgba(121, 85, 72, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .multivalued-attribute::before {
+            content: '';
+            position: absolute;
+            top: 9px;
+            left: 9px;
+            right: 9px;
+            bottom: 9px;
+            border: 1px double rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .key-attribute {
+            background: linear-gradient(145deg, #FFC107 0%, #F57F17 50%, #e65100 100%);
+            box-shadow: 
+                0 4px 8px rgba(255, 193, 7, 0.5),
+                0 2px 4px rgba(255, 193, 7, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 10px rgba(255, 193, 7, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+        }
+
+        .key-attribute::before {
+            content: '🔑';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 12px;
+            background: linear-gradient(145deg, #ff6f00, #e65100);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .key-attribute .text {
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.8);
+            text-decoration-thickness: 2px;
+            text-underline-offset: 2px;
+        }
+
+        /* Relationship Styles */
+        .relationship {
+            background: linear-gradient(145deg, #E91E63 0%, #C2185B 50%, #880e4f 100%);
+            color: white;
+            transform: rotate(45deg);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            font-size: 10px;
+            box-shadow: 
+                0 4px 8px rgba(233, 30, 99, 0.4),
+                0 2px 4px rgba(233, 30, 99, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .relationship:hover {
+            transform: rotate(45deg) scale(1.03);
+            box-shadow: 
+                0 6px 12px rgba(233, 30, 99, 0.5),
+                0 3px 6px rgba(233, 30, 99, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .relationship .content {
+            transform: rotate(-45deg);
+            line-height: 1.2;
+            padding: 5px;
+        }
+
+        .weak-relationship {
+            background: linear-gradient(145deg, #673AB7 0%, #512DA8 50%, #311b92 100%);
+            border: 3px double #9C27B0;
+            position: relative;
+            transform: rotate(45deg);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            font-size: 10px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 6px 12px rgba(103, 58, 183, 0.4),
+                0 3px 6px rgba(103, 58, 183, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+        
+        .weak-relationship:hover {
+            transform: rotate(45deg) scale(1.03);
+            box-shadow: 
+                0 8px 16px rgba(103, 58, 183, 0.5),
+                0 4px 8px rgba(103, 58, 183, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+        
+        .weak-relationship .content {
+            transform: rotate(-45deg);
+            line-height: 1.2;
+            padding: 5px;
+        }
+
+        .weak-relationship::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px dashed rgba(255, 255, 255, 0.9);
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .weak-relationship::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 1px dotted #9C27B0;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* Enhanced Connection Styles */
+        .connection-line {
+            stroke: #2c3e50;
+            stroke-width: 3;
+            fill: none;
+            pointer-events: all;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            stroke-linecap: round;
+        }
+
+        .connection-line.enhanced {
+            stroke: #667eea;
+            stroke-width: 2.5px;
+            filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
+        }
+
+        .connection-line:hover, .connection-line.enhanced:hover {
+            stroke: #4CAF50;
+            stroke-width: 3.5px;
+            filter: drop-shadow(0 3px 8px rgba(76, 175, 80, 0.4));
+        }
+        
+        .connection-hover-line {
+            stroke: transparent;
+            stroke-width: 12px;
+            cursor: pointer;
+        }
+        
+        .connection-point {
+            fill: #667eea;
+            stroke: white;
+            stroke-width: 2px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .connection-group.connection-hover .connection-point {
+            opacity: 1;
+        }
+
+        .cardinality-label {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            fill: #2c3e50;
+            text-anchor: middle;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
+        }
+        
+        .cardinality-label.enhanced {
+            font-size: 11px;
+            font-weight: 600;
+            fill: #667eea;
+        }
+        
+        .cardinality-bg {
+            fill: rgba(255, 255, 255, 0.95);
+            stroke: #667eea;
+            stroke-width: 1.5px;
+            opacity: 0.9;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .participation-line {
+            stroke: #34495e;
+            stroke-width: 3;
+        }
+        
+        .participation-line.enhanced {
+            stroke: #FF9800;
+            stroke-width: 2px;
+            stroke-linecap: round;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .connection-group:hover .cardinality-label {
+            fill: #e74c3c;
+            font-size: 14px;
+        }
+
+        /* Property Panel */
+        .property-panel {
+            width: 250px;
+            background: white;
+            border-left: 3px solid #ddd;
+            padding: 20px;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .property-section {
+            margin-bottom: 20px;
+        }
+
+        .property-section h3 {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .property-field {
+            margin-bottom: 12px;
+        }
+
+        .property-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .property-field input,
+        .property-field select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .property-field input:focus,
+        .property-field select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-bar.error {
+            background: #e74c3c;
+        }
+
+        .status-bar.success {
+            background: #27ae60;
+        }
+
+        /* Schema Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            min-width: 600px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .schema-output {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+
+        /* Modal active state for connection properties */
+        .modal.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .modal .property-field {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .modal .property-field label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .modal .property-field input,
+        .modal .property-field select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal .property-field input:focus,
+        .modal .property-field select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 180px;
+            font-size: 13px;
+        }
+
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .context-menu-item:hover {
+            background: #f0f0f0;
+        }
+
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .context-menu-header {
+            padding: 8px 15px;
+            font-weight: bold;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            color: #555;
+        }
+
+        /* Tutorial Overlay */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tutorial-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .tutorial-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: tutorialSlideIn 0.4s ease-out;
+        }
+
+        @keyframes tutorialSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .tutorial-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .tutorial-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .tutorial-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .tutorial-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .tutorial-body {
+            padding: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tutorial-step {
+            display: none;
+        }
+
+        .tutorial-step.active {
+            display: block;
+            animation: stepFadeIn 0.3s ease;
+        }
+
+        @keyframes stepFadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .tutorial-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-step h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .tutorial-step p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tutorial-step ul {
+            color: #555;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .tutorial-step li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .tutorial-highlight {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left: 4px solid #FF9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        kbd {
+            background: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .tutorial-footer {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tutorial-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tutorial-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tutorial-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .tutorial-btn.secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .tutorial-btn.secondary:hover {
+            background: #e9ecef;
+        }
+
+        .tutorial-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Tutorial Highlights */
+        .tutorial-highlight-overlay {
+            animation: highlightSlideDown 0.4s ease-out;
+        }
+
+        @keyframes highlightSlideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .tutorial-highlight-content {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(255, 107, 107, 0.3);
+            text-align: center;
+            max-width: 200px;
+            position: relative;
+        }
+
+        .tutorial-highlight-message {
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .tutorial-highlight-arrow {
+            font-size: 20px;
+            margin-top: 5px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes tutorialPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+                transform: scale(1.05);
+            }
+        }
+
+        /* Enhanced Context Menu */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 200px;
+            font-size: 14px;
+            padding: 8px 0;
+            display: none;
+        }
+
+        .context-menu.show {
+            display: block;
+            animation: contextMenuShow 0.2s ease-out;
+        }
+
+        @keyframes contextMenuShow {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .context-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #333;
+            transition: all 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+            color: #667eea;
+        }
+
+        .context-menu-item.delete:hover {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #e74c3c;
+        }
+
+        .context-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: #eee;
+            margin: 4px 0;
+        }
+
+        /* Enhanced Responsive Design */
+        
+        /* Large screens - maintain original design */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: none;
+            }
+        }
+
+        /* Medium-large screens */
+        @media (max-width: 1200px) {
+            .toolbar { 
+                width: 240px; 
+            }
+            .property-panel { 
+                width: 200px; 
+            }
+            .zoom-controls {
+                padding: 8px;
+                gap: 6px;
+            }
+            .zoom-controls button {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+        }
+
+        /* Medium screens - collapsible property panel */
+        @media (max-width: 1024px) {
+            .toolbar { 
+                width: 220px; 
+            }
+            .property-panel { 
+                width: 180px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                position: absolute;
+                right: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1001;
+                box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+            }
+            .property-panel.open {
+                transform: translateX(0);
+            }
+            .tutorial-content {
+                width: 90%;
+                max-width: 500px;
+            }
+        }
+
+        /* Small-medium screens - mobile-first adaptations */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                height: 100vh;
+            }
+            
+            .toolbar {
+                width: 100%;
+                height: auto;
+                max-height: 30vh;
+                overflow-y: auto;
+                border-right: none;
+                border-bottom: 3px solid #ddd;
+                flex-shrink: 0;
+            }
+            
+            .toolbar-content {
+                padding: 10px;
+            }
+            
+            .tool-grid {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                gap: 8px;
+            }
+            
+            .tool-item {
+                padding: 8px 4px;
+                font-size: 10px;
+                min-height: 60px;
+            }
+            
+            .tool-item .icon {
+                font-size: 16px;
+                margin-bottom: 4px;
+            }
+            
+            .canvas-area {
+                flex: 1;
+                position: relative;
+            }
+            
+            .property-panel {
+                display: none;
+            }
+            
+            .zoom-controls {
+                top: 10px;
+                right: 10px;
+                padding: 6px;
+                gap: 4px;
+                flex-wrap: wrap;
+                max-width: 300px;
+            }
+            
+            .zoom-controls button {
+                padding: 6px 8px;
+                font-size: 11px;
+                min-width: 32px;
+            }
+            
+            .zoom-controls .separator {
+                display: none;
+            }
+            
+            #zoomLevel {
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+            
+            .status-bar {
+                padding: 8px 10px;
+                font-size: 12px;
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .tutorial-content {
+                width: 95%;
+                margin: 10px;
+                max-height: 85vh;
+            }
+            
+            .tutorial-header h2 {
+                font-size: 20px;
+            }
+            
+            .tutorial-body {
+                padding: 20px 15px;
+                max-height: 300px;
+            }
+        }
+
+        /* Small screens - phone portrait */
+        @media (max-width: 600px) {
+            .toolbar-header h2 {
+                font-size: 16px;
+            }
+            
+            .toolbar-header p {
+                font-size: 11px;
+            }
+            
+            .section-header {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+            
+            .tool-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 6px;
+            }
+            
+            .tool-item {
+                padding: 6px 2px;
+                font-size: 9px;
+                min-height: 50px;
+            }
+            
+            .tool-item .icon {
+                font-size: 14px;
+                margin-bottom: 3px;
+            }
+            
+            .btn {
+                padding: 8px;
+                font-size: 11px;
+                margin: 3px 0;
+            }
+            
+            .zoom-controls {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                top: auto;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                padding: 4px;
+                max-width: 200px;
+            }
+            
+            .zoom-controls button {
+                padding: 4px 6px;
+                font-size: 10px;
+                min-width: 28px;
+                border-radius: 12px;
+            }
+            
+            #zoomLevel {
+                font-size: 10px;
+                padding: 2px 4px;
+            }
+            
+            .status-bar {
+                font-size: 10px;
+                padding: 6px 8px;
+            }
+            
+            .tutorial-content {
+                width: 98%;
+                margin: 5px;
+                border-radius: 12px;
+            }
+            
+            .tutorial-header {
+                padding: 15px;
+            }
+            
+            .tutorial-header h2 {
+                font-size: 18px;
+            }
+            
+            .tutorial-body {
+                padding: 15px 12px;
+                max-height: 250px;
+            }
+            
+            .tutorial-step h3 {
+                font-size: 16px;
+            }
+            
+            .tutorial-step p {
+                font-size: 14px;
+            }
+            
+            .tutorial-buttons {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+            
+            .tutorial-btn {
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            .context-menu {
+                min-width: 160px;
+                font-size: 13px;
+            }
+            
+            .context-menu-item {
+                padding: 10px 12px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+                max-height: 80vh;
+            }
+            
+            .property-field input,
+            .property-field select {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* Extra small screens - very small phones */
+        @media (max-width: 400px) {
+            .toolbar {
+                max-height: 25vh;
+            }
+            
+            .toolbar-header h2 {
+                font-size: 14px;
+            }
+            
+            .toolbar-header p {
+                font-size: 10px;
+            }
+            
+            .tool-grid {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                gap: 4px;
+            }
+            
+            .tool-item {
+                padding: 4px 2px;
+                font-size: 8px;
+                min-height: 45px;
+            }
+            
+            .tool-item .icon {
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+            
+            .zoom-controls button {
+                padding: 3px 5px;
+                font-size: 9px;
+                min-width: 24px;
+            }
+            
+            .tutorial-content {
+                border-radius: 8px;
+            }
+            
+            .tutorial-header h2 {
+                font-size: 16px;
+            }
+            
+            .tutorial-step h3 {
+                font-size: 14px;
+            }
+            
+            .tutorial-step p {
+                font-size: 13px;
+            }
+        }
+
+        /* Landscape orientation handling for tablets */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .toolbar {
+                width: 200px;
+                height: 100vh;
+                max-height: none;
+                border-right: 3px solid #ddd;
+                border-bottom: none;
+            }
+            
+            .container {
+                flex-direction: row;
+            }
+            
+            .canvas-area {
+                flex: 1;
+            }
+            
+            .zoom-controls {
+                top: 10px;
+                right: 10px;
+                bottom: auto;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (pointer: coarse) {
+            .tool-item {
+                min-height: 50px;
+                touch-action: manipulation;
+            }
+            
+            .zoom-controls button {
+                min-width: 36px;
+                min-height: 36px;
+                touch-action: manipulation;
+            }
+            
+            .btn {
+                min-height: 40px;
+                touch-action: manipulation;
+            }
+            
+            .context-menu-item {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+        }
+
+        /* Mobile toolbar toggle */
+        .toolbar-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1002;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toolbar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .toolbar-toggle.active {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            transform: rotate(90deg);
+        }
+
+        /* Mobile toolbar overlay */
+        .toolbar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .toolbar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+            .toolbar-toggle {
+                display: block;
+            }
+            
+            .toolbar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                z-index: 1001;
+                transition: left 0.3s ease;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+                background: white;
+            }
+            
+            .toolbar.open {
+                left: 0;
+            }
+            
+            .toolbar-header {
+                padding: 15px 10px 10px 60px;
+            }
+        }
+
+        /* Improved canvas interaction for touch */
+        @media (pointer: coarse) {
+            .canvas {
+                touch-action: pan-x pan-y pinch-zoom;
+            }
+            
+            .element {
+                touch-action: none;
+            }
+        }
+
+        /* High DPI display optimizations */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .canvas {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: pixelated;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .toolbar,
+            .zoom-controls,
+            .status-bar,
+            .toolbar-toggle {
+                display: none !important;
+            }
+            
+            .canvas-area {
+                width: 100% !important;
+                height: 100vh !important;
+            }
+            
+            .container {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toolbar Toggle -->
+        <button class="toolbar-toggle" onclick="toggleMobileToolbar()" id="toolbarToggle">☰</button>
+        <div class="toolbar-overlay" onclick="closeMobileToolbar()" id="toolbarOverlay"></div>
+        
+        <!-- Enhanced Toolbar -->
+        <div class="toolbar" id="toolbar">
+            <div class="toolbar-header">
+                <h2>🎯 ER Builder Pro</h2>
+                <p>Advanced Database Design Tool</p>
+            </div>
+            <div class="toolbar-content">
+                <!-- Entities Section -->
+                <div class="tool-section">
+                    <div class="section-header">🏢 Entities</div>
+                    <div class="section-content">
+                        <div class="tool-grid">
+                            <div class="tool-item" draggable="true" data-type="entity">
+                                <span class="icon">⬛</span>
+                                <div>Strong Entity</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="weak-entity">
+                                <span class="icon">📦</span>
+                                <div>Weak Entity</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="associative-entity">
+                                <span class="icon">🔷</span>
+                                <div>Associative Entity</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attributes Section -->
+                <div class="tool-section">
+                    <div class="section-header">🏷️ Attributes</div>
+                    <div class="section-content">
+                        <div class="tool-grid">
+                            <div class="tool-item" draggable="true" data-type="simple-attribute">
+                                <span class="icon">●</span>
+                                <div>Simple</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="composite-attribute">
+                                <span class="icon">◉</span>
+                                <div>Composite</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="derived-attribute">
+                                <span class="icon">○</span>
+                                <div>Derived</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="multivalued-attribute">
+                                <span class="icon">◎</span>
+                                <div>Multi-valued</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="key-attribute">
+                                <span class="icon">🔑</span>
+                                <div>Key Attribute</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relationships Section -->
+                <div class="tool-section">
+                    <div class="section-header">🔗 Relationships</div>
+                    <div class="section-content">
+                        <div class="tool-grid">
+                            <div class="tool-item" draggable="true" data-type="relationship">
+                                <span class="icon">♦</span>
+                                <div>Relationship</div>
+                            </div>
+                            <div class="tool-item" draggable="true" data-type="weak-relationship">
+                                <span class="icon">◊◇</span>
+                                <div>Weak Relationship</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="tool-section">
+                    <div class="section-header">⚙️ Controls</div>
+                    <div class="section-content">
+                        <button class="btn" id="connectBtn">🔗 Connect Elements</button>
+                        <button class="btn" onclick="erBuilder.generateSchema()">📋 Generate Schema</button>
+                        <button class="btn" onclick="erBuilder.validateDiagram()">✅ Validate Diagram</button>
+                        <button class="btn" onclick="erBuilder.clearAll()">🗑️ Clear All</button>
+                        <button class="btn" onclick="erBuilder.exportDiagram()">💾 Export Diagram</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+            <!-- Zoom Controls -->
+            <div class="zoom-controls">
+                <button onclick="undo()" title="Undo" id="undoBtn">↶</button>
+                <button onclick="redo()" title="Redo" id="redoBtn">↷</button>
+                <div class="separator"></div>
+                <button onclick="saveDiagram()" title="Save Diagram">💾</button>
+                <button onclick="loadDiagram()" title="Load Diagram">📂</button>
+                <button onclick="exportDiagram()" title="Export as Image">📸</button>
+                <div class="separator"></div>
+                <button onclick="zoomIn()" title="Zoom In">🔍+</button>
+                <button onclick="zoomOut()" title="Zoom Out">🔍-</button>
+                <button onclick="resetZoom()" title="Reset Zoom">⟲</button>
+                <button onclick="toggleGrid()" title="Toggle Grid" id="gridBtn">⊞</button>
+                <button onclick="toggleSnap()" title="Toggle Snap to Grid" id="snapBtn">📐</button>
+                <div class="separator"></div>
+                <button onclick="window.tutorialManager && window.tutorialManager.startTutorial()" title="Restart Tutorial" id="tutorialBtn">🎓</button>
+                <span id="zoomLevel">100%</span>
+            </div>
+            
+            <div class="canvas" id="canvas">
+                <svg class="svg-canvas" id="svgCanvas">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                                refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+            <div class="status-bar">
+                <span id="statusText">Ready - Drag elements to canvas to start building your ER diagram</span>
+                <span id="elementCount">Elements: 0</span>
+            </div>
+        </div>
+
+        <!-- Property Panel -->
+        <div class="property-panel">
+            <div class="property-section">
+                <h3>📝 Element Properties</h3>
+                <div id="propertyContent">
+                    <p style="color: #999; font-style: italic;">Select an element to edit its properties</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schema Modal -->
+    <div id="schemaModal" class="modal">
+        <div class="modal-content">
+            <h3>📋 Generated Relational Schema</h3>
+            <div id="schemaOutput" class="schema-output"></div>
+            <div class="modal-buttons">
+                <button class="copy-btn" onclick="erBuilder.copySchema()">📋 Copy Schema</button>
+                <button class="close-btn" onclick="erBuilder.closeModal()">❌ Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tutorial Manager
+        class TutorialManager {
+            constructor() {
+                this.currentStep = 1;
+                this.maxSteps = 4;
+                this.overlay = document.getElementById('tutorial-overlay');
+                
+                if (!this.overlay) {
+                    console.error('Tutorial overlay element not found!');
+                    return;
+                }
+                console.log('TutorialManager initialized successfully!');
+            }
+
+            startTutorial() {
+                if (!this.overlay) {
+                    console.error('Cannot start tutorial: overlay element not found');
+                    return;
+                }
+                
+                console.log('Starting tutorial...');
+                this.currentStep = 1;
+                this.overlay.classList.add('active');
+                this.updateStep();
+            }
+
+            nextStep() {
+                if (this.currentStep < this.maxSteps) {
+                    this.currentStep++;
+                    this.updateStep();
+                }
+            }
+
+            previousStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                    this.updateStep();
+                }
+            }
+
+            updateStep() {
+                console.log(`Updating tutorial to step ${this.currentStep}`);
+                
+                // Hide all steps
+                const steps = document.querySelectorAll('.tutorial-step');
+                console.log(`Found ${steps.length} tutorial steps`);
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                });
+
+                // Show current step
+                const currentStepEl = document.querySelector(`[data-step="${this.currentStep}"]`);
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                    console.log(`Activated step ${this.currentStep}`);
+                } else {
+                    console.error(`Step element ${this.currentStep} not found`);
+                }
+
+                // Update progress dots
+                const dots = document.querySelectorAll('.dot');
+                console.log(`Found ${dots.length} progress dots`);
+                dots.forEach(dot => {
+                    dot.classList.remove('active');
+                });
+                const currentDot = document.querySelector(`.dot[data-step="${this.currentStep}"]`);
+                if (currentDot) {
+                    currentDot.classList.add('active');
+                } else {
+                    console.error(`Progress dot ${this.currentStep} not found`);
+                }
+
+                // Update buttons
+                const prevBtn = document.getElementById('tutorial-prev');
+                const nextBtn = document.getElementById('tutorial-next');
+                const completeBtn = document.getElementById('tutorial-complete');
+
+                prevBtn.disabled = this.currentStep === 1;
+                
+                if (this.currentStep === this.maxSteps) {
+                    nextBtn.style.display = 'none';
+                    completeBtn.style.display = 'inline-block';
+                } else {
+                    nextBtn.style.display = 'inline-block';
+                    completeBtn.style.display = 'none';
+                }
+            }
+
+            skipTutorial() {
+                this.closeTutorial();
+                localStorage.setItem('erbuilder_tutorial_completed', 'true');
+            }
+
+            completeTutorial() {
+                this.closeTutorial();
+                localStorage.setItem('erbuilder_tutorial_completed', 'true');
+                
+                // Show a welcome message with helpful tip
+                if (window.erBuilder) {
+                    erBuilder.updateStatus('Tutorial completed! 🎉 Right-click connections to edit properties. Happy diagramming!', 'success');
+                }
+                
+                // Show celebration effect
+                this.showCelebration();
+            }
+
+            showCelebration() {
+                // Add confetti-like effect (simple version)
+                const celebration = document.createElement('div');
+                celebration.innerHTML = '🎉✨🎊✨🎉';
+                celebration.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 48px;
+                    z-index: 10001;
+                    animation: celebrate 2s ease-out forwards;
+                    pointer-events: none;
+                `;
+                
+                // Add keyframes if not already added
+                if (!document.querySelector('#celebrate-keyframes')) {
+                    const style = document.createElement('style');
+                    style.id = 'celebrate-keyframes';
+                    style.textContent = `
+                        @keyframes celebrate {
+                            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+                            50% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 1; }
+                            100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(celebration);
+                setTimeout(() => {
+                    if (celebration.parentNode) {
+                        celebration.parentNode.removeChild(celebration);
+                    }
+                }, 2000);
+            }
+
+            addHighlight(selector, message) {
+                const element = document.querySelector(selector);
+                if (element) {
+                    // Create highlight overlay
+                    const highlight = document.createElement('div');
+                    highlight.className = 'tutorial-highlight-overlay';
+                    highlight.innerHTML = `
+                        <div class="tutorial-highlight-content">
+                            <div class="tutorial-highlight-message">${message}</div>
+                            <div class="tutorial-highlight-arrow">↓</div>
+                        </div>
+                    `;
+                    
+                    // Position highlight
+                    const rect = element.getBoundingClientRect();
+                    highlight.style.cssText = `
+                        position: fixed;
+                        top: ${rect.top - 60}px;
+                        left: ${rect.left + rect.width/2}px;
+                        transform: translateX(-50%);
+                        z-index: 9999;
+                        pointer-events: none;
+                    `;
+                    
+                    document.body.appendChild(highlight);
+                    
+                    // Remove after delay
+                    setTimeout(() => {
+                        if (highlight.parentNode) {
+                            highlight.parentNode.removeChild(highlight);
+                        }
+                    }, 5000);
+                    
+                    // Add pulse effect to target element
+                    element.style.animation = 'tutorialPulse 2s infinite';
+                    setTimeout(() => {
+                        element.style.animation = '';
+                    }, 5000);
+                }
+            }
+
+            closeTutorial() {
+                this.overlay.classList.remove('active');
+            }
+        }
+
+        // Connection Context Menu Manager
+        class ConnectionContextMenu {
+            constructor() {
+                this.menu = document.getElementById('connection-context-menu');
+                this.currentConnection = null;
+                this.isVisible = false;
+
+                // Close menu on outside click
+                document.addEventListener('click', (e) => {
+                    if (this.isVisible && !this.menu.contains(e.target)) {
+                        this.hide();
+                    }
+                });
+
+                // Close menu on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isVisible) {
+                        this.hide();
+                    }
+                });
+            }
+
+            show(x, y, connection) {
+                this.currentConnection = connection;
+                this.menu.style.left = x + 'px';
+                this.menu.style.top = y + 'px';
+                this.menu.classList.add('show');
+                this.isVisible = true;
+            }
+
+            hide() {
+                this.menu.classList.remove('show');
+                this.isVisible = false;
+                this.currentConnection = null;
+            }
+
+            editProperties() {
+                if (this.currentConnection) {
+                    this.hide();
+                    // Open properties modal
+                    this.showPropertiesModal();
+                }
+            }
+
+            setCardinality() {
+                if (this.currentConnection) {
+                    this.hide();
+                    const cardinality = prompt('Enter cardinality (e.g., 1:1, 1:N, M:N):');
+                    if (cardinality) {
+                        this.updateConnectionCardinality(cardinality);
+                    }
+                }
+            }
+
+            addLabel() {
+                if (this.currentConnection) {
+                    this.hide();
+                    const label = prompt('Enter connection label:');
+                    if (label) {
+                        this.updateConnectionLabel(label);
+                    }
+                }
+            }
+
+            deleteConnection() {
+                console.log('=== CONTEXT MENU DELETE ===');
+                console.log('currentConnection:', this.currentConnection);
+                console.log('window.erBuilder:', window.erBuilder);
+                
+                if (this.currentConnection && window.erBuilder) {
+                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    console.log('Connection ID to delete:', connectionId);
+                    
+                    this.hide();
+                    if (confirm('Delete this connection?')) {
+                        console.log('User confirmed deletion');
+                        // Pass the connection ID directly
+                        window.erBuilder.deleteConnection(connectionId);
+                    } else {
+                        console.log('User cancelled deletion');
+                    }
+                } else {
+                    console.error('Missing currentConnection or erBuilder');
+                }
+            }
+
+            updateConnectionCardinality(cardinality) {
+                if (this.currentConnection && window.erBuilder) {
+                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    if (connectionId) {
+                        // Parse cardinality (e.g., "M:N" -> start: "M", end: "N")
+                        const parts = cardinality.split(':');
+                        if (parts.length === 2) {
+                            const startCard = parts[0].trim();
+                            const endCard = parts[1].trim();
+                            
+                            // Update the connection data
+                            window.erBuilder.setCardinality(connectionId, startCard, endCard);
+                        } else {
+                            window.erBuilder.updateStatus('Invalid cardinality format. Use format like "1:N" or "M:N"', 'error');
+                        }
+                    }
+                }
+            }
+
+            updateConnectionLabel(label) {
+                if (this.currentConnection && window.erBuilder) {
+                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    if (connectionId) {
+                        // Store label data
+                        const connectionData = window.erBuilder.connections.get(connectionId);
+                        if (connectionData) {
+                            connectionData.label = label;
+                            window.erBuilder.updateStatus(`Label added: ${label}`, 'success');
+                            window.erBuilder.saveState('Add connection label');
+                        }
+                    }
+                }
+            }
+
+            showPropertiesModal() {
+                // Create and show properties modal
+                const modal = document.createElement('div');
+                modal.className = 'modal active';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h3>🔗 Connection Properties</h3>
+                        <div class="property-field">
+                            <label>Cardinality:</label>
+                            <select id="cardinality-select">
+                                <option value="1:1">1:1 (One to One)</option>
+                                <option value="1:N">1:N (One to Many)</option>
+                                <option value="M:N">M:N (Many to Many)</option>
+                                <option value="0:1">0:1 (Zero or One)</option>
+                                <option value="0:N">0:N (Zero or Many)</option>
+                            </select>
+                        </div>
+                        <div class="property-field">
+                            <label>Participation:</label>
+                            <select id="participation-select">
+                                <option value="partial">Partial (Optional)</option>
+                                <option value="total">Total (Mandatory)</option>
+                            </select>
+                        </div>
+                        <div class="property-field">
+                            <label>Connection Label:</label>
+                            <input type="text" id="connection-label" placeholder="Enter label...">
+                        </div>
+                        <div class="property-field">
+                            <label>Line Style:</label>
+                            <select id="line-style-select">
+                                <option value="solid">Solid Line</option>
+                                <option value="dashed">Dashed Line</option>
+                                <option value="dotted">Dotted Line</option>
+                            </select>
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn primary" onclick="connectionContextMenu.applyProperties()">✅ Apply</button>
+                            <button class="btn secondary" onclick="connectionContextMenu.closePropertiesModal()">❌ Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                this.propertiesModal = modal;
+            }
+
+            applyProperties() {
+                const cardinality = document.getElementById('cardinality-select').value;
+                const participation = document.getElementById('participation-select').value;
+                const label = document.getElementById('connection-label').value;
+                const lineStyle = document.getElementById('line-style-select').value;
+
+                if (this.currentConnection && window.erBuilder) {
+                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    
+                    // Apply cardinality
+                    if (cardinality) {
+                        this.updateConnectionCardinality(cardinality);
+                    }
+
+                    // Apply label
+                    if (label) {
+                        this.updateConnectionLabel(label);
+                    }
+
+                    // Apply line style
+                    if (lineStyle !== 'solid') {
+                        this.currentConnection.style.strokeDasharray = 
+                            lineStyle === 'dashed' ? '10,5' : '3,3';
+                    } else {
+                        this.currentConnection.style.strokeDasharray = '';
+                    }
+
+                    window.erBuilder.updateStatus('Connection properties updated!', 'success');
+                    window.erBuilder.saveState('Update connection properties');
+                }
+
+                this.closePropertiesModal();
+            }
+
+            closePropertiesModal() {
+                if (this.propertiesModal) {
+                    this.propertiesModal.remove();
+                    this.propertiesModal = null;
+                }
+            }
+        }
+
+        class AdvancedERBuilder {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.svgCanvas = document.getElementById('svgCanvas');
+                this.elements = new Map();
+                this.connections = new Map();
+                this.selectedElement = null;
+                this.connectMode = false;
+                this.connectStart = null;
+                this.idCounter = 0;
+                this.draggedElement = null;
+                this.isDragging = false;
+                this.dragOffset = { x: 0, y: 0 };
+                
+                // Undo/Redo system
+                this.history = [];
+                this.historyIndex = -1;
+                this.maxHistorySize = 50;
+
+                this.initializeEventListeners();
+                this.saveState('Initial state');
+                this.updateStatus('Advanced ER Builder Pro initialized - Start by dragging elements to the canvas');
+            }
+
+            initializeEventListeners() {
+                // Canvas events
+                this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+                this.canvas.addEventListener('dragover', (e) => e.preventDefault());
+                this.canvas.addEventListener('drop', (e) => this.handleCanvasDrop(e));
+
+                // Toolbar drag events
+                const toolItems = document.querySelectorAll('.tool-item');
+                toolItems.forEach(item => {
+                    item.addEventListener('dragstart', (e) => this.handleDragStart(e));
+                });
+
+                // Connect button
+                document.getElementById('connectBtn').addEventListener('click', () => this.toggleConnect());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+                // Context menu prevention
+                document.addEventListener('contextmenu', (e) => e.preventDefault());
+            }
+
+            handleDragStart(e) {
+                const elementType = e.target.getAttribute('data-type');
+                e.dataTransfer.setData('text/plain', elementType);
+                e.dataTransfer.effectAllowed = 'copy';
+            }
+
+            handleCanvasDrop(e) {
+                e.preventDefault();
+                const elementType = e.dataTransfer.getData('text/plain');
+                if (elementType) {
+                    const rect = this.canvas.getBoundingClientRect();
+                    
+                    // Account for zoom and pan transformations
+                    let x = e.clientX - rect.left;
+                    let y = e.clientY - rect.top;
+                    
+                    // Adjust for current zoom and pan
+                    if (window.currentZoom && window.translateX !== undefined && window.translateY !== undefined) {
+                        x = (x - window.translateX) / window.currentZoom;
+                        y = (y - window.translateY) / window.currentZoom;
+                    }
+                    
+                    // Ensure elements are within visible canvas area
+                    x = Math.max(20, Math.min(x, rect.width - 100));
+                    y = Math.max(20, Math.min(y, rect.height - 100));
+                    
+                    this.createElement(elementType, x, y);
+                }
+            }
+
+            createElement(type, x, y) {
+                const elementId = `element_${++this.idCounter}`;
+                const element = document.createElement('div');
+                element.id = elementId;
+                
+                // Add proper class combinations
+                let className = `diagram-element ${type}`;
+                if (type.includes('attribute')) {
+                    className += ' attribute';
+                }
+                element.className = className;
+                
+                element.setAttribute('data-type', type);
+                element.setAttribute('data-element-id', elementId);
+                
+                // Set position
+                element.style.left = x + 'px';
+                element.style.top = y + 'px';
+                
+                // Set default content based on type
+                const content = this.getDefaultContent(type);
+                element.innerHTML = content;
+                
+                // Force dimensions for specific element types
+                if (type.includes('attribute')) {
+                    element.style.width = '70px';
+                    element.style.height = '70px';
+                } else if (type.includes('relationship')) {
+                    element.style.width = '80px';
+                    element.style.height = '80px';
+                } else if (type === 'associative-entity') {
+                    element.style.width = '80px';
+                    element.style.height = '80px';
+                }
+                
+                // Add event listeners
+                this.addElementEventListeners(element);
+                
+                // Store element data
+                this.elements.set(elementId, {
+                    id: elementId,
+                    type: type,
+                    x: x,
+                    y: y,
+                    properties: this.getDefaultProperties(type)
+                });
+                
+                this.canvas.appendChild(element);
+                this.updateElementCount();
+                this.updateStatus(`Added ${this.getElementLabel(type)} at position (${Math.round(x)}, ${Math.round(y)})`);
+                
+                // Save state for undo/redo
+                this.saveState(`Add ${this.getElementLabel(type)}`);
+            }
+
+            getDefaultContent(type) {
+                const defaultNames = {
+                    'entity': 'Entity',
+                    'weak-entity': 'Weak Entity',
+                    'associative-entity': 'Assoc Entity',
+                    'simple-attribute': 'Attribute',
+                    'composite-attribute': 'Composite',
+                    'derived-attribute': 'Derived',
+                    'multivalued-attribute': 'Multi',
+                    'key-attribute': '<div class="text">Key</div>',
+                    'relationship': '<div class="content">Relationship</div>',
+                    'weak-relationship': '<div class="content">Weak Rel</div>'
+                };
+                return defaultNames[type] || 'Element';
+            }
+
+            getDefaultProperties(type) {
+                const baseProps = { name: this.getDefaultContent(type).replace(/<[^>]*>/g, '') };
+                
+                switch(type) {
+                    case 'entity':
+                    case 'weak-entity':
+                    case 'associative-entity':
+                        return { ...baseProps, primaryKey: '', attributes: [] };
+                    
+                    case 'simple-attribute':
+                    case 'composite-attribute':
+                    case 'derived-attribute':
+                    case 'multivalued-attribute':
+                    case 'key-attribute':
+                        return { ...baseProps, dataType: 'VARCHAR(50)', nullable: true };
+                    
+                    case 'relationship':
+                    case 'weak-relationship':
+                        return { ...baseProps, cardinality: { start: '1', end: '1' }, participation: { start: 'partial', end: 'partial' } };
+                    
+                    default:
+                        return baseProps;
+                }
+            }
+
+            getElementLabel(type) {
+                const labels = {
+                    'entity': 'Strong Entity',
+                    'weak-entity': 'Weak Entity',
+                    'associative-entity': 'Associative Entity',
+                    'simple-attribute': 'Simple Attribute',
+                    'composite-attribute': 'Composite Attribute',
+                    'derived-attribute': 'Derived Attribute',
+                    'multivalued-attribute': 'Multi-valued Attribute',
+                    'key-attribute': 'Key Attribute',
+                    'relationship': 'Relationship',
+                    'weak-relationship': 'Weak Relationship'
+                };
+                return labels[type] || type;
+            }
+
+            addElementEventListeners(element) {
+                element.addEventListener('click', (e) => this.handleElementClick(e, element));
+                element.addEventListener('mousedown', (e) => this.handleElementMouseDown(e, element));
+                element.addEventListener('contextmenu', (e) => this.handleElementRightClick(e, element));
+                
+                // Double-click to edit
+                element.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    this.editElement(element);
+                });
+            }
+
+            handleElementClick(e, element) {
+                e.stopPropagation();
+                
+                if (this.connectMode) {
+                    this.handleConnection(element);
+                } else {
+                    this.selectElement(element);
+                }
+            }
+
+            handleElementMouseDown(e, element) {
+                if (e.button === 0 && !this.connectMode) { // Left click
+                    this.isDragging = true;
+                    this.draggedElement = element;
+                    const rect = element.getBoundingClientRect();
+                    this.dragOffset.x = e.clientX - rect.left;
+                    this.dragOffset.y = e.clientY - rect.top;
+                    
+                    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                    document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                    
+                    element.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            }
+
+            handleMouseMove(e) {
+                if (this.isDragging && this.draggedElement) {
+                    const canvasRect = this.canvas.getBoundingClientRect();
+                    let x = e.clientX - canvasRect.left - this.dragOffset.x;
+                    let y = e.clientY - canvasRect.top - this.dragOffset.y;
+                    
+                    // Apply snap to grid if enabled
+                    const snappedPos = snapPosition(x, y);
+                    x = snappedPos.x;
+                    y = snappedPos.y;
+                    
+                    this.draggedElement.style.left = x + 'px';
+                    this.draggedElement.style.top = y + 'px';
+                    
+                    // Update element data
+                    const elementId = this.draggedElement.getAttribute('data-element-id');
+                    if (this.elements.has(elementId)) {
+                        const elementData = this.elements.get(elementId);
+                        elementData.x = x;
+                        elementData.y = y;
+                    }
+                    
+                    this.updateConnections();
+                }
+            }
+
+            handleMouseUp(e) {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    if (this.draggedElement) {
+                        this.draggedElement.style.cursor = 'move';
+                        this.draggedElement = null;
+                    }
+                    
+                    document.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+                    document.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+                }
+            }
+
+            handleElementRightClick(e, element) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showContextMenu(e.pageX, e.pageY, element);
+            }
+
+            selectElement(element) {
+                // Remove previous selection
+                if (this.selectedElement) {
+                    this.selectedElement.classList.remove('selected');
+                }
+                
+                // Add selection to new element
+                this.selectedElement = element;
+                element.classList.add('selected');
+                
+                this.showElementProperties(element);
+                
+                const elementId = element.getAttribute('data-element-id');
+                const elementData = this.elements.get(elementId);
+                this.updateStatus(`Selected: ${elementData.properties.name} (${this.getElementLabel(elementData.type)})`);
+            }
+
+            showElementProperties(element) {
+                const elementId = element.getAttribute('data-element-id');
+                const elementData = this.elements.get(elementId);
+                const propertyContent = document.getElementById('propertyContent');
+                
+                let html = `
+                    <div class="property-field">
+                        <label>Element Type</label>
+                        <input type="text" value="${this.getElementLabel(elementData.type)}" readonly>
+                    </div>
+                    <div class="property-field">
+                        <label>Name</label>
+                        <input type="text" value="${elementData.properties.name}" 
+                               onchange="erBuilder.updateElementProperty('${elementId}', 'name', this.value)">
+                    </div>
+                `;
+                
+                // Add type-specific properties
+                if (elementData.type.includes('entity')) {
+                    html += `
+                        <div class="property-field">
+                            <label>Primary Key</label>
+                            <input type="text" value="${elementData.properties.primaryKey || ''}" 
+                                   onchange="erBuilder.updateElementProperty('${elementId}', 'primaryKey', this.value)">
+                        </div>
+                    `;
+                } else if (elementData.type.includes('attribute')) {
+                    html += `
+                        <div class="property-field">
+                            <label>Data Type</label>
+                            <select onchange="erBuilder.updateElementProperty('${elementId}', 'dataType', this.value)">
+                                <option value="VARCHAR(50)" ${elementData.properties.dataType === 'VARCHAR(50)' ? 'selected' : ''}>VARCHAR(50)</option>
+                                <option value="INT" ${elementData.properties.dataType === 'INT' ? 'selected' : ''}>INT</option>
+                                <option value="DECIMAL(10,2)" ${elementData.properties.dataType === 'DECIMAL(10,2)' ? 'selected' : ''}>DECIMAL(10,2)</option>
+                                <option value="DATE" ${elementData.properties.dataType === 'DATE' ? 'selected' : ''}>DATE</option>
+                                <option value="BOOLEAN" ${elementData.properties.dataType === 'BOOLEAN' ? 'selected' : ''}>BOOLEAN</option>
+                                <option value="TEXT" ${elementData.properties.dataType === 'TEXT' ? 'selected' : ''}>TEXT</option>
+                            </select>
+                        </div>
+                        <div class="property-field">
+                            <label>
+                                <input type="checkbox" ${elementData.properties.nullable ? 'checked' : ''} 
+                                       onchange="erBuilder.updateElementProperty('${elementId}', 'nullable', this.checked)">
+                                Nullable
+                            </label>
+                        </div>
+                    `;
+                }
+                
+                propertyContent.innerHTML = html;
+            }
+
+            updateElementProperty(elementId, property, value) {
+                if (this.elements.has(elementId)) {
+                    const elementData = this.elements.get(elementId);
+                    elementData.properties[property] = value;
+                    
+                    // Update visual representation if it's the name
+                    if (property === 'name') {
+                        const element = document.getElementById(elementId);
+                        if (elementData.type.includes('relationship')) {
+                            element.querySelector('.content').textContent = value;
+                        } else if (elementData.type === 'key-attribute') {
+                            const textElement = element.querySelector('.text');
+                            if (textElement) {
+                                textElement.textContent = value;
+                            } else {
+                                element.innerHTML = `<div class="text">${value}</div>`;
+                            }
+                        } else {
+                            element.textContent = value;
+                        }
+                    }
+                    
+                    this.updateStatus(`Updated ${property} for ${elementData.properties.name}`);
+                }
+            }
+
+            toggleConnect() {
+                this.connectMode = !this.connectMode;
+                const connectBtn = document.getElementById('connectBtn');
+                
+                if (this.connectMode) {
+                    connectBtn.textContent = '❌ Cancel Connect';
+                    connectBtn.classList.add('active');
+                    this.canvas.style.cursor = 'crosshair';
+                    this.updateStatus('Connection mode: Click two elements to connect them');
+                } else {
+                    connectBtn.textContent = '🔗 Connect Elements';
+                    connectBtn.classList.remove('active');
+                    this.canvas.style.cursor = 'default';
+                    this.connectStart = null;
+                    this.updateStatus('Connection mode disabled');
+                }
+            }
+
+            handleConnection(element) {
+                const elementId = element.getAttribute('data-element-id');
+                
+                if (!this.connectStart) {
+                    this.connectStart = elementId;
+                    element.classList.add('connecting');
+                    this.updateStatus('First element selected - Click second element to complete connection');
+                } else if (this.connectStart !== elementId) {
+                    this.createConnection(this.connectStart, elementId);
+                    
+                    // Reset connection mode
+                    const firstElement = document.getElementById(this.connectStart);
+                    if (firstElement) {
+                        firstElement.classList.remove('connecting');
+                    }
+                    this.connectStart = null;
+                    this.toggleConnect();
+                } else {
+                    this.updateStatus('Cannot connect an element to itself', 'error');
+                }
+            }
+
+            createConnection(startId, endId) {
+                // Validate connection
+                const validation = this.validateConnection(startId, endId);
+                if (!validation.valid) {
+                    this.updateStatus(validation.message, 'error');
+                    return;
+                }
+                
+                const connectionId = `conn_${++this.idCounter}`;
+                const connection = {
+                    id: connectionId,
+                    startId,
+                    endId,
+                    cardinality: { start: '1', end: '1' },
+                    participation: { start: 'partial', end: 'partial' },
+                    type: 'identifying'
+                };
+
+                this.connections.set(connectionId, connection);
+                this.renderConnection(connection);
+                this.updateStatus('Connection created! 👆 Right-click on the line to edit properties', 'success');
+                this.saveState('Create connection');
+                
+                // Show tutorial hint for first connection
+                if (this.connections.size === 1 && window.tutorialManager) {
+                    setTimeout(() => {
+                        window.tutorialManager.addHighlight('.connection-line', 'Right-click me to edit properties! 🎯');
+                    }, 1000);
+                }
+            }
+
+            validateConnection(startId, endId) {
+                const startElement = this.elements.get(startId);
+                const endElement = this.elements.get(endId);
+                
+                if (!startElement || !endElement) {
+                    return { valid: false, message: 'Invalid elements for connection' };
+                }
+                
+                // Check for duplicate connections
+                const existingConnection = Array.from(this.connections.values()).find(conn =>
+                    (conn.startId === startId && conn.endId === endId) ||
+                    (conn.startId === endId && conn.endId === startId)
+                );
+                
+                if (existingConnection) {
+                    return { valid: false, message: 'Connection already exists between these elements' };
+                }
+                
+                const startType = startElement.type;
+                const endType = endElement.type;
+                
+                // Entity-to-Entity connections need a relationship
+                if (startType.includes('entity') && endType.includes('entity')) {
+                    return { 
+                        valid: false, 
+                        message: 'Entities cannot connect directly - use a relationship' 
+                    };
+                }
+                
+                return { valid: true };
+            }
+
+            renderConnection(connection) {
+                const startElement = document.getElementById(connection.startId);
+                const endElement = document.getElementById(connection.endId);
+                
+                if (startElement && endElement) {
+                    const points = this.calculateConnectionPoints(startElement, endElement);
+                    
+                    // Create connection group with smooth animation
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    group.setAttribute('data-connection-id', connection.id);
+                    group.setAttribute('class', 'connection-group');
+                    
+                    // Calculate distance and create curved path for smoother connections
+                    const distance = Math.sqrt(Math.pow(points.endX - points.startX, 2) + Math.pow(points.endY - points.startY, 2));
+                    const curvature = Math.min(distance * 0.3, 100); // Dynamic curvature based on distance
+                    
+                    // Control points for quadratic Bézier curve
+                    const midX = (points.startX + points.endX) / 2;
+                    const midY = (points.startY + points.endY) / 2;
+                    const perpX = -(points.endY - points.startY) / distance * curvature;
+                    const perpY = (points.endX - points.startX) / distance * curvature;
+                    
+                    // Create smooth curved path
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const pathData = `M ${points.startX} ${points.startY} Q ${midX + perpX} ${midY + perpY} ${points.endX} ${points.endY}`;
+                    path.setAttribute('d', pathData);
+                    path.setAttribute('class', 'connection-line enhanced');
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+                    path.setAttribute('fill', 'none');
+                    
+                    // Add hover effect background line
+                    const hoverPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    hoverPath.setAttribute('d', pathData);
+                    hoverPath.setAttribute('class', 'connection-hover-line');
+                    hoverPath.setAttribute('fill', 'none');
+                    
+                    // Enhanced cardinality labels with background
+                    const startLabelBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    startLabelBg.setAttribute('cx', points.startX + (points.endX - points.startX) * 0.25);
+                    startLabelBg.setAttribute('cy', points.startY + (points.endY - points.startY) * 0.25);
+                    startLabelBg.setAttribute('r', '12');
+                    startLabelBg.setAttribute('class', 'cardinality-bg');
+                    
+                    const startLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    startLabel.setAttribute('x', points.startX + (points.endX - points.startX) * 0.25);
+                    startLabel.setAttribute('y', points.startY + (points.endY - points.startY) * 0.25 + 4);
+                    startLabel.setAttribute('class', 'cardinality-label enhanced');
+                    startLabel.setAttribute('text-anchor', 'middle');
+                    startLabel.setAttribute('data-label-for', connection.id);
+                    startLabel.setAttribute('data-label-type', 'start');
+                    startLabel.textContent = connection.cardinality.start;
+                    
+                    const endLabelBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    endLabelBg.setAttribute('cx', points.endX - (points.endX - points.startX) * 0.25);
+                    endLabelBg.setAttribute('cy', points.endY - (points.endY - points.startY) * 0.25);
+                    endLabelBg.setAttribute('r', '12');
+                    endLabelBg.setAttribute('class', 'cardinality-bg');
+                    
+                    const endLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    endLabel.setAttribute('x', points.endX - (points.endX - points.startX) * 0.25);
+                    endLabel.setAttribute('y', points.endY - (points.endY - points.startY) * 0.25 + 4);
+                    endLabel.setAttribute('class', 'cardinality-label enhanced');
+                    endLabel.setAttribute('text-anchor', 'middle');
+                    endLabel.setAttribute('data-label-for', connection.id);
+                    endLabel.setAttribute('data-label-type', 'end');
+                    endLabel.textContent = connection.cardinality.end;
+                    
+                    // Enhanced participation constraints
+                    if (connection.participation.start === 'total') {
+                        const parallelPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        const offset = 4;
+                        const parallelData = `M ${points.startX + offset} ${points.startY + offset} Q ${midX + perpX + offset} ${midY + perpY + offset} ${points.startX + (points.endX - points.startX) * 0.2 + offset} ${points.startY + (points.endY - points.startY) * 0.2 + offset}`;
+                        parallelPath.setAttribute('d', parallelData);
+                        parallelPath.setAttribute('class', 'participation-line enhanced');
+                        parallelPath.setAttribute('fill', 'none');
+                        group.appendChild(parallelPath);
+                    }
+                    
+                    if (connection.participation.end === 'total') {
+                        const parallelPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        const offset = 4;
+                        const parallelData = `M ${points.endX - offset} ${points.endY - offset} Q ${midX + perpX - offset} ${midY + perpY - offset} ${points.endX - (points.endX - points.startX) * 0.2 - offset} ${points.endY - (points.endY - points.startY) * 0.2 - offset}`;
+                        parallelPath.setAttribute('d', parallelData);
+                        parallelPath.setAttribute('class', 'participation-line enhanced');
+                        parallelPath.setAttribute('fill', 'none');
+                        group.appendChild(parallelPath);
+                    }
+                    
+                    // Connection point indicators
+                    const startPoint = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    startPoint.setAttribute('cx', points.startX);
+                    startPoint.setAttribute('cy', points.startY);
+                    startPoint.setAttribute('r', '3');
+                    startPoint.setAttribute('class', 'connection-point');
+                    
+                    const endPoint = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    endPoint.setAttribute('cx', points.endX);
+                    endPoint.setAttribute('cy', points.endY);
+                    endPoint.setAttribute('r', '3');
+                    endPoint.setAttribute('class', 'connection-point');
+                    
+                    // Append elements in correct order for proper layering
+                    group.appendChild(hoverPath);
+                    group.appendChild(path);
+                    group.appendChild(startPoint);
+                    group.appendChild(endPoint);
+                    group.appendChild(startLabelBg);
+                    group.appendChild(startLabel);
+                    group.appendChild(endLabelBg);
+                    group.appendChild(endLabel);
+                    
+                    // Enhanced interaction events
+                    group.addEventListener('mouseenter', () => {
+                        group.classList.add('connection-hover');
+                    });
+                    
+                    group.addEventListener('mouseleave', () => {
+                        group.classList.remove('connection-hover');
+                    });
+                    
+                    group.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        this.showConnectionContextMenu(e.pageX, e.pageY, connection);
+                    });
+                    
+                    // Add entrance animation
+                    group.style.opacity = '0';
+                    group.style.transform = 'scale(0.8)';
+                    this.svgCanvas.appendChild(group);
+                    
+                    // Animate in
+                    setTimeout(() => {
+                        group.style.transition = 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                        group.style.opacity = '1';
+                        group.style.transform = 'scale(1)';
+                    }, 50);
+                }
+            }
+
+            calculateConnectionPoints(startElement, endElement) {
+                const startRect = startElement.getBoundingClientRect();
+                const endRect = endElement.getBoundingClientRect();
+                const canvasRect = this.canvas.getBoundingClientRect();
+                
+                const startCenter = {
+                    x: startRect.left + startRect.width / 2 - canvasRect.left,
+                    y: startRect.top + startRect.height / 2 - canvasRect.top
+                };
+                const endCenter = {
+                    x: endRect.left + endRect.width / 2 - canvasRect.left,
+                    y: endRect.top + endRect.height / 2 - canvasRect.top
+                };
+                
+                const dx = endCenter.x - startCenter.x;
+                const dy = endCenter.y - startCenter.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance === 0) return startCenter;
+                
+                const unitX = dx / distance;
+                const unitY = dy / distance;
+                
+                const startOffset = Math.max(startRect.width, startRect.height) / 2;
+                const endOffset = Math.max(endRect.width, endRect.height) / 2;
+                
+                return {
+                    startX: startCenter.x + unitX * startOffset,
+                    startY: startCenter.y + unitY * startOffset,
+                    endX: endCenter.x - unitX * endOffset,
+                    endY: endCenter.y - unitY * endOffset
+                };
+            }
+
+            updateConnections() {
+                // Clear existing connections
+                const existingConnections = this.svgCanvas.querySelectorAll('.connection-group');
+                existingConnections.forEach(group => group.remove());
+                
+                // Re-render all connections
+                this.connections.forEach(connection => {
+                    this.renderConnection(connection);
+                });
+            }
+
+            showContextMenu(x, y, element) {
+                const elementId = element.getAttribute('data-element-id');
+                const elementData = this.elements.get(elementId);
+                
+                const menu = document.createElement('div');
+                menu.className = 'context-menu';
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                
+                menu.innerHTML = `
+                    <div class="context-menu-header">${elementData.properties.name}</div>
+                    <div class="context-menu-item" onclick="erBuilder.editElement(document.getElementById('${elementId}'))">✏️ Edit Properties</div>
+                    <div class="context-menu-item" onclick="erBuilder.duplicateElement('${elementId}')">📋 Duplicate</div>
+                    <div class="context-menu-item" onclick="erBuilder.deleteElement('${elementId}')">🗑️ Delete</div>
+                `;
+                
+                document.body.appendChild(menu);
+                
+                setTimeout(() => {
+                    document.addEventListener('click', () => {
+                        if (document.body.contains(menu)) {
+                            document.body.removeChild(menu);
+                        }
+                    }, { once: true });
+                }, 100);
+            }
+
+            showConnectionContextMenu(x, y, connection) {
+                const menu = document.createElement('div');
+                menu.className = 'context-menu';
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                
+                menu.innerHTML = `
+                    <div class="context-menu-header">Connection Options</div>
+                    <div class="context-menu-item" onclick="erBuilder.setCardinality('${connection.id}', '1', '1')">1:1 (One to One)</div>
+                    <div class="context-menu-item" onclick="erBuilder.setCardinality('${connection.id}', '1', 'N')">1:N (One to Many)</div>
+                    <div class="context-menu-item" onclick="erBuilder.setCardinality('${connection.id}', 'N', '1')">N:1 (Many to One)</div>
+                    <div class="context-menu-item" onclick="erBuilder.setCardinality('${connection.id}', 'M', 'N')">M:N (Many to Many)</div>
+                    <div class="context-menu-header">Participation</div>
+                    <div class="context-menu-item" onclick="erBuilder.setParticipation('${connection.id}', 'partial', 'partial')">Partial - Partial</div>
+                    <div class="context-menu-item" onclick="erBuilder.setParticipation('${connection.id}', 'total', 'partial')">Total - Partial</div>
+                    <div class="context-menu-item" onclick="erBuilder.setParticipation('${connection.id}', 'partial', 'total')">Partial - Total</div>
+                    <div class="context-menu-item" onclick="erBuilder.setParticipation('${connection.id}', 'total', 'total')">Total - Total</div>
+                    <div class="context-menu-header">Actions</div>
+                    <div class="context-menu-item" onclick="erBuilder.deleteConnection('${connection.id}')">🗑️ Delete Connection</div>
+                `;
+                
+                document.body.appendChild(menu);
+                
+                setTimeout(() => {
+                    document.addEventListener('click', () => {
+                        if (document.body.contains(menu)) {
+                            document.body.removeChild(menu);
+                        }
+                    }, { once: true });
+                }, 100);
+            }
+
+            setCardinality(connectionId, startCard, endCard) {
+                const connection = this.connections.get(connectionId);
+                if (connection) {
+                    connection.cardinality.start = startCard;
+                    connection.cardinality.end = endCard;
+                    this.updateConnections();
+                    this.updateStatus(`Updated cardinality to ${startCard}:${endCard}`);
+                }
+            }
+
+            setParticipation(connectionId, startPart, endPart) {
+                const connection = this.connections.get(connectionId);
+                if (connection) {
+                    connection.participation.start = startPart;
+                    connection.participation.end = endPart;
+                    this.updateConnections();
+                    this.updateStatus(`Updated participation to ${startPart}-${endPart}`);
+                }
+            }
+
+            editElement(element) {
+                const elementId = element.getAttribute('data-element-id');
+                const elementData = this.elements.get(elementId);
+                
+                const newName = prompt(`Enter new name for ${this.getElementLabel(elementData.type)}:`, elementData.properties.name);
+                if (newName && newName.trim()) {
+                    this.updateElementProperty(elementId, 'name', newName.trim());
+                }
+            }
+
+            duplicateElement(elementId) {
+                const elementData = this.elements.get(elementId);
+                if (elementData) {
+                    this.createElement(elementData.type, elementData.x + 50, elementData.y + 50);
+                    this.updateStatus(`Duplicated ${elementData.properties.name}`);
+                }
+            }
+
+            showConnectionContextMenu(x, y, connection) {
+                console.log('=== SHOW CONNECTION CONTEXT MENU ===');
+                console.log('Connection:', connection);
+                console.log('Connection ID:', connection.id);
+                
+                // Find the SVG group element for this connection
+                const connectionGroup = this.svgCanvas.querySelector(`[data-connection-id="${connection.id}"]`);
+                console.log('Connection group found:', connectionGroup);
+                
+                if (connectionGroup && window.connectionContextMenu) {
+                    // Pass the group element, not the path
+                    window.connectionContextMenu.show(x, y, connectionGroup);
+                } else {
+                    console.error('Connection group not found or context menu not available');
+                }
+            }
+
+            deleteConnection(connectionElement) {
+                console.log('=== DELETE CONNECTION DEBUG ===');
+                console.log('connectionElement:', connectionElement);
+                
+                // Handle both connection element and connection ID
+                let connectionId;
+                
+                if (typeof connectionElement === 'string') {
+                    // If passed a string, treat it as connection ID
+                    connectionId = connectionElement;
+                    console.log('String connection ID passed:', connectionId);
+                } else if (connectionElement && connectionElement.hasAttribute('data-connection-id')) {
+                    // If passed an element, get the connection ID from it
+                    connectionId = connectionElement.getAttribute('data-connection-id');
+                    console.log('Element tag name:', connectionElement.tagName);
+                    console.log('Connection ID from element:', connectionId);
+                } else {
+                    console.error('Invalid connection element or missing data-connection-id');
+                    if (connectionElement) {
+                        console.log('Element HTML:', connectionElement.outerHTML);
+                    }
+                    return;
+                }
+                
+                const connection = this.connections.get(connectionId);
+                console.log('Connection data:', connection);
+                console.log('Total connections before deletion:', this.connections.size);
+                
+                if (connection) {
+                    // Remove from connections map
+                    this.connections.delete(connectionId);
+                    console.log('Removed from connections map');
+                    console.log('Total connections after deletion:', this.connections.size);
+                    
+                    // Find and remove the SVG group element
+                    const connectionGroup = this.svgCanvas.querySelector(`[data-connection-id="${connectionId}"]`);
+                    console.log('Connection group element:', connectionGroup);
+                    
+                    if (connectionGroup) {
+                        connectionGroup.remove();
+                        console.log('SVG group element removed');
+                    } else {
+                        console.error('Could not find SVG group element to remove');
+                    }
+                    
+                    this.updateStatus('Connection deleted', 'success');
+                    this.saveState('Delete connection');
+                    console.log('Delete connection completed');
+                } else {
+                    console.error('Connection not found in connections map');
+                    console.log('Available connection IDs:', Array.from(this.connections.keys()));
+                }
+            }
+
+            deleteConnectionById(connectionId) {
+                // Convenience method to delete by ID only
+                console.log('deleteConnectionById called with ID:', connectionId);
+                return this.deleteConnection(connectionId);
+            }
+
+            addCardinalityLabel(connectionId, cardinality) {
+                const connection = this.connections.get(connectionId);
+                if (connection) {
+                    // Parse cardinality (e.g., "1:N" -> start: "1", end: "N")
+                    const parts = cardinality.split(':');
+                    if (parts.length === 2) {
+                        connection.cardinality.start = parts[0].trim();
+                        connection.cardinality.end = parts[1].trim();
+                        this.updateConnections(); // Re-render to show new cardinality
+                    }
+                }
+            }
+
+            deleteElement(elementId) {
+                const element = document.getElementById(elementId);
+                const elementData = this.elements.get(elementId);
+                
+                if (element && elementData) {
+                    // Remove connections involving this element
+                    const connectionsToRemove = Array.from(this.connections.entries())
+                        .filter(([_, conn]) => conn.startId === elementId || conn.endId === elementId)
+                        .map(([id, _]) => id);
+                    
+                    connectionsToRemove.forEach(connId => this.deleteConnection(connId));
+                    
+                    // Remove element
+                    element.remove();
+                    this.elements.delete(elementId);
+                    
+                    if (this.selectedElement === element) {
+                        this.selectedElement = null;
+                        document.getElementById('propertyContent').innerHTML = 
+                            '<p style="color: #999; font-style: italic;">Select an element to edit its properties</p>';
+                    }
+                    
+                    this.updateElementCount();
+                    this.updateStatus(`Deleted ${elementData.properties.name}`);
+                    
+                    // Save state for undo/redo
+                    this.saveState(`Delete ${elementData.properties.name}`);
+                }
+            }
+
+            deleteConnection(connectionId) {
+                const connectionElement = this.svgCanvas.querySelector(`[data-connection-id="${connectionId}"]`);
+                if (connectionElement) {
+                    connectionElement.remove();
+                }
+                this.connections.delete(connectionId);
+                this.updateStatus('Connection deleted');
+                
+                // Save state for undo/redo
+                this.saveState('Delete connection');
+            }
+
+            generateSchema() {
+                this.showSchemaModal();
+            }
+            
+            showSchemaModal() {
+                const modal = document.createElement('div');
+                modal.className = 'enhanced-schema-modal';
+                modal.innerHTML = `
+                    <div class="enhanced-schema-content">
+                        <div class="schema-header">
+                            <h3>🗄️ Generate Database Schema</h3>
+                            <button class="close-btn">×</button>
+                        </div>
+                        <div class="schema-options">
+                            <label>Database Type:</label>
+                            <select id="dbTypeSelect">
+                                <option value="mysql">MySQL</option>
+                                <option value="postgresql">PostgreSQL</option>
+                                <option value="sqlite">SQLite</option>
+                                <option value="oracle">Oracle</option>
+                                <option value="sqlserver">SQL Server</option>
+                            </select>
+                            
+                            <label>
+                                <input type="checkbox" id="includeConstraints" checked>
+                                Include Constraints
+                            </label>
+                            
+                            <label>
+                                <input type="checkbox" id="includeIndexes" checked>
+                                Generate Indexes
+                            </label>
+                            
+                            <label>
+                                <input type="checkbox" id="includeSampleData">
+                                Include Sample Data
+                            </label>
+                        </div>
+                        
+                        <div class="schema-output">
+                            <div class="output-header">
+                                <span>Generated Schema</span>
+                                <button class="copy-btn">📋 Copy</button>
+                                <button class="download-btn">💾 Download</button>
+                            </div>
+                            <pre id="enhancedSchemaOutput"></pre>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add event listeners
+                const closeBtn = modal.querySelector('.close-btn');
+                closeBtn.addEventListener('click', () => modal.remove());
+                
+                const dbTypeSelect = modal.querySelector('#dbTypeSelect');
+                const includeConstraints = modal.querySelector('#includeConstraints');
+                const includeIndexes = modal.querySelector('#includeIndexes');
+                const includeSampleData = modal.querySelector('#includeSampleData');
+                const copyBtn = modal.querySelector('.copy-btn');
+                const downloadBtn = modal.querySelector('.download-btn');
+                
+                // Update schema preview on changes
+                const updatePreview = () => this.updateSchemaPreview();
+                dbTypeSelect.addEventListener('change', updatePreview);
+                includeConstraints.addEventListener('change', updatePreview);
+                includeIndexes.addEventListener('change', updatePreview);
+                includeSampleData.addEventListener('change', updatePreview);
+                
+                // Button actions
+                copyBtn.addEventListener('click', () => this.copyEnhancedSchema());
+                downloadBtn.addEventListener('click', () => this.downloadSchema());
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+                
+                // Initial schema generation
+                this.updateSchemaPreview();
+            }
+
+            updateSchemaPreview() {
+                const dbType = document.getElementById('dbTypeSelect').value;
+                const includeConstraints = document.getElementById('includeConstraints').checked;
+                const includeIndexes = document.getElementById('includeIndexes').checked;
+                const includeSampleData = document.getElementById('includeSampleData').checked;
+                
+                const schema = this.buildEnhancedSchema(dbType, includeConstraints, includeIndexes, includeSampleData);
+                document.getElementById('enhancedSchemaOutput').textContent = schema;
+            }
+            
+            buildEnhancedSchema(dbType, includeConstraints, includeIndexes, includeSampleData) {
+                let schema = `-- Enhanced ${dbType.toUpperCase()} Schema\n`;
+                schema += `-- Generated by Advanced ER Builder Pro\n`;
+                schema += `-- Created: ${new Date().toLocaleString()}\n\n`;
+                
+                const entities = Array.from(this.elements.values()).filter(el => el.type.includes('entity'));
+                const relationships = Array.from(this.connections.values());
+                
+                if (entities.length === 0) {
+                    return schema + "-- No entities found. Please create entities and attributes first.\n";
+                }
+                
+                // Database-specific settings
+                const dbConfig = this.getDBConfig(dbType);
+                
+                // Add database-specific headers
+                if (dbType === 'mysql') {
+                    schema += "SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n";
+                    schema += "SET AUTOCOMMIT = 0;\n";
+                    schema += "START TRANSACTION;\n\n";
+                } else if (dbType === 'postgresql') {
+                    schema += "-- PostgreSQL Schema\n";
+                    schema += "SET client_encoding = 'UTF8';\n\n";
+                }
+                
+                // Group attributes by entities
+                const entityAttributes = this.groupAttributesByEntity(relationships);
+                
+                // Generate table definitions
+                entities.forEach(entity => {
+                    schema += `-- Table: ${entity.properties.name}\n`;
+                    schema += `CREATE TABLE ${dbConfig.quoteIdentifier}${entity.properties.name}${dbConfig.quoteIdentifier} (\n`;
+                    
+                    const attrs = entityAttributes.get(entity.id) || [];
+                    const columns = [];
+                    
+                    // Primary key
+                    const pkName = entity.properties.primaryKey || 'id';
+                    columns.push(`    ${dbConfig.quoteIdentifier}${pkName}${dbConfig.quoteIdentifier} ${dbConfig.autoIncrement}`);
+                    
+                    // Add attributes
+                    attrs.forEach(attr => {
+                        const dataType = this.mapDataType(attr.properties.dataType || 'VARCHAR(50)', dbType);
+                        const nullable = attr.properties.nullable !== false ? '' : ' NOT NULL';
+                        const defaultVal = attr.properties.defaultValue ? ` DEFAULT ${attr.properties.defaultValue}` : '';
+                        
+                        let constraint = '';
+                        if (attr.type === 'key-attribute') {
+                            constraint = ' UNIQUE';
+                        }
+                        
+                        columns.push(`    ${dbConfig.quoteIdentifier}${attr.properties.name}${dbConfig.quoteIdentifier} ${dataType}${nullable}${defaultVal}${constraint}`);
+                    });
+                    
+                    // Add primary key constraint
+                    if (includeConstraints) {
+                        columns.push(`    PRIMARY KEY (${dbConfig.quoteIdentifier}${pkName}${dbConfig.quoteIdentifier})`);
+                    }
+                    
+                    schema += columns.join(',\n') + '\n';
+                    schema += `);${dbConfig.tableOptions}\n\n`;
+                });
+                
+                // Generate relationship tables and foreign keys
+                const processedRelations = new Set();
+                
+                relationships.forEach(rel => {
+                    const startEl = this.elements.get(rel.startId);
+                    const endEl = this.elements.get(rel.endId);
+                    
+                    if (startEl && endEl && 
+                        startEl.type.includes('entity') && endEl.type.includes('entity')) {
+                        
+                        const relKey = [rel.startId, rel.endId].sort().join('-');
+                        if (processedRelations.has(relKey)) return;
+                        processedRelations.add(relKey);
+                        
+                        if (rel.cardinality.start === 'M' && rel.cardinality.end === 'N') {
+                            // Many-to-many relationship table
+                            const tableName = `${startEl.properties.name}_${endEl.properties.name}`;
+                            schema += `-- Junction table for M:N relationship\n`;
+                            schema += `CREATE TABLE ${dbConfig.quoteIdentifier}${tableName}${dbConfig.quoteIdentifier} (\n`;
+                            schema += `    ${dbConfig.quoteIdentifier}${startEl.properties.name}_id${dbConfig.quoteIdentifier} ${dbConfig.foreignKeyType},\n`;
+                            schema += `    ${dbConfig.quoteIdentifier}${endEl.properties.name}_id${dbConfig.quoteIdentifier} ${dbConfig.foreignKeyType},\n`;
+                            
+                            if (includeConstraints) {
+                                schema += `    PRIMARY KEY (${dbConfig.quoteIdentifier}${startEl.properties.name}_id${dbConfig.quoteIdentifier}, ${dbConfig.quoteIdentifier}${endEl.properties.name}_id${dbConfig.quoteIdentifier}),\n`;
+                                schema += `    FOREIGN KEY (${dbConfig.quoteIdentifier}${startEl.properties.name}_id${dbConfig.quoteIdentifier}) REFERENCES ${dbConfig.quoteIdentifier}${startEl.properties.name}${dbConfig.quoteIdentifier}(${dbConfig.quoteIdentifier}${startEl.properties.primaryKey || 'id'}${dbConfig.quoteIdentifier}),\n`;
+                                schema += `    FOREIGN KEY (${dbConfig.quoteIdentifier}${endEl.properties.name}_id${dbConfig.quoteIdentifier}) REFERENCES ${dbConfig.quoteIdentifier}${endEl.properties.name}${dbConfig.quoteIdentifier}(${dbConfig.quoteIdentifier}${endEl.properties.primaryKey || 'id'}${dbConfig.quoteIdentifier})\n`;
+                            }
+                            
+                            schema += `);${dbConfig.tableOptions}\n\n`;
+                        } else if (rel.cardinality.start === '1' && rel.cardinality.end === 'N') {
+                            // Add foreign key to the "many" side
+                            schema += `-- Add foreign key for 1:N relationship\n`;
+                            schema += `ALTER TABLE ${dbConfig.quoteIdentifier}${endEl.properties.name}${dbConfig.quoteIdentifier}\n`;
+                            schema += `ADD COLUMN ${dbConfig.quoteIdentifier}${startEl.properties.name}_id${dbConfig.quoteIdentifier} ${dbConfig.foreignKeyType}`;
+                            
+                            if (includeConstraints) {
+                                schema += `,\nADD FOREIGN KEY (${dbConfig.quoteIdentifier}${startEl.properties.name}_id${dbConfig.quoteIdentifier}) REFERENCES ${dbConfig.quoteIdentifier}${startEl.properties.name}${dbConfig.quoteIdentifier}(${dbConfig.quoteIdentifier}${startEl.properties.primaryKey || 'id'}${dbConfig.quoteIdentifier})`;
+                            }
+                            schema += ';\n\n';
+                        }
+                    }
+                });
+                
+                // Generate indexes
+                if (includeIndexes) {
+                    schema += "-- Indexes for performance optimization\n";
+                    entities.forEach(entity => {
+                        const attrs = entityAttributes.get(entity.id) || [];
+                        attrs.forEach(attr => {
+                            if (attr.type === 'key-attribute' || attr.properties.indexed) {
+                                schema += `CREATE INDEX ${dbConfig.indexPrefix}${entity.properties.name}_${attr.properties.name} ON ${dbConfig.quoteIdentifier}${entity.properties.name}${dbConfig.quoteIdentifier} (${dbConfig.quoteIdentifier}${attr.properties.name}${dbConfig.quoteIdentifier});\n`;
+                            }
+                        });
+                    });
+                    schema += '\n';
+                }
+                
+                // Generate sample data
+                if (includeSampleData) {
+                    schema += "-- Sample Data\n";
+                    entities.forEach((entity, index) => {
+                        const attrs = entityAttributes.get(entity.id) || [];
+                        const columns = ['id', ...attrs.map(attr => attr.properties.name)];
+                        const values = [`${index + 1}`, ...attrs.map(attr => this.generateSampleValue(attr))];
+                        
+                        schema += `INSERT INTO ${dbConfig.quoteIdentifier}${entity.properties.name}${dbConfig.quoteIdentifier} (${columns.map(col => `${dbConfig.quoteIdentifier}${col}${dbConfig.quoteIdentifier}`).join(', ')}) VALUES (${values.join(', ')});\n`;
+                    });
+                    schema += '\n';
+                }
+                
+                // Database-specific footers
+                if (dbType === 'mysql') {
+                    schema += "COMMIT;\n";
+                }
+                
+                return schema;
+            }
+            
+            getDBConfig(dbType) {
+                const configs = {
+                    mysql: {
+                        quoteIdentifier: '`',
+                        autoIncrement: 'INT AUTO_INCREMENT',
+                        foreignKeyType: 'INT',
+                        tableOptions: ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+                        indexPrefix: 'idx_'
+                    },
+                    postgresql: {
+                        quoteIdentifier: '"',
+                        autoIncrement: 'SERIAL',
+                        foreignKeyType: 'INTEGER',
+                        tableOptions: '',
+                        indexPrefix: 'idx_'
+                    },
+                    sqlite: {
+                        quoteIdentifier: '"',
+                        autoIncrement: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+                        foreignKeyType: 'INTEGER',
+                        tableOptions: '',
+                        indexPrefix: 'idx_'
+                    },
+                    oracle: {
+                        quoteIdentifier: '"',
+                        autoIncrement: 'NUMBER GENERATED ALWAYS AS IDENTITY',
+                        foreignKeyType: 'NUMBER',
+                        tableOptions: '',
+                        indexPrefix: 'IDX_'
+                    },
+                    sqlserver: {
+                        quoteIdentifier: '[',
+                        autoIncrement: 'INT IDENTITY(1,1)',
+                        foreignKeyType: 'INT',
+                        tableOptions: '',
+                        indexPrefix: 'IX_'
+                    }
+                };
+                
+                return configs[dbType] || configs.mysql;
+            }
+            
+            groupAttributesByEntity(relationships) {
+                const entityAttributes = new Map();
+                
+                Array.from(this.elements.values()).filter(el => el.type.includes('entity')).forEach(entity => {
+                    entityAttributes.set(entity.id, []);
+                });
+                
+                relationships.forEach(rel => {
+                    const startEl = this.elements.get(rel.startId);
+                    const endEl = this.elements.get(rel.endId);
+                    
+                    if (startEl && endEl) {
+                        if (startEl.type.includes('entity') && endEl.type.includes('attribute')) {
+                            entityAttributes.get(startEl.id).push(endEl);
+                        } else if (endEl.type.includes('entity') && startEl.type.includes('attribute')) {
+                            entityAttributes.get(endEl.id).push(startEl);
+                        }
+                    }
+                });
+                
+                return entityAttributes;
+            }
+            
+            mapDataType(dataType, dbType) {
+                const typeMappings = {
+                    mysql: {
+                        'VARCHAR': 'VARCHAR(255)',
+                        'TEXT': 'TEXT',
+                        'INT': 'INT',
+                        'DECIMAL': 'DECIMAL(10,2)',
+                        'DATE': 'DATE',
+                        'DATETIME': 'DATETIME',
+                        'BOOLEAN': 'TINYINT(1)'
+                    },
+                    postgresql: {
+                        'VARCHAR': 'VARCHAR(255)',
+                        'TEXT': 'TEXT',
+                        'INT': 'INTEGER',
+                        'DECIMAL': 'NUMERIC(10,2)',
+                        'DATE': 'DATE',
+                        'DATETIME': 'TIMESTAMP',
+                        'BOOLEAN': 'BOOLEAN'
+                    },
+                    sqlite: {
+                        'VARCHAR': 'TEXT',
+                        'TEXT': 'TEXT',
+                        'INT': 'INTEGER',
+                        'DECIMAL': 'REAL',
+                        'DATE': 'TEXT',
+                        'DATETIME': 'TEXT',
+                        'BOOLEAN': 'INTEGER'
+                    }
+                };
+                
+                const mappings = typeMappings[dbType] || typeMappings.mysql;
+                const baseType = dataType.split('(')[0].toUpperCase();
+                return mappings[baseType] || dataType;
+            }
+            
+            generateSampleValue(attr) {
+                const dataType = (attr.properties.dataType || 'VARCHAR').toUpperCase();
+                
+                if (dataType.includes('INT') || dataType.includes('NUMBER')) {
+                    return Math.floor(Math.random() * 1000) + 1;
+                } else if (dataType.includes('DECIMAL') || dataType.includes('NUMERIC')) {
+                    return (Math.random() * 1000).toFixed(2);
+                } else if (dataType.includes('DATE')) {
+                    return "'2024-01-01'";
+                } else if (dataType.includes('BOOLEAN')) {
+                    return Math.random() > 0.5 ? 'TRUE' : 'FALSE';
+                } else {
+                    return `'Sample ${attr.properties.name}'`;
+                }
+            }
+            
+            copyEnhancedSchema() {
+                const schemaText = document.getElementById('enhancedSchemaOutput').textContent;
+                navigator.clipboard.writeText(schemaText).then(() => {
+                    this.updateStatus('Enhanced schema copied to clipboard!', 'success');
+                });
+            }
+            
+            downloadSchema() {
+                const dbType = document.getElementById('dbTypeSelect').value;
+                const schemaText = document.getElementById('enhancedSchemaOutput').textContent;
+                
+                const blob = new Blob([schemaText], { type: 'text/sql' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `er-schema-${dbType}-${new Date().toISOString().split('T')[0]}.sql`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                this.updateStatus('Schema downloaded successfully!', 'success');
+            }
+
+            copySchema() {
+                const schemaText = document.getElementById('schemaOutput').textContent;
+                navigator.clipboard.writeText(schemaText).then(() => {
+                    this.updateStatus('Schema copied to clipboard!', 'success');
+                });
+            }
+
+            closeModal() {
+                document.getElementById('schemaModal').style.display = 'none';
+            }
+
+            validateDiagram() {
+                const entities = Array.from(this.elements.values()).filter(el => el.type.includes('entity'));
+                const attributes = Array.from(this.elements.values()).filter(el => el.type.includes('attribute'));
+                const relationships = Array.from(this.connections.values());
+                
+                let issues = [];
+                
+                if (entities.length === 0) {
+                    issues.push("No entities defined");
+                }
+                
+                if (attributes.length === 0) {
+                    issues.push("No attributes defined");
+                }
+                
+                // Check for entities without primary keys
+                entities.forEach(entity => {
+                    if (!entity.properties.primaryKey) {
+                        issues.push(`Entity '${entity.properties.name}' has no primary key`);
+                    }
+                });
+                
+                if (issues.length === 0) {
+                    this.updateStatus('✅ Diagram validation passed - No issues found', 'success');
+                } else {
+                    this.updateStatus(`❌ Validation issues: ${issues.join(', ')}`, 'error');
+                }
+            }
+
+            clearAll() {
+                if (confirm('Are you sure you want to clear the entire diagram?')) {
+                    this.elements.clear();
+                    this.connections.clear();
+                    this.canvas.querySelectorAll('.diagram-element').forEach(el => el.remove());
+                    this.svgCanvas.querySelectorAll('.connection-group').forEach(el => el.remove());
+                    this.selectedElement = null;
+                    document.getElementById('propertyContent').innerHTML = 
+                        '<p style="color: #999; font-style: italic;">Select an element to edit its properties</p>';
+                    this.updateElementCount();
+                    this.updateStatus('Diagram cleared');
+                }
+            }
+
+            exportDiagram() {
+                const diagramData = {
+                    elements: Array.from(this.elements.entries()),
+                    connections: Array.from(this.connections.entries()),
+                    timestamp: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(diagramData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'er-diagram.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.updateStatus('Diagram exported successfully', 'success');
+            }
+
+            handleCanvasClick(e) {
+                if (e.target === this.canvas) {
+                    if (this.selectedElement) {
+                        this.selectedElement.classList.remove('selected');
+                        this.selectedElement = null;
+                        document.getElementById('propertyContent').innerHTML = 
+                            '<p style="color: #999; font-style: italic;">Select an element to edit its properties</p>';
+                    }
+                }
+            }
+
+            handleKeyboard(e) {
+                if (e.key === 'Delete' && this.selectedElement) {
+                    const elementId = this.selectedElement.getAttribute('data-element-id');
+                    this.deleteElement(elementId);
+                } else if (e.key === 'Escape') {
+                    if (this.connectMode) {
+                        this.toggleConnect();
+                    }
+                }
+            }
+
+            updateElementCount() {
+                document.getElementById('elementCount').textContent = `Elements: ${this.elements.size}`;
+            }
+
+            // Undo/Redo System
+            saveState(description) {
+                // Remove future history if we're not at the end
+                if (this.historyIndex < this.history.length - 1) {
+                    this.history = this.history.slice(0, this.historyIndex + 1);
+                }
+                
+                // Create state snapshot
+                const state = {
+                    elements: new Map(this.elements),
+                    connections: new Map(this.connections),
+                    elementsHTML: this.canvas.innerHTML,
+                    connectionsHTML: this.svgCanvas.innerHTML,
+                    idCounter: this.idCounter,
+                    description: description,
+                    timestamp: new Date()
+                };
+                
+                // Add to history
+                this.history.push(state);
+                this.historyIndex = this.history.length - 1;
+                
+                // Limit history size
+                if (this.history.length > this.maxHistorySize) {
+                    this.history.shift();
+                    this.historyIndex--;
+                }
+                
+                this.updateUndoRedoButtons();
+            }
+            
+            restoreState(state) {
+                try {
+                    this.elements = new Map(state.elements);
+                    this.connections = new Map(state.connections);
+                    this.idCounter = state.idCounter;
+                    
+                    // Clear current canvas except SVG
+                    const svgCanvas = this.canvas.querySelector('#svgCanvas');
+                    this.canvas.innerHTML = '';
+                    if (svgCanvas) {
+                        this.canvas.appendChild(svgCanvas);
+                    }
+                    
+                    // Clear SVG connections
+                    this.svgCanvas.innerHTML = '<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth"><polygon points="0 0, 10 3.5, 0 7" fill="#333" /></marker></defs>';
+                    
+                    // Restore elements
+                    if (state.elementsHTML) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = state.elementsHTML;
+                        const elements = tempDiv.querySelectorAll('.diagram-element');
+                        
+                        elements.forEach(element => {
+                            if (!element.id.startsWith('svgCanvas')) {
+                                const clonedElement = element.cloneNode(true);
+                                this.canvas.appendChild(clonedElement);
+                                this.attachElementEvents(clonedElement);
+                            }
+                        });
+                    }
+                    
+                    // Restore connections
+                    if (state.connectionsHTML) {
+                        const tempSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        tempSvg.innerHTML = state.connectionsHTML;
+                        const connectionGroups = tempSvg.querySelectorAll('.connection-group');
+                        
+                        connectionGroups.forEach(group => {
+                            this.svgCanvas.appendChild(group.cloneNode(true));
+                        });
+                        
+                        // Re-attach connection events
+                        this.svgCanvas.querySelectorAll('.connection-group').forEach(group => {
+                            const connectionId = group.getAttribute('data-connection-id');
+                            const connection = this.connections.get(connectionId);
+                            if (connection) {
+                                group.addEventListener('contextmenu', (e) => {
+                                    e.preventDefault();
+                                    this.showConnectionContextMenu(e.pageX, e.pageY, connection);
+                                });
+                            }
+                        });
+                    }
+                    
+                    this.updateUndoRedoButtons();
+                    this.clearSelection();
+                    this.updateElementCount();
+                } catch (error) {
+                    console.error('Error restoring state:', error);
+                    this.updateStatus('Error restoring state', 'error');
+                }
+            }
+            
+            attachElementEvents(element) {
+                element.addEventListener('click', (e) => this.handleElementClick(e, element));
+                element.addEventListener('contextmenu', (e) => this.handleElementRightClick(e, element));
+                element.addEventListener('mousedown', (e) => this.handleMouseDown(e, element));
+            }
+            
+            clearSelection() {
+                this.selectedElement = null;
+                // Clear any visual selection indicators
+                document.querySelectorAll('.diagram-element.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                // Clear property panel
+                const propertyContent = document.getElementById('propertyContent');
+                if (propertyContent) {
+                    propertyContent.innerHTML = '<p style="color: #999; font-style: italic;">Select an element to edit its properties</p>';
+                }
+            }
+            
+            updateUndoRedoButtons() {
+                const undoBtn = document.getElementById('undoBtn');
+                const redoBtn = document.getElementById('redoBtn');
+                
+                if (undoBtn) {
+                    undoBtn.disabled = this.historyIndex <= 0;
+                    undoBtn.title = this.historyIndex > 0 ? 
+                        `Undo: ${this.history[this.historyIndex].description}` : 
+                        'Nothing to undo';
+                }
+                
+                if (redoBtn) {
+                    redoBtn.disabled = this.historyIndex >= this.history.length - 1;
+                    redoBtn.title = this.historyIndex < this.history.length - 1 ? 
+                        `Redo: ${this.history[this.historyIndex + 1].description}` : 
+                        'Nothing to redo';
+                }
+            }
+
+            updateStatus(message, type = 'info') {
+                const statusBar = document.querySelector('.status-bar');
+                const statusText = document.getElementById('statusText');
+                
+                statusText.textContent = message;
+                
+                statusBar.className = `status-bar ${type}`;
+                
+                if (type === 'error') {
+                    setTimeout(() => {
+                        statusBar.className = 'status-bar';
+                    }, 5000);
+                } else if (type === 'success') {
+                    setTimeout(() => {
+                        statusBar.className = 'status-bar';
+                    }, 3000);
+                }
+            }
+        }
+
+        // Zoom and Pan Functionality (Global variables)
+        window.currentZoom = 1;
+        window.isPanning = false;
+        window.startX = 0;
+        window.startY = 0;
+        window.translateX = 0;
+        window.translateY = 0;
+        window.gridSize = 20;
+        window.snapToGrid = true;
+        window.showGrid = true;
+        
+        function zoomIn() {
+            window.currentZoom = Math.min(window.currentZoom * 1.2, 3);
+            updateZoom();
+        }
+        
+        function zoomOut() {
+            window.currentZoom = Math.max(window.currentZoom / 1.2, 0.3);
+            updateZoom();
+        }
+        
+        function resetZoom() {
+            window.currentZoom = 1;
+            window.translateX = 0;
+            window.translateY = 0;
+            updateZoom();
+        }
+        
+        function updateZoom() {
+            const canvas = document.getElementById('canvas');
+            canvas.style.transform = `translate(${window.translateX}px, ${window.translateY}px) scale(${window.currentZoom})`;
+            const zoomLevelElement = document.getElementById('zoomLevel');
+            if (zoomLevelElement) {
+                zoomLevelElement.textContent = Math.round(window.currentZoom * 100) + '%';
+            }
+        }
+        
+        // Initialize mouse events after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('canvas');
+            if (canvas) {
+                // Add mouse wheel zoom support
+                canvas.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    window.currentZoom = Math.max(0.3, Math.min(3, window.currentZoom * delta));
+                    updateZoom();
+                });
+                
+                // Add pan functionality with middle mouse button or shift+drag
+                canvas.addEventListener('mousedown', (e) => {
+                    if (e.button === 1 || (e.button === 0 && e.shiftKey)) { // Middle button or Shift+Left
+                        window.isPanning = true;
+                        window.startX = e.clientX - window.translateX;
+                        window.startY = e.clientY - window.translateY;
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+        
+        // Keyboard shortcuts for undo/redo
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (window.isPanning) {
+                window.translateX = e.clientX - window.startX;
+                window.translateY = e.clientY - window.startY;
+                updateZoom();
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            window.isPanning = false;
+        });
+
+        // Touch support for mobile devices
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('#canvas')) {
+                // Close mobile toolbar when user starts interacting with canvas
+                if (window.innerWidth <= 900) {
+                    closeMobileToolbar();
+                }
+            }
+        }, { passive: true });
+
+        // Touch events for pan and zoom
+        let initialDistance = 0;
+        let initialZoom = 1;
+        
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // Two-finger gesture for zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialDistance = Math.sqrt(
+                    Math.pow(touch2.clientX - touch1.clientX, 2) +
+                    Math.pow(touch2.clientY - touch1.clientY, 2)
+                );
+                initialZoom = window.currentZoom || 1;
+                e.preventDefault();
+            } else if (e.touches.length === 1 && e.target.closest('#canvas')) {
+                // Single finger pan
+                const touch = e.touches[0];
+                window.isPanning = true;
+                window.startX = touch.clientX - (window.translateX || 0);
+                window.startY = touch.clientY - (window.translateY || 0);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                // Two-finger zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.sqrt(
+                    Math.pow(touch2.clientX - touch1.clientX, 2) +
+                    Math.pow(touch2.clientY - touch1.clientY, 2)
+                );
+                const zoomFactor = currentDistance / initialDistance;
+                window.currentZoom = Math.max(0.3, Math.min(3, initialZoom * zoomFactor));
+                updateZoom();
+                e.preventDefault();
+            } else if (e.touches.length === 1 && window.isPanning) {
+                // Single finger pan
+                const touch = e.touches[0];
+                window.translateX = touch.clientX - window.startX;
+                window.translateY = touch.clientY - window.startY;
+                updateZoom();
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (e.touches.length === 0) {
+                window.isPanning = false;
+            }
+        }, { passive: true });
+        
+        // Grid and Snap Functions
+        function toggleGrid() {
+            window.showGrid = !window.showGrid;
+            const canvas = document.getElementById('canvas');
+            const gridBtn = document.getElementById('gridBtn');
+            
+            if (window.showGrid) {
+                canvas.style.backgroundImage = `
+                    linear-gradient(90deg, rgba(102, 126, 234, 0.08) 1px, transparent 1px),
+                    linear-gradient(180deg, rgba(102, 126, 234, 0.08) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(102, 126, 234, 0.04) 1px, transparent 1px),
+                    linear-gradient(180deg, rgba(102, 126, 234, 0.04) 1px, transparent 1px)
+                `;
+                gridBtn.style.background = 'linear-gradient(145deg, #667eea 0%, #764ba2 100%)';
+            } else {
+                canvas.style.backgroundImage = 'none';
+                gridBtn.style.background = 'linear-gradient(145deg, #ccc 0%, #999 100%)';
+            }
+        }
+        
+        function toggleSnap() {
+            window.snapToGrid = !window.snapToGrid;
+            const snapBtn = document.getElementById('snapBtn');
+            
+            if (window.snapToGrid) {
+                snapBtn.style.background = 'linear-gradient(145deg, #667eea 0%, #764ba2 100%)';
+                snapBtn.title = 'Snap to Grid: ON';
+            } else {
+                snapBtn.style.background = 'linear-gradient(145deg, #ccc 0%, #999 100%)';
+                snapBtn.title = 'Snap to Grid: OFF';
+            }
+        }
+        
+        function snapPosition(x, y) {
+            if (!window.snapToGrid) return { x, y };
+            return {
+                x: Math.round(x / window.gridSize) * window.gridSize,
+                y: Math.round(y / window.gridSize) * window.gridSize
+            };
+        }
+        
+        // Undo/Redo Global Functions
+        function undo() {
+            if (erBuilder && erBuilder.historyIndex > 0) {
+                erBuilder.historyIndex--;
+                erBuilder.restoreState(erBuilder.history[erBuilder.historyIndex]);
+                erBuilder.updateStatus(`Undid: ${erBuilder.history[erBuilder.historyIndex + 1].description}`, 'info');
+            }
+        }
+        
+        function redo() {
+            if (erBuilder && erBuilder.historyIndex < erBuilder.history.length - 1) {
+                erBuilder.historyIndex++;
+                erBuilder.restoreState(erBuilder.history[erBuilder.historyIndex]);
+                erBuilder.updateStatus(`Redid: ${erBuilder.history[erBuilder.historyIndex].description}`, 'info');
+            }
+        }
+        
+        // Save/Load/Export Functions
+        function saveDiagram() {
+            if (!erBuilder) return;
+            
+            const diagramData = {
+                elements: Array.from(erBuilder.elements.entries()),
+                connections: Array.from(erBuilder.connections.entries()),
+                elementsHTML: erBuilder.canvas.innerHTML,
+                connectionsHTML: erBuilder.svgCanvas.innerHTML,
+                idCounter: erBuilder.idCounter,
+                version: '1.0',
+                created: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(diagramData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `er-diagram-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            erBuilder.updateStatus('Diagram saved successfully!', 'success');
+        }
+        
+        function loadDiagram() {
+            if (!erBuilder) return;
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const diagramData = JSON.parse(e.target.result);
+                        
+                        // Clear current diagram
+                        erBuilder.clearAll();
+                        
+                        // Restore data
+                        erBuilder.elements = new Map(diagramData.elements);
+                        erBuilder.connections = new Map(diagramData.connections);
+                        erBuilder.idCounter = diagramData.idCounter || 0;
+                        
+                        // Restore HTML content
+                        erBuilder.canvas.innerHTML = diagramData.elementsHTML;
+                        erBuilder.svgCanvas.innerHTML = diagramData.connectionsHTML;
+                        
+                        // Re-attach events to all elements
+                        erBuilder.canvas.querySelectorAll('.diagram-element').forEach(element => {
+                            erBuilder.attachElementEvents(element);
+                        });
+                        
+                        // Re-attach connection events
+                        erBuilder.svgCanvas.querySelectorAll('.connection-group').forEach(group => {
+                            const connectionId = group.getAttribute('data-connection-id');
+                            const connection = erBuilder.connections.get(connectionId);
+                            if (connection) {
+                                group.addEventListener('contextmenu', (e) => {
+                                    e.preventDefault();
+                                    erBuilder.showConnectionContextMenu(e.pageX, e.pageY, connection);
+                                });
+                            }
+                        });
+                        
+                        erBuilder.updateElementCount();
+                        erBuilder.saveState('Load diagram');
+                        erBuilder.updateStatus('Diagram loaded successfully!', 'success');
+                        
+                    } catch (error) {
+                        erBuilder.updateStatus('Error loading diagram: Invalid file format', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
+        function exportDiagram() {
+            if (!erBuilder) return;
+            
+            // Temporarily remove zoom controls and other overlays for clean export
+            const zoomControls = document.querySelector('.zoom-controls');
+            const propertyPanel = document.querySelector('.property-panel');
+            
+            if (zoomControls) zoomControls.style.display = 'none';
+            if (propertyPanel) propertyPanel.style.display = 'none';
+            
+            // Reset canvas transform for export
+            const canvas = erBuilder.canvas;
+            const originalTransform = canvas.style.transform;
+            canvas.style.transform = 'none';
+            
+            // Use html2canvas for accurate rendering
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.onload = function() {
+                window.html2canvas(canvas, {
+                    backgroundColor: '#ffffff',
+                    scale: 2, // Higher resolution
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    width: canvas.offsetWidth,
+                    height: canvas.offsetHeight
+                }).then(function(canvasElement) {
+                    // Download the image
+                    const link = document.createElement('a');
+                    link.download = `er-diagram-${new Date().toISOString().split('T')[0]}.png`;
+                    link.href = canvasElement.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Restore UI elements
+                    if (zoomControls) zoomControls.style.display = '';
+                    if (propertyPanel) propertyPanel.style.display = '';
+                    canvas.style.transform = originalTransform;
+                    
+                    erBuilder.updateStatus('Diagram exported successfully!', 'success');
+                }).catch(function(error) {
+                    console.error('Export failed:', error);
+                    // Fallback to manual canvas rendering
+                    exportDiagramFallback();
+                });
+            };
+            
+            script.onerror = function() {
+                // Fallback if html2canvas fails to load
+                exportDiagramFallback();
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        function exportDiagramFallback() {
+            if (!erBuilder) return;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const rect = erBuilder.canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width * 2; // Higher resolution
+            canvas.height = rect.height * 2;
+            ctx.scale(2, 2);
+            
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, rect.width, rect.height);
+            
+            // Draw grid if visible
+            if (window.showGrid) {
+                ctx.strokeStyle = 'rgba(102, 126, 234, 0.08)';
+                ctx.lineWidth = 0.5;
+                for (let x = 0; x <= rect.width; x += window.gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, rect.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y <= rect.height; y += window.gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(rect.width, y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw elements
+            erBuilder.elements.forEach((elementData, id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const elemRect = element.getBoundingClientRect();
+                    const canvasRect = erBuilder.canvas.getBoundingClientRect();
+                    
+                    const x = elemRect.left - canvasRect.left;
+                    const y = elemRect.top - canvasRect.top;
+                    const w = elemRect.width;
+                    const h = elemRect.height;
+                    
+                    ctx.save();
+                    
+                    if (elementData.type.includes('entity')) {
+                        // Draw entity rectangle
+                        const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
+                        if (elementData.type === 'weak-entity') {
+                            gradient.addColorStop(0, '#FFE0B2');
+                            gradient.addColorStop(1, '#FFCC80');
+                            ctx.strokeStyle = '#FF9800';
+                            ctx.lineWidth = 3;
+                        } else {
+                            gradient.addColorStop(0, '#E8F5E8');
+                            gradient.addColorStop(1, '#C8E6C9');
+                            ctx.strokeStyle = '#4CAF50';
+                            ctx.lineWidth = 2;
+                        }
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(x, y, w, h);
+                        ctx.strokeRect(x, y, w, h);
+                        
+                        if (elementData.type === 'weak-entity') {
+                            ctx.strokeRect(x + 4, y + 4, w - 8, h - 8);
+                        }
+                    } else if (elementData.type.includes('relationship')) {
+                        // Draw relationship diamond
+                        ctx.beginPath();
+                        ctx.moveTo(x + w/2, y);
+                        ctx.lineTo(x + w, y + h/2);
+                        ctx.lineTo(x + w/2, y + h);
+                        ctx.lineTo(x, y + h/2);
+                        ctx.closePath();
+                        
+                        const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
+                        if (elementData.type === 'weak-relationship') {
+                            gradient.addColorStop(0, '#673AB7');
+                            gradient.addColorStop(0.5, '#512DA8');
+                            gradient.addColorStop(1, '#311b92');
+                            ctx.strokeStyle = '#9C27B0';
+                            ctx.lineWidth = 3;
+                        } else {
+                            gradient.addColorStop(0, '#E3F2FD');
+                            gradient.addColorStop(1, '#BBDEFB');
+                            ctx.strokeStyle = '#2196F3';
+                            ctx.lineWidth = 2;
+                        }
+                        ctx.fillStyle = gradient;
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        if (elementData.type === 'weak-relationship') {
+                            // Inner dashed diamond (::before equivalent)
+                            ctx.beginPath();
+                            ctx.moveTo(x + w/2, y + 8);
+                            ctx.lineTo(x + w - 8, y + h/2);
+                            ctx.lineTo(x + w/2, y + h - 8);
+                            ctx.lineTo(x + 8, y + h/2);
+                            ctx.closePath();
+                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                            ctx.lineWidth = 2;
+                            ctx.setLineDash([8, 4]);
+                            ctx.stroke();
+                            
+                            // Outer dotted diamond (::after equivalent)
+                            ctx.beginPath();
+                            ctx.moveTo(x + w/2, y + 4);
+                            ctx.lineTo(x + w - 4, y + h/2);
+                            ctx.lineTo(x + w/2, y + h - 4);
+                            ctx.lineTo(x + 4, y + h/2);
+                            ctx.closePath();
+                            ctx.strokeStyle = '#9C27B0';
+                            ctx.lineWidth = 1;
+                            ctx.setLineDash([3, 3]);
+                            ctx.stroke();
+                            
+                            // Reset line dash for other elements
+                            ctx.setLineDash([]);
+                        }
+                    } else if (elementData.type.includes('attribute')) {
+                        // Draw attribute circle
+                        const centerX = x + w/2;
+                        const centerY = y + h/2;
+                        const radius = Math.min(w, h)/2 - 5;
+                        
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                        
+                        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+                        gradient.addColorStop(0, '#FFF3E0');
+                        gradient.addColorStop(1, '#FFCC80');
+                        ctx.fillStyle = gradient;
+                        ctx.fill();
+                        ctx.strokeStyle = '#FF9800';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        if (elementData.type === 'key-attribute') {
+                            ctx.font = 'bold 12px Segoe UI';
+                            ctx.strokeStyle = '#FF9800';
+                            ctx.lineWidth = 1;
+                            ctx.strokeText(elementData.properties.name, centerX, centerY + 4);
+                        }
+                    }
+                    
+                    // Draw text
+                    ctx.fillStyle = '#333';
+                    ctx.font = '12px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(elementData.properties.name, x + w/2, y + h/2);
+                    
+                    ctx.restore();
+                }
+            });
+            
+            // Download the image
+            const link = document.createElement('a');
+            link.download = `er-diagram-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            erBuilder.updateStatus('Diagram exported successfully!', 'success');
+        }
+
+        // Initialize the application
+        let erBuilder;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize managers after DOM is loaded
+            window.tutorialManager = new TutorialManager();
+            window.connectionContextMenu = new ConnectionContextMenu();
+            
+            erBuilder = new AdvancedERBuilder();
+            window.erBuilder = erBuilder; // Make it globally accessible
+            console.log('Advanced ER Builder Pro initialized successfully!');
+            
+            // Initialize button states
+            updateUndoRedoButtons();
+            
+            // Show tutorial if first visit
+            if (!localStorage.getItem('erbuilder_tutorial_completed')) {
+                console.log('Starting tutorial in 2 seconds...');
+                setTimeout(() => {
+                    console.log('Tutorial timeout triggered');
+                    if (window.tutorialManager) {
+                        console.log('TutorialManager found, starting tutorial');
+                        window.tutorialManager.startTutorial();
+                    } else {
+                        console.error('TutorialManager not found!');
+                    }
+                }, 2000);
+            } else {
+                console.log('Tutorial already completed');
+            }
+        });
+        
+        // Global helper function for button updates
+        function updateUndoRedoButtons() {
+            if (erBuilder) {
+                erBuilder.updateUndoRedoButtons();
+            }
+        }
+
+        // Mobile toolbar toggle functions
+        function toggleMobileToolbar() {
+            const toolbar = document.getElementById('toolbar');
+            const overlay = document.getElementById('toolbarOverlay');
+            const toggle = document.getElementById('toolbarToggle');
+            
+            if (toolbar.classList.contains('open')) {
+                closeMobileToolbar();
+            } else {
+                openMobileToolbar();
+            }
+        }
+
+        function openMobileToolbar() {
+            const toolbar = document.getElementById('toolbar');
+            const overlay = document.getElementById('toolbarOverlay');
+            const toggle = document.getElementById('toolbarToggle');
+            
+            toolbar.classList.add('open');
+            overlay.classList.add('active');
+            toggle.classList.add('active');
+            toggle.innerHTML = '✕';
+            
+            // Prevent body scroll when toolbar is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileToolbar() {
+            const toolbar = document.getElementById('toolbar');
+            const overlay = document.getElementById('toolbarOverlay');
+            const toggle = document.getElementById('toolbarToggle');
+            
+            toolbar.classList.remove('open');
+            overlay.classList.remove('active');
+            toggle.classList.remove('active');
+            toggle.innerHTML = '☰';
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Close toolbar on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMobileToolbar();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Close mobile toolbar on desktop resize
+            if (window.innerWidth > 900) {
+                closeMobileToolbar();
+            }
+        });
+
+
+    </script>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="tutorial-overlay">
+        <div class="tutorial-content">
+            <div class="tutorial-header">
+                <h2>Welcome to Advanced ER Builder Pro!</h2>
+                <button class="tutorial-close" onclick="window.tutorialManager && window.tutorialManager.closeTutorial()">×</button>
+            </div>
+            <div class="tutorial-body">
+                <div class="tutorial-step active" data-step="1">
+                    <div class="tutorial-icon">🎯</div>
+                    <h3>Getting Started</h3>
+                    <p>Welcome! This tutorial will guide you through creating professional ER diagrams. Let's start with the basics!</p>
+                    <ul>
+                        <li>Drag elements from the toolbox to the canvas</li>
+                        <li>Create entities, attributes, and relationships</li>
+                        <li>Connect elements by dragging from one to another</li>
+                    </ul>
+                </div>
+                
+                <div class="tutorial-step" data-step="2">
+                    <div class="tutorial-icon">🖱️</div>
+                    <h3>Right-Click for Properties</h3>
+                    <p>Here's a key feature! <strong>Right-click on any connection line (arrow)</strong> to edit its properties:</p>
+                    <ul>
+                        <li>Set cardinality (1:1, 1:N, M:N)</li>
+                        <li>Add participation constraints</li>
+                        <li>Modify relationship attributes</li>
+                        <li>Change connection style</li>
+                    </ul>
+                    <div class="tutorial-highlight">💡 Try it: Create a connection, then right-click on it!</div>
+                </div>
+                
+                <div class="tutorial-step" data-step="3">
+                    <div class="tutorial-icon">⚡</div>
+                    <h3>Advanced Features</h3>
+                    <p>Explore these powerful features:</p>
+                    <ul>
+                        <li><strong>Zoom & Pan:</strong> Mouse wheel to zoom, drag to pan</li>
+                        <li><strong>Export:</strong> Save as PNG or generate SQL schema</li>
+                        <li><strong>Undo/Redo:</strong> Use buttons or Ctrl+Z/Ctrl+Y</li>
+                        <li><strong>Element Types:</strong> Normal/weak entities, various attributes</li>
+                    </ul>
+                </div>
+                
+                <div class="tutorial-step" data-step="4">
+                    <div class="tutorial-icon">✨</div>
+                    <h3>Pro Tips</h3>
+                    <p>Master these shortcuts for efficient diagramming:</p>
+                    <ul>
+                        <li>Hold <kbd>Shift</kbd> while dragging for precise alignment</li>
+                        <li>Double-click elements to edit text directly</li>
+                        <li>Use connection mode for faster linking</li>
+                        <li>Right-click canvas for context menu</li>
+                    </ul>
+                    <div class="tutorial-highlight">🚀 You're ready to create professional ER diagrams!</div>
+                </div>
+            </div>
+            <div class="tutorial-footer">
+                <div class="tutorial-progress">
+                    <div class="progress-dots">
+                        <span class="dot active" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                        <span class="dot" data-step="4"></span>
+                    </div>
+                </div>
+                <div class="tutorial-buttons">
+                    <button class="tutorial-btn secondary" onclick="window.tutorialManager && window.tutorialManager.skipTutorial()">Skip Tutorial</button>
+                    <button class="tutorial-btn" onclick="window.tutorialManager && window.tutorialManager.previousStep()" id="tutorial-prev" disabled>Previous</button>
+                    <button class="tutorial-btn primary" onclick="window.tutorialManager && window.tutorialManager.nextStep()" id="tutorial-next">Next</button>
+                    <button class="tutorial-btn primary" onclick="window.tutorialManager && window.tutorialManager.completeTutorial()" id="tutorial-complete" style="display:none">Get Started!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu for Arrows -->
+    <div id="connection-context-menu" class="context-menu">
+        <div class="context-menu-item" onclick="window.connectionContextMenu && window.connectionContextMenu.editProperties()">
+            <span class="context-icon">⚙️</span>
+            Edit Properties
+        </div>
+        <div class="context-menu-item" onclick="window.connectionContextMenu && window.connectionContextMenu.setCardinality()">
+            <span class="context-icon">🔢</span>
+            Set Cardinality
+        </div>
+        <div class="context-menu-item" onclick="window.connectionContextMenu && window.connectionContextMenu.addLabel()">
+            <span class="context-icon">🏷️</span>
+            Add Label
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item delete" onclick="window.connectionContextMenu && window.connectionContextMenu.deleteConnection()">
+            <span class="context-icon">🗑️</span>
+            Delete Connection
+        </div>
+    </div>
+
+</body>
+</html>

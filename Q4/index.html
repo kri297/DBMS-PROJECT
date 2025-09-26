@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Management Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeWelcomeModal()">&times;</span>
+            <h2>Welcome to Transaction Management Simulator! 👋</h2>
+            <p>This interactive tool helps you learn database transaction concepts through hands-on demonstrations.</p>
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <span class="feature-icon">🔄</span>
+                    <strong>Transaction States:</strong> See how transactions move through different states
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <strong>ACID Properties:</strong> Experience Atomicity, Consistency, Isolation, and Durability
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⚠️</span>
+                    <strong>Dirty Reads:</strong> Understand concurrency problems with real examples
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔐</span>
+                    <strong>Privileges:</strong> Learn about GRANT and REVOKE operations
+                </div>
+            </div>
+            <button onclick="startGuidedTour()" class="tour-btn">Take Guided Tour</button>
+            <button onclick="closeWelcomeModal()" class="skip-btn">Skip & Explore</button>
+        </div>
+    </div>
+
+    <!-- Help Tooltip -->
+    <div id="helpTooltip" class="tooltip">
+        <div class="tooltip-content">
+            <span class="tooltip-text"></span>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Transaction Management Simulator</h1>
+            <p>Interactive demonstration of database transaction concepts</p>
+            <button onclick="showWelcomeModal()" class="help-button" title="Show help and tour">
+                <span class="help-icon">❓</span> Help & Tour
+            </button>
+        </header>
+
+        <!-- Transaction States Section -->
+        <section class="transaction-states" id="section-states">
+            <div class="section-header">
+                <h2>🔄 Transaction States</h2>
+                <span class="help-icon" onmouseover="showTooltip(event, 'Click the buttons below to see how transactions move through different states. Green shows successful path, red shows failure path.')" onmouseout="hideTooltip()">ℹ️</span>
+            </div>
+            <div class="instruction-box">
+                <p><strong>💡 How to use:</strong> Click the simulation buttons to watch transactions move through their lifecycle. Each state represents a different phase in transaction processing.</p>
+            </div>
+            <div class="states-container">
+                <div class="state-diagram">
+                    <div class="state active" id="active">
+                        <span class="state-name">Active</span>
+                        <div class="state-description">Transaction is running</div>
+                    </div>
+                    <div class="state" id="partially-committed">
+                        <span class="state-name">Partially Committed</span>
+                        <div class="state-description">Transaction completed but not yet committed</div>
+                    </div>
+                    <div class="state" id="committed">
+                        <span class="state-name">Committed</span>
+                        <div class="state-description">Transaction successfully completed</div>
+                    </div>
+                    <div class="state" id="failed">
+                        <span class="state-name">Failed</span>
+                        <div class="state-description">Transaction encountered an error</div>
+                    </div>
+                    <div class="state" id="aborted">
+                        <span class="state-name">Aborted</span>
+                        <div class="state-description">Transaction was rolled back</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button onclick="simulateTransaction('success')" class="btn-success" 
+                            onmouseover="showTooltip(event, 'Shows the happy path: Active → Partially Committed → Committed')" 
+                            onmouseout="hideTooltip()">
+                        ✅ Simulate Successful Transaction
+                    </button>
+                    <button onclick="simulateTransaction('failure')" class="btn-danger"
+                            onmouseover="showTooltip(event, 'Shows the failure path: Active → Failed → Aborted')" 
+                            onmouseout="hideTooltip()">
+                        ❌ Simulate Failed Transaction
+                    </button>
+                    <button onclick="resetStates()" class="btn-secondary">🔄 Reset</button>
+                </div>
+                <div class="progress-indicator" id="transaction-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <span class="progress-text">Processing transaction...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACID Properties Section -->
+        <section class="acid-properties" id="section-acid">
+            <div class="section-header">
+                <h2>⚡ ACID Properties Demonstration</h2>
+                <span class="help-icon" onmouseover="showTooltip(event, 'ACID properties ensure reliable database transactions. Try each demo to understand how they work!')" onmouseout="hideTooltip()">ℹ️</span>
+            </div>
+            <div class="instruction-box">
+                <p><strong>💡 Learn by doing:</strong> Each property has interactive examples. Click the buttons to see ACID principles in action with real scenarios.</p>
+            </div>
+            <div class="acid-grid">
+                <div class="acid-property">
+                    <h3>💎 Atomicity</h3>
+                    <p>All operations in a transaction succeed or all fail</p>
+                    <div class="property-explanation">
+                        <small><strong>Example:</strong> When transferring money, both debit and credit must happen together, or neither should happen.</small>
+                    </div>
+                    <div class="demo-area" id="atomicity-demo">
+                        <div class="bank-account">
+                            <div class="account">
+                                <h4>Account A</h4>
+                                <div class="balance" id="account-a">$1000</div>
+                            </div>
+                            <div class="account">
+                                <h4>Account B</h4>
+                                <div class="balance" id="account-b">$500</div>
+                            </div>
+                        </div>
+                        <button onclick="demonstrateAtomicity('success')" class="btn-success"
+                                onmouseover="showTooltip(event, 'Watch both accounts update together in a successful transfer')" 
+                                onmouseout="hideTooltip()">
+                            ✅ Successful Transfer ($200)
+                        </button>
+                        <button onclick="demonstrateAtomicity('failure')" class="btn-danger"
+                                onmouseover="showTooltip(event, 'See how all changes are rolled back when transfer fails')" 
+                                onmouseout="hideTooltip()">
+                            ❌ Failed Transfer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="acid-property">
+                    <h3>⚖️ Consistency</h3>
+                    <p>Database remains in a valid state after transaction</p>
+                    <div class="property-explanation">
+                        <small><strong>Example:</strong> Account balance can never go below $0. Try withdrawing more than available!</small>
+                    </div>
+                    <div class="demo-area" id="consistency-demo">
+                        <div class="constraint-check">
+                            <div class="rule">💰 Rule: Account balance ≥ $0 (Current: $1000)</div>
+                            <div class="test-case">
+                                <label for="withdraw-amount">💸 Withdrawal Amount:</label>
+                                <input type="number" id="withdraw-amount" placeholder="e.g., 200 or 1500" value="200" min="0">
+                                <button onclick="demonstrateConsistency()" class="btn-primary"
+                                        onmouseover="showTooltip(event, 'Try amounts like 200 (valid) or 1500 (violates rule)')" 
+                                        onmouseout="hideTooltip()">
+                                    🧪 Test Withdrawal
+                                </button>
+                            </div>
+                            <div id="consistency-result"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="acid-property">
+                    <h3>🏝️ Isolation</h3>
+                    <p>Concurrent transactions don't interfere with each other</p>
+                    <div class="property-explanation">
+                        <small><strong>Example:</strong> Multiple users can work with the database simultaneously without seeing each other's uncommitted changes.</small>
+                    </div>
+                    <div class="demo-area" id="isolation-demo">
+                        <div class="concurrent-transactions">
+                            <div class="transaction" id="tx1">
+                                <h4>Transaction 1</h4>
+                                <div class="tx-status">Idle</div>
+                            </div>
+                            <div class="transaction" id="tx2">
+                                <h4>Transaction 2</h4>
+                                <div class="tx-status">Idle</div>
+                            </div>
+                        </div>
+                        <button onclick="demonstrateIsolation()" class="btn-primary"
+                                onmouseover="showTooltip(event, 'Watch two transactions run simultaneously without interfering with each other')" 
+                                onmouseout="hideTooltip()">
+                            🔄 Run Concurrent Transactions
+                        </button>
+                    </div>
+                </div>
+
+                <div class="acid-property">
+                    <h3>💪 Durability</h3>
+                    <p>Committed transactions survive system failures</p>
+                    <div class="property-explanation">
+                        <small><strong>Example:</strong> Even if the system crashes, committed transactions are permanently saved and can be recovered.</small>
+                    </div>
+                    <div class="demo-area" id="durability-demo">
+                        <div class="system-status">
+                            <div class="status-indicator" id="system-status">System Online</div>
+                            <div class="transaction-log" id="transaction-log"></div>
+                        </div>
+                        <button onclick="demonstrateDurability()" class="btn-warning"
+                                onmouseover="showTooltip(event, 'Simulate a system crash after committing transactions and watch recovery')" 
+                                onmouseout="hideTooltip()">
+                            💥 Commit & Crash System
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dirty Read Scenario -->
+        <section class="dirty-read" id="section-dirty-read">
+            <div class="section-header">
+                <h2>⚠️ Dirty Read Simulation</h2>
+                <span class="help-icon" onmouseover="showTooltip(event, 'A dirty read occurs when a transaction reads uncommitted data from another transaction. This can lead to inconsistent results!')" onmouseout="hideTooltip()">ℹ️</span>
+            </div>
+            <div class="instruction-box">
+                <p><strong>💡 Watch the problem:</strong> Transaction 1 updates data but hasn't committed yet. Transaction 2 reads this "dirty" data and makes decisions based on it. When Transaction 1 rolls back, Transaction 2 has wrong information!</p>
+            </div>
+            <div class="scenario-container">
+                <div class="transactions-panel">
+                    <div class="transaction-window" id="transaction-1">
+                        <h3>Transaction 1 (Writer)</h3>
+                        <div class="tx-steps">
+                            <div class="step" data-step="1">1. BEGIN TRANSACTION</div>
+                            <div class="step" data-step="2">2. UPDATE balance = 1500 WHERE id = 1</div>
+                            <div class="step" data-step="3">3. (Transaction running...)</div>
+                            <div class="step" data-step="4">4. ROLLBACK</div>
+                        </div>
+                    </div>
+                    <div class="transaction-window" id="transaction-2">
+                        <h3>Transaction 2 (Reader)</h3>
+                        <div class="tx-steps">
+                            <div class="step" data-step="1">1. BEGIN TRANSACTION</div>
+                            <div class="step" data-step="2">2. SELECT balance WHERE id = 1</div>
+                            <div class="step" data-step="3">3. Process with dirty data: 1500</div>
+                            <div class="step" data-step="4">4. COMMIT (with wrong data!)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-view">
+                    <h4>Database State</h4>
+                    <table id="dirty-read-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td id="balance-value">1000</td>
+                                <td id="balance-status">Committed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="controls">
+                    <button onclick="startDirtyReadDemo()" class="btn-warning"
+                            onmouseover="showTooltip(event, 'Watch a step-by-step demonstration of the dirty read problem')" 
+                            onmouseout="hideTooltip()">
+                        ▶️ Start Dirty Read Demo
+                    </button>
+                    <button onclick="resetDirtyRead()" class="btn-secondary">🔄 Reset</button>
+                </div>
+                <div class="demo-status" id="dirty-read-status" style="display: none;">
+                    <div class="status-indicator">
+                        <span class="status-icon">⏳</span>
+                        <span class="status-text">Running demonstration...</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="dirty-read-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privilege Management -->
+        <section class="privilege-management" id="section-privileges">
+            <div class="section-header">
+                <h2>🔐 GRANT and REVOKE Privileges Demo</h2>
+                <span class="help-icon" onmouseover="showTooltip(event, 'Database security uses privileges to control who can do what. GRANT gives permissions, REVOKE removes them.')" onmouseout="hideTooltip()">ℹ️</span>
+            </div>
+            <div class="instruction-box">
+                <p><strong>💡 Try it yourself:</strong> Grant privileges to users, then test operations to see access control in action. Notice how users can only perform operations they have permission for!</p>
+            </div>
+            <div class="privilege-container">
+                <div class="users-panel">
+                    <h3>Database Users</h3>
+                    <div class="user-list">
+                        <div class="user" data-user="alice">
+                            <div class="user-name">Alice (Admin)</div>
+                            <div class="user-privileges" id="alice-privileges">
+                                ALL PRIVILEGES
+                            </div>
+                        </div>
+                        <div class="user" data-user="bob">
+                            <div class="user-name">Bob (Analyst)</div>
+                            <div class="user-privileges" id="bob-privileges">
+                                No privileges
+                            </div>
+                        </div>
+                        <div class="user" data-user="charlie">
+                            <div class="user-name">Charlie (Intern)</div>
+                            <div class="user-privileges" id="charlie-privileges">
+                                No privileges
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sample-data">
+                    <h3>Sample Database: employees</h3>
+                    <table id="employees-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Salary</th>
+                                <th>Department</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>John Doe</td>
+                                <td>$75,000</td>
+                                <td>Engineering</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Jane Smith</td>
+                                <td>$82,000</td>
+                                <td>Marketing</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Mike Johnson</td>
+                                <td>$68,000</td>
+                                <td>Sales</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="privilege-controls">
+                    <h3>Privilege Management</h3>
+                    <div class="grant-revoke-section">
+                        <div class="control-group">
+                            <label>User:</label>
+                            <select id="target-user">
+                                <option value="bob">Bob</option>
+                                <option value="charlie">Charlie</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Privilege:</label>
+                            <select id="privilege-type">
+                                <option value="SELECT">SELECT</option>
+                                <option value="INSERT">INSERT</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <button onclick="grantPrivilege()" class="btn-success"
+                                    onmouseover="showTooltip(event, 'Give the selected privilege to the chosen user')" 
+                                    onmouseout="hideTooltip()">
+                                ✅ GRANT Privilege
+                            </button>
+                            <button onclick="revokePrivilege()" class="btn-danger"
+                                    onmouseover="showTooltip(event, 'Remove the selected privilege from the chosen user')" 
+                                    onmouseout="hideTooltip()">
+                                ❌ REVOKE Privilege
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="test-operations">
+                        <h4>Test Operations</h4>
+                        <div class="operation-test">
+                            <select id="test-user">
+                                <option value="bob">Test as Bob</option>
+                                <option value="charlie">Test as Charlie</option>
+                            </select>
+                            <select id="test-operation">
+                                <option value="SELECT">SELECT</option>
+                                <option value="INSERT">INSERT</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                            <button onclick="testOperation()" class="btn-primary"
+                                    onmouseover="showTooltip(event, 'Test if the selected user can perform the chosen operation')" 
+                                    onmouseout="hideTooltip()">
+                                🧪 Test Operation
+                            </button>
+                        </div>
+                        <div id="operation-result"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

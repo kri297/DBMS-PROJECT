@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/Q1/home.html",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/Q1/(.*)",
+      "destination": "/Q1/$1"
+    },
+    {
+      "source": "/Q2/(.*)",
+      "destination": "/Q2/$1"
+    },
+    {
+      "source": "/Q3/(.*)",
+      "destination": "/Q3/$1"
+    },
+    {
+      "source": "/Q4/(.*)",
+      "destination": "/Q4/$1"
+    }
+  ]
+}

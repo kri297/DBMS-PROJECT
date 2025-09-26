@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schema vs Instance | DBMS Fundamentals</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/schema-instance.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home.html"><h2><i class="fas fa-database"></i> DBMS Fundamentals</h2></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../home.html" class="nav-link">Home</a></li>
+                <li><a href="architecture.html" class="nav-link">Three-Schema Architecture</a></li>
+                <li><a href="schema-instance.html" class="nav-link active">Schema vs Instance</a></li>
+                <li><a href="advantages.html" class="nav-link">DBMS Advantages</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-nav">
+                <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                <span><i class="fas fa-chevron-right"></i></span>
+                <span>Schema vs Instance</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Database Schema vs Instance</h1>
+            <p class="page-subtitle">Understanding the blueprint and the actual data in database systems</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="content-container">
+            
+            <!-- Concept Overview -->
+            <section class="concept-overview">
+                <div class="concept-grid">
+                    <div class="concept-card schema-card">
+                        <div class="concept-icon">
+                            <i class="fas fa-drafting-compass"></i>
+                        </div>
+                        <h3>Database Schema</h3>
+                        <p class="concept-definition">The logical blueprint or structure that defines the organization of data in a database</p>
+                        <ul class="concept-features">
+                            <li><i class="fas fa-check"></i> Static structure</li>
+                            <li><i class="fas fa-check"></i> Defines tables, columns, relationships</li>
+                            <li><i class="fas fa-check"></i> Rarely changes</li>
+                            <li><i class="fas fa-check"></i> Design-time artifact</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="concept-card instance-card">
+                        <div class="concept-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Database Instance</h3>
+                        <p class="concept-definition">The actual data stored in the database at any particular moment in time</p>
+                        <ul class="concept-features">
+                            <li><i class="fas fa-check"></i> Dynamic content</li>
+                            <li><i class="fas fa-check"></i> Actual rows and values</li>
+                            <li><i class="fas fa-check"></i> Changes frequently</li>
+                            <li><i class="fas fa-check"></i> Runtime data</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Visualization -->
+            <section class="interactive-visualization">
+                <h2>Interactive Visualization</h2>
+                <div class="visualization-container">
+                    
+                    <!-- Schema View -->
+                    <div class="view-panel" id="schema-view">
+                        <div class="panel-header">
+                            <h3><i class="fas fa-drafting-compass"></i> Schema (Structure)</h3>
+                            <div class="schema-controls">
+                                <button class="view-toggle active" data-view="schema">Show Schema</button>
+                                <button class="edit-schema-btn" onclick="toggleSchemaEdit()">
+                                    <i class="fas fa-edit"></i> Edit Schema
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <div class="table-schema">
+                                <div class="table-header">
+                                    <h4>Students Table Schema</h4>
+                                </div>
+                                <div class="schema-structure" id="schema-structure">
+                                    <div class="column-def" data-column="0">
+                                        <span class="column-name editable" contenteditable="false">student_id</span>
+                                        <span class="column-type editable" contenteditable="false">INT</span>
+                                        <span class="column-constraint editable" contenteditable="false">PRIMARY KEY</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(0)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="column-def" data-column="1">
+                                        <span class="column-name editable" contenteditable="false">first_name</span>
+                                        <span class="column-type editable" contenteditable="false">VARCHAR(50)</span>
+                                        <span class="column-constraint editable" contenteditable="false">NOT NULL</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(1)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="column-def" data-column="2">
+                                        <span class="column-name editable" contenteditable="false">last_name</span>
+                                        <span class="column-type editable" contenteditable="false">VARCHAR(50)</span>
+                                        <span class="column-constraint editable" contenteditable="false">NOT NULL</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(2)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="column-def" data-column="3">
+                                        <span class="column-name editable" contenteditable="false">email</span>
+                                        <span class="column-type editable" contenteditable="false">VARCHAR(100)</span>
+                                        <span class="column-constraint editable" contenteditable="false">UNIQUE</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(3)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="column-def" data-column="4">
+                                        <span class="column-name editable" contenteditable="false">enrollment_date</span>
+                                        <span class="column-type editable" contenteditable="false">DATE</span>
+                                        <span class="column-constraint editable" contenteditable="false">NOT NULL</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(4)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="column-def" data-column="5">
+                                        <span class="column-name editable" contenteditable="false">gpa</span>
+                                        <span class="column-type editable" contenteditable="false">DECIMAL(3,2)</span>
+                                        <span class="column-constraint editable" contenteditable="false">CHECK (gpa >= 0.0 AND gpa <= 4.0)</span>
+                                        <button class="delete-column-btn" onclick="deleteColumn(5)" style="display: none;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="schema-actions" id="schema-actions" style="display: none;">
+                                    <button class="add-column-btn" onclick="addNewColumn()">
+                                        <i class="fas fa-plus"></i> Add Column
+                                    </button>
+                                    <button class="save-schema-btn" onclick="saveSchemaChanges()">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                    <button class="cancel-schema-btn" onclick="cancelSchemaEdit()">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instance View -->
+                    <div class="view-panel" id="instance-view">
+                        <div class="panel-header">
+                            <h3><i class="fas fa-database"></i> Instance (Data)</h3>
+                            <button class="view-toggle" data-view="instance">Show Instance</button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="table-instance">
+                                <div class="table-header">
+                                    <h4>Students Table Data</h4>
+                                    <div class="data-controls">
+                                        <button class="add-record-btn" onclick="showAddForm()">
+                                            <i class="fas fa-plus"></i> Add Record
+                                        </button>
+                                        <button class="add-sample-btn" onclick="addSampleRecord()">
+                                            <i class="fas fa-magic"></i> Add Sample
+                                        </button>
+                                        <button class="clear-data-btn" onclick="clearAllData()">
+                                            <i class="fas fa-trash"></i> Clear Data
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="data-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>student_id</th>
+                                                <th>first_name</th>
+                                                <th>last_name</th>
+                                                <th>email</th>
+                                                <th>enrollment_date</th>
+                                                <th>gpa</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="data-tbody">
+                                            <tr data-row="0">
+                                                <td class="editable-cell" contenteditable="false">1001</td>
+                                                <td class="editable-cell" contenteditable="false">Arjun</td>
+                                                <td class="editable-cell" contenteditable="false">Sharma</td>
+                                                <td class="editable-cell" contenteditable="false">arjun.sharma@university.edu</td>
+                                                <td class="editable-cell" contenteditable="false">2023-09-01</td>
+                                                <td class="editable-cell" contenteditable="false">3.75</td>
+                                                <td class="action-cell">
+                                                    <button class="edit-row-btn" onclick="editRow(0)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="delete-row-btn" onclick="deleteRow(0)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr data-row="1">
+                                                <td class="editable-cell" contenteditable="false">1002</td>
+                                                <td class="editable-cell" contenteditable="false">Priya</td>
+                                                <td class="editable-cell" contenteditable="false">Patel</td>
+                                                <td class="editable-cell" contenteditable="false">priya.patel@university.edu</td>
+                                                <td class="editable-cell" contenteditable="false">2023-09-15</td>
+                                                <td class="editable-cell" contenteditable="false">3.92</td>
+                                                <td class="action-cell">
+                                                    <button class="edit-row-btn" onclick="editRow(1)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="delete-row-btn" onclick="deleteRow(1)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr data-row="2">
+                                                <td class="editable-cell" contenteditable="false">1003</td>
+                                                <td class="editable-cell" contenteditable="false">Vikram</td>
+                                                <td class="editable-cell" contenteditable="false">Singh</td>
+                                                <td class="editable-cell" contenteditable="false">vikram.singh@university.edu</td>
+                                                <td class="editable-cell" contenteditable="false">2023-08-20</td>
+                                                <td class="editable-cell" contenteditable="false">3.45</td>
+                                                <td class="action-cell">
+                                                    <button class="edit-row-btn" onclick="editRow(2)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="delete-row-btn" onclick="deleteRow(2)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Add Record Form -->
+                                <div class="add-record-form" id="add-record-form" style="display: none;">
+                                    <h4>Add New Student Record</h4>
+                                    <div class="form-row">
+                                        <input type="number" id="new-student-id" placeholder="Student ID" required>
+                                        <input type="text" id="new-first-name" placeholder="First Name" required>
+                                        <input type="text" id="new-last-name" placeholder="Last Name" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <input type="email" id="new-email" placeholder="Email" required>
+                                        <input type="date" id="new-enrollment-date" required>
+                                        <input type="number" id="new-gpa" placeholder="GPA" step="0.01" min="0" max="4" required>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button class="save-record-btn" onclick="saveNewRecord()">
+                                            <i class="fas fa-save"></i> Save Record
+                                        </button>
+                                        <button class="cancel-form-btn" onclick="hideAddForm()">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Differences -->
+            <section class="key-differences">
+                <h2>Key Differences Explained</h2>
+                <div class="differences-grid">
+                    
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Temporal Nature</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> Remains constant over time. Changes only during design modifications or system upgrades.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Continuously evolving. Changes with every INSERT, UPDATE, or DELETE operation.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3>Abstraction Level</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> High-level abstraction defining structure, constraints, and relationships.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Concrete implementation with actual values and records.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>User Interaction</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> Designed by database architects and rarely modified by end users.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Constantly manipulated by applications and end users through CRUD operations.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Data Integrity</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> Defines constraints and rules that must be followed.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Must conform to schema constraints; violations are rejected.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-memory"></i>
+                        </div>
+                        <h3>Storage Impact</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> Minimal storage footprint; stored in system catalog.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Significant storage requirements; grows with data volume.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="difference-item">
+                        <div class="difference-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3>Modification Impact</h3>
+                        <div class="comparison">
+                            <div class="schema-point">
+                                <strong>Schema:</strong> Changes require careful planning; may affect all existing data.
+                            </div>
+                            <div class="instance-point">
+                                <strong>Instance:</strong> Changes are routine and localized to specific records.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-world Examples -->
+            <section class="real-world-examples">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Real-World Analogy</h2>
+                        <p class="section-subtitle">Understanding Schema vs Instance through everyday examples</p>
+                    </div>
+                    
+                    <div class="analogy-container">
+                        <div class="analogy-item clickable-analogy" onclick="highlightAnalogy(this, 'construction')">
+                            <div class="analogy-header construction-header">
+                                <div class="header-content">
+                                    <div class="icon-container">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <h3>Building Construction</h3>
+                                </div>
+                            </div>
+                            <div class="analogy-content">
+                                <div class="comparison-grid">
+                                    <div class="analogy-schema">
+                                        <div class="content-header">
+                                            <i class="fas fa-drafting-compass"></i>
+                                            <h4>Schema = Blueprint</h4>
+                                        </div>
+                                        <ul>
+                                            <li><i class="fas fa-ruler-combined"></i> Architectural drawings</li>
+                                            <li><i class="fas fa-home"></i> Room layouts and dimensions</li>
+                                            <li><i class="fas fa-plug"></i> Electrical and plumbing plans</li>
+                                            <li><i class="fas fa-gavel"></i> Building codes and regulations</li>
+                                        </ul>
+                                    </div>
+                                    <div class="vs-divider">
+                                        <span>VS</span>
+                                    </div>
+                                    <div class="analogy-instance">
+                                        <div class="content-header">
+                                            <i class="fas fa-city"></i>
+                                            <h4>Instance = Actual Building</h4>
+                                        </div>
+                                        <ul>
+                                            <li><i class="fas fa-building"></i> Physical structure with rooms</li>
+                                            <li><i class="fas fa-couch"></i> Furniture and occupants</li>
+                                            <li><i class="fas fa-clock"></i> Daily activities and changes</li>
+                                            <li><i class="fas fa-tools"></i> Temporary modifications</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="analogy-insight">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Just like how one blueprint can create multiple identical buildings, one database schema can have many instances with different data!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analogy-item clickable-analogy" onclick="highlightAnalogy(this, 'publishing')">
+                            <div class="analogy-header publishing-header">
+                                <div class="header-content">
+                                    <div class="icon-container">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <h3>Book Publishing</h3>
+                                </div>
+                            </div>
+                            <div class="analogy-content">
+                                <div class="comparison-grid">
+                                    <div class="analogy-schema">
+                                        <div class="content-header">
+                                            <i class="fas fa-palette"></i>
+                                            <h4>Schema = Book Format</h4>
+                                        </div>
+                                        <ul>
+                                            <li><i class="fas fa-list-ol"></i> Chapter structure</li>
+                                            <li><i class="fas fa-file-alt"></i> Page layout template</li>
+                                            <li><i class="fas fa-font"></i> Typography rules</li>
+                                            <li><i class="fas fa-stamp"></i> Publishing standards</li>
+                                        </ul>
+                                    </div>
+                                    <div class="vs-divider">
+                                        <span>VS</span>
+                                    </div>
+                                    <div class="analogy-instance">
+                                        <div class="content-header">
+                                            <i class="fas fa-book"></i>
+                                            <h4>Instance = Actual Book</h4>
+                                        </div>
+                                        <ul>
+                                            <li><i class="fas fa-paragraph"></i> Specific content and text</li>
+                                            <li><i class="fas fa-copy"></i> Individual copies</li>
+                                            <li><i class="fas fa-pen"></i> Reader annotations</li>
+                                            <li><i class="fas fa-calendar-alt"></i> Wear and updates</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="analogy-insight">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>One book format template can produce thousands of books with different stories - similar to how one schema creates multiple database instances!</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                    
+                    <!-- Interactive Summary -->
+                    <div class="analogy-summary">
+                        <div class="summary-card">
+                            <h3><i class="fas fa-key"></i> Key Takeaway</h3>
+                            <p>Schema defines the <strong>structure and rules</strong>, while Instance contains the <strong>actual data</strong> following those rules. One schema can have multiple instances, just like one blueprint can create many buildings!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section class="best-practices">
+                <h2>Best Practices</h2>
+                <div class="practices-grid">
+                    
+                    <div class="practice-card schema-practice">
+                        <div class="practice-header">
+                            <i class="fas fa-drafting-compass"></i>
+                            <h3>Schema Design</h3>
+                        </div>
+                        <ul class="practice-list">
+                            <li><i class="fas fa-check-circle"></i> Plan schema changes carefully</li>
+                            <li><i class="fas fa-check-circle"></i> Use appropriate data types</li>
+                            <li><i class="fas fa-check-circle"></i> Define proper constraints</li>
+                            <li><i class="fas fa-check-circle"></i> Document schema changes</li>
+                            <li><i class="fas fa-check-circle"></i> Version control schema scripts</li>
+                            <li><i class="fas fa-check-circle"></i> Test changes in development</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-card instance-practice">
+                        <div class="practice-header">
+                            <i class="fas fa-database"></i>
+                            <h3>Data Management</h3>
+                        </div>
+                        <ul class="practice-list">
+                            <li><i class="fas fa-check-circle"></i> Regular data backups</li>
+                            <li><i class="fas fa-check-circle"></i> Monitor data quality</li>
+                            <li><i class="fas fa-check-circle"></i> Implement data validation</li>
+                            <li><i class="fas fa-check-circle"></i> Archive old data</li>
+                            <li><i class="fas fa-check-circle"></i> Optimize query performance</li>
+                            <li><i class="fas fa-check-circle"></i> Maintain data consistency</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <section class="page-navigation">
+                <div class="nav-buttons">
+                    <a href="architecture.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> Three-Schema Architecture
+                    </a>
+                    <a href="advantages.html" class="nav-btn next">
+                        DBMS Advantages <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-database"></i> DBMS Fundamentals</h3>
+                    <p>Professional database management system learning platform.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Learning Modules</h4>
+                    <ul>
+                        <li><a href="architecture.html">Three-Schema Architecture</a></li>
+                        <li><a href="schema-instance.html">Schema vs Instance</a></li>
+                        <li><a href="advantages.html">DBMS Advantages</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 DBMS Fundamentals Learning Platform. Educational Content.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/schema-instance.js"></script>
+</body>
+</html>

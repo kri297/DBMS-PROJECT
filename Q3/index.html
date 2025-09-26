@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relational Algebra Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Relational Algebra Visualizer</h1>
+            <p>Create tables and apply relational algebra operations in real-time</p>
+            <div class="header-buttons">
+                <button onclick="startTutorial()" class="btn btn-tutorial">📚 Start Tutorial</button>
+                <button onclick="runQuickDemo()" class="btn btn-demo">🚀 Run Quick Demo</button>
+                <button onclick="toggleHelpMode()" class="btn btn-help" id="helpToggle">💡 Help Mode: OFF</button>
+            </div>
+        </header>
+
+        <!-- Table Creation Panel -->
+        <div class="panel table-creation-panel" data-help="Create new tables by entering a name and comma-separated column names. Example: 'Students' with columns 'ID, Name, Age, Major'">
+            <h2>Create New Relation <span class="help-icon" onclick="showHelp(this)">?</span></h2>
+            <div class="form-group">
+                <label for="tableName">Table Name:</label>
+                <input type="text" id="tableName" placeholder="e.g., Students, Companies, Cities" data-help="Enter a unique name for your table">
+                <div class="input-suggestions" id="tableNameSuggestions"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="columns">Columns (comma-separated):</label>
+                <input type="text" id="columns" placeholder="e.g., ID, Name, City, State" data-help="List column names separated by commas">
+                <div class="input-suggestions" id="columnSuggestions"></div>
+            </div>
+
+            <button onclick="createTable()" class="btn btn-primary">Create Table</button>
+            
+            <div class="quick-templates">
+                <p><strong>Quick Templates:</strong></p>
+                <button onclick="useTemplate('employees')" class="btn-template">👥 Employees</button>
+                <button onclick="useTemplate('products')" class="btn-template">📦 Products</button>
+                <button onclick="useTemplate('orders')" class="btn-template">🛒 Orders</button>
+            </div>
+        </div>
+
+        <!-- Operation Panel -->
+        <div class="panel operation-panel">
+            <h2>Relational Algebra Operations</h2>
+            
+            <div class="operation-section" data-help="SELECT filters rows that meet specific conditions. Use column names and comparison operators like >, <, =, !=">
+                <h3>SELECT (σ) - Filter Rows <span class="help-icon" onclick="showHelp(this)">?</span></h3>
+                <div class="operation-form">
+                    <select id="selectTable" class="table-select" onchange="updateConditionSuggestions('select')">
+                        <option value="">Select Table</option>
+                    </select>
+                    <div class="condition-input-container">
+                        <input type="text" id="selectCondition" placeholder="e.g., Age > 20, City = \"Mumbai\"" onkeyup="showConditionSuggestions('select')">
+                        <div class="condition-suggestions" id="selectConditionSuggestions"></div>
+                    </div>
+                    <button onclick="performSelect()" class="btn btn-operation">Apply σ</button>
+                    <button onclick="explainOperation('select')" class="btn btn-explain">📖 Explain</button>
+                </div>
+                <div class="examples">
+                    <small><strong>Examples:</strong> Age > 20, Major = "CS", Name = "Arjun Sharma"</small>
+                </div>
+            </div>
+
+            <div class="operation-section" data-help="PROJECT selects specific columns from a table and removes duplicates automatically">
+                <h3>PROJECT (π) - Select Columns <span class="help-icon" onclick="showHelp(this)">?</span></h3>
+                <div class="operation-form">
+                    <select id="projectTable" class="table-select" onchange="updateColumnCheckboxes()">
+                        <option value="">Select Table</option>
+                    </select>
+                    <div class="column-selector" id="columnSelector" style="display: none;">
+                        <p><strong>Select columns:</strong></p>
+                        <div class="column-checkboxes" id="columnCheckboxes"></div>
+                        <button onclick="selectAllColumns()" class="btn-small">Select All</button>
+                        <button onclick="clearAllColumns()" class="btn-small">Clear All</button>
+                    </div>
+                    <input type="text" id="projectColumns" placeholder="e.g., Name, City, Department" readonly onclick="showColumnSelector()">
+                    <button onclick="performProject()" class="btn btn-operation">Apply π</button>
+                    <button onclick="explainOperation('project')" class="btn btn-explain">📖 Explain</button>
+                </div>
+                <div class="examples">
+                    <small><strong>Examples:</strong> Name, City | ID, Department | Course, Grade</small>
+                </div>
+            </div>
+
+            <div class="operation-section">
+                <h3>JOIN (⋈) - Join Tables</h3>
+                <div class="operation-form">
+                    <select id="joinTable1" class="table-select">
+                        <option value="">Select First Table</option>
+                    </select>
+                    <select id="joinTable2" class="table-select">
+                        <option value="">Select Second Table</option>
+                    </select>
+                    <input type="text" id="joinCondition" placeholder="e.g., Students.ID = Grades.StudentID">
+                    <button onclick="performJoin()" class="btn btn-operation">Apply ⋈</button>
+                </div>
+                <div class="examples">
+                    <small><strong>Example:</strong> Students.ID = Grades.StudentID</small>
+                </div>
+            </div>
+
+            <div class="operation-section">
+                <h3>UNION (∪) - Combine Tables</h3>
+                <div class="operation-form">
+                    <select id="unionTable1" class="table-select">
+                        <option value="">Select First Table</option>
+                    </select>
+                    <select id="unionTable2" class="table-select">
+                        <option value="">Select Second Table</option>
+                    </select>
+                    <button onclick="performUnion()" class="btn btn-operation">Apply ∪</button>
+                </div>
+            </div>
+
+            <div class="operation-section">
+                <h3>DIFFERENCE (−) - Subtract Tables</h3>
+                <div class="operation-form">
+                    <select id="diffTable1" class="table-select">
+                        <option value="">Select First Table</option>
+                    </select>
+                    <select id="diffTable2" class="table-select">
+                        <option value="">Select Second Table</option>
+                    </select>
+                    <button onclick="performDifference()" class="btn btn-operation">Apply −</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Display Area -->
+        <div class="tables-container">
+            <div class="tables-section">
+                <h2>Relations (Tables)</h2>
+                <div id="tablesDisplay" class="tables-grid">
+                    <!-- Tables will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Operation Results</h2>
+                <div id="resultsDisplay" class="results-area">
+                    <p class="placeholder">Results will appear here after performing operations</p>
+                </div>
+                <button onclick="clearResults()" class="btn btn-secondary">Clear Results</button>
+            </div>
+        </div>
+
+        <!-- Row Addition Modal -->
+        <div id="rowModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeRowModal()">&times;</span>
+                <h3 id="modalTitle">Add Row</h3>
+                <div id="rowForm" class="row-form">
+                    <!-- Dynamic form fields will be added here -->
+                </div>
+                <div class="modal-actions">
+                    <button onclick="addRowToTable()" class="btn btn-primary">Add Row</button>
+                    <button onclick="closeRowModal()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content help-modal">
+                <span class="close" onclick="closeHelpModal()">&times;</span>
+                <h3>Relational Algebra Operations Guide</h3>
+                <div class="help-content">
+                    <div class="help-section">
+                        <h4>SELECT (σ) - Filter Rows</h4>
+                        <p>Filters rows based on conditions. Use column names with operators:</p>
+                        <ul>
+                            <li><code>Age > 21</code> - Numbers greater than 21</li>
+                            <li><code>Name = "Arjun Sharma"</code> - Exact text match</li>
+                            <li><code>City = "Mumbai"</code> - Filter by city</li>
+                            <li><code>Salary > 50000</code> - Salary conditions</li>
+                            <li><code>Department != "HR"</code> - Not equal to HR</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h4>PROJECT (π) - Select Columns</h4>
+                        <p>Selects specific columns and removes duplicates automatically.</p>
+                        <p>Example: Select "Name, City, Department" to show only those columns.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>JOIN (⋈) - Combine Tables</h4>
+                        <p>Combines rows from two tables based on matching values.</p>
+                        <p>Format: <code>Table1.Column1 = Table2.Column2</code></p>
+                    </div>
+                    <div class="help-section">
+                        <h4>UNION (∪) - Combine All Rows</h4>
+                        <p>Combines all rows from two compatible tables, removing duplicates.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>DIFFERENCE (−) - Subtract Tables</h4>
+                        <p>Returns rows in first table that are NOT in the second table.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>Keyboard Shortcuts</h4>
+                        <ul>
+                            <li><kbd>Ctrl + Enter</kbd> - Run Quick Demo</li>
+                            <li><kbd>Ctrl + H</kbd> - Toggle Help Mode</li>
+                            <li><kbd>F1</kbd> - Show Help</li>
+                            <li><kbd>Escape</kbd> - Close Modals</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Overlay -->
+        <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+            <div class="tutorial-content">
+                <div class="tutorial-step" id="tutorialStep">
+                    <h3 id="tutorialTitle">Welcome to Relational Algebra Visualizer!</h3>
+                    <p id="tutorialText">Let's take a quick tour of the features.</p>
+                    <div class="tutorial-actions">
+                        <button onclick="previousTutorialStep()" class="btn btn-secondary" id="prevBtn">Previous</button>
+                        <button onclick="nextTutorialStep()" class="btn btn-primary" id="nextBtn">Next</button>
+                        <button onclick="skipTutorial()" class="btn btn-skip">Skip Tutorial</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Processing operation...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
