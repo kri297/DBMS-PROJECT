@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "python -m http.server 8000",
-    "build": "echo 'Static site - no build step required'",
+    "build": "echo 'Building static site...' && echo 'Build complete!'",
     "start": "echo 'Static site ready for deployment'"
   },
   "keywords": [
@@ -25,8 +25,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/kri297/DBMS-PROJECT.git"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
