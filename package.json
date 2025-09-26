@@ -24,7 +24,7 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/dbms-project.git"
+    "url": "https://github.com/kri297/DBMS-PROJECT.git"
   },
   "engines": {
     "node": ">=14.0.0"
