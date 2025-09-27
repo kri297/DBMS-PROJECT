@@ -813,19 +813,44 @@ input[type="text"]:focus, select:focus {
 }
 
 .results-area {
-    min-height: 300px;
+    min-height: 80px;
     background: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
     border: 2px dashed #bdc3c7;
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .placeholder {
     text-align: center;
     color: #7f8c8d;
     font-style: italic;
-    margin-top: 100px;
+    margin: 0;
+}
+
+.results-empty-state {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.results-empty-state .empty-icon {
+    font-size: 2em;
+    color: #bdc3c7;
+    margin-bottom: 10px;
+}
+
+.results-empty-state .empty-text {
+    color: #7f8c8d;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.results-empty-state .empty-hint {
+    color: #95a5a6;
+    font-size: 0.85em;
 }
 
 .result-item {
@@ -918,61 +943,190 @@ input[type="text"]:focus, select:focus {
     margin-top: 25px;
 }
 
-/* Enhanced Responsive Design */
+/* Enhanced Responsive Design - Mobile First Approach */
+
 /* Large screens (1200px and up) */
 @media (min-width: 1200px) {
     .container {
         max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
     }
     
     .tables-container {
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+    }
+    
+    .operation-form {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .panel {
+        padding: 30px;
     }
 }
 
-/* Medium screens (992px to 1199px) */
+/* Medium-large screens (992px to 1199px) */
 @media (max-width: 1199px) and (min-width: 992px) {
     .container {
         max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px;
     }
     
     .operation-form {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .tables-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
 }
 
-/* Small screens (768px to 991px) */
+/* Medium screens (768px to 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
     .container {
-        margin: 15px;
+        margin: 10px;
+        padding: 15px;
     }
     
     .panel {
-        margin: 15px;
+        margin: 10px 0;
         padding: 20px;
+    }
+    
+    header {
+        padding: 20px;
+        text-align: center;
     }
     
     header h1 {
         font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+    
+    .header-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
     }
     
     .operation-form {
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
+    }
+    
+    .tables-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .btn {
-        padding: 10px 20px;
+        padding: 12px 16px;
         font-size: 0.9em;
     }
 }
 
-/* Mobile screens (576px to 767px) */
+/* Small tablets and large phones (576px to 767px) */
 @media (max-width: 767px) and (min-width: 576px) {
     .container {
-        margin: 10px;
+        margin: 5px;
         border-radius: 10px;
+        padding: 10px;
     }
+    
+    .panel {
+        margin: 8px 0;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    header {
+        padding: 15px;
+        text-align: center;
+    }
+    
+    header h1 {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+    
+    header p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+    
+    .header-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .header-buttons .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px;
+        font-size: 0.85em;
+    }
+    
+    .operation-form {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        font-size: 0.9em;
+        margin-bottom: 6px;
+    }
+    
+    input[type="text"], select, textarea {
+        min-height: 44px;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+    
+    .tables-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 100%;
+        font-size: 0.85em;
+    }
+    
+    th, td {
+        padding: 8px 6px;
+        min-width: 80px;
+    }
+    
+    .btn {
+        padding: 10px 14px;
+        font-size: 0.85em;
+        min-height: 44px;
+    }
+    
+    .result-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .result-actions .btn {
+        width: 100%;
+    }
+}
     
     .panel {
         margin: 15px;
@@ -1020,10 +1174,10 @@ input[type="text"]:focus, select:focus {
     }
 }
 
-/* Extra small screens (up to 575px) */
+/* Extra small screens (up to 575px) - Mobile phones */
 @media (max-width: 575px) {
     body {
-        padding: 10px;
+        padding: 5px;
     }
     
     .container {
@@ -1093,7 +1247,77 @@ input[type="text"]:focus, select:focus {
     .header-buttons .btn {
         width: 100%;
         margin: 0;
+        max-width: none;
+        padding: 12px 15px;
     }
+    
+    .form-group label {
+        font-size: 0.85em;
+        margin-bottom: 5px;
+    }
+    
+    .quick-templates {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 15px;
+    }
+    
+    .btn-template {
+        padding: 10px;
+        font-size: 0.8em;
+        width: 100%;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .result-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+    
+    .result-actions .btn {
+        width: 100%;
+    }
+    
+    .toast {
+        left: 5px;
+        right: 5px;
+        bottom: 20px;
+        font-size: 0.85em;
+    }
+    
+    /* Better table scrolling on mobile */
+    .table-card {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    
+    .table-container::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 2px;
+    }
+}
     
     .quick-templates {
         text-align: center;
@@ -1154,4 +1378,477 @@ input[type="text"]:focus, select:focus {
 
 .result-highlight {
     animation: highlight 2s ease;
+}
+
+/* Basic styles for new operation sections */
+.column-rename-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.column-rename-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.column-rename-item label {
+    margin: 0;
+    margin-right: 10px;
+    min-width: 80px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.column-rename-item input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* ================================
+   MOBILE RESPONSIVE LAYOUT ONLY
+   (No color scheme changes)
+   ================================ */
+
+/* Tablet Portrait (768px - 1024px) */
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+    .container {
+        margin: 15px;
+    }
+    
+    .panel {
+        margin: 15px;
+        padding: 20px;
+    }
+    
+    .tables-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .operation-form {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .header-buttons {
+        flex-wrap: wrap;
+        max-width: 500px;
+        margin: 15px auto 0;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+}
+
+/* Mobile Landscape & Small Tablet (481px - 767px) */
+@media screen and (max-width: 767px) and (min-width: 481px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        margin: 0;
+        border-radius: 12px;
+    }
+    
+    header {
+        padding: 20px 15px;
+    }
+    
+    header h1 {
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+    
+    header p {
+        font-size: 0.95em;
+    }
+    
+    .header-buttons {
+        flex-direction: column;
+        gap: 10px;
+        max-width: 300px;
+        margin: 15px auto 0;
+    }
+    
+    .panel {
+        margin: 12px;
+        padding: 18px;
+    }
+    
+    .panel h2 {
+        font-size: 1.3em;
+    }
+    
+    .operation-section {
+        margin-bottom: 18px;
+        padding: 16px;
+    }
+    
+    .operation-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px 16px;
+    }
+    
+    .btn-operation, .btn-explain {
+        width: 48%;
+        display: inline-block;
+        margin-right: 2%;
+    }
+    
+    .btn-explain {
+        margin-right: 0;
+    }
+    
+    .tables-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin: 15px;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-container table {
+        min-width: 100%;
+        font-size: 0.9em;
+    }
+    
+    .results-area {
+        min-height: 100px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 20px;
+    }
+}
+
+/* Mobile Portrait (up to 480px) */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
+    
+    .container {
+        margin: 0;
+        border-radius: 10px;
+    }
+    
+    header {
+        padding: 16px 12px;
+    }
+    
+    header h1 {
+        font-size: 1.7em;
+        margin-bottom: 6px;
+    }
+    
+    header p {
+        font-size: 0.9em;
+        margin-bottom: 12px;
+    }
+    
+    .header-buttons {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .header-buttons .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 0.9em;
+    }
+    
+    .panel {
+        margin: 8px;
+        padding: 14px;
+    }
+    
+    .panel h2 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+    
+    .operation-section {
+        margin-bottom: 15px;
+        padding: 14px;
+    }
+    
+    .operation-section h3 {
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+        position: relative;
+        user-select: none;
+    }
+    
+    .operation-section h3:after {
+        content: '▼';
+        position: absolute;
+        right: 8px;
+        font-size: 0.8em;
+        transition: transform 0.3s ease;
+    }
+    
+    .operation-section.collapsed h3:after {
+        transform: rotate(-90deg);
+    }
+    
+    .operation-section .operation-form {
+        max-height: 500px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .operation-section.collapsed .operation-form {
+        max-height: 0;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .operation-form {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    input[type="text"], select {
+        padding: 14px 12px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 8px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 0.9em;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .btn-operation, .btn-explain {
+        width: 48%;
+        display: inline-block;
+        margin-right: 2%;
+        margin-bottom: 8px;
+    }
+    
+    .btn-explain {
+        margin-right: 0;
+    }
+    
+    .tables-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin: 12px;
+    }
+    
+    .tables-section, .results-section {
+        padding: 16px;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+    
+    .table-container::after {
+        content: '← Scroll →';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.7em;
+        pointer-events: none;
+        opacity: 0.8;
+    }
+    
+    .table-container table {
+        min-width: 350px;
+        font-size: 0.85em;
+    }
+    
+    .table-container th,
+    .table-container td {
+        padding: 10px 6px;
+        white-space: nowrap;
+    }
+    
+    .results-area {
+        min-height: 80px;
+        padding: 12px;
+    }
+    
+    .results-empty-state .empty-icon {
+        font-size: 1.8em;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .quick-templates {
+        margin-top: 12px;
+    }
+    
+    .btn-template {
+        display: block;
+        width: 100%;
+        margin: 6px 0;
+        padding: 10px;
+        font-size: 0.85em;
+    }
+    
+    .column-checkboxes {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .examples {
+        margin-top: 8px;
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+}
+
+/* Extra Small Mobile (up to 360px) */
+@media screen and (max-width: 360px) {
+    body {
+        padding: 5px;
+    }
+    
+    header {
+        padding: 12px 8px;
+    }
+    
+    header h1 {
+        font-size: 1.5em;
+        margin-bottom: 4px;
+    }
+    
+    header p {
+        font-size: 0.85em;
+    }
+    
+    .panel {
+        margin: 6px;
+        padding: 12px;
+    }
+    
+    .panel h2 {
+        font-size: 1.1em;
+    }
+    
+    .operation-section {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .operation-section h3 {
+        font-size: 1em;
+        padding: 6px;
+    }
+    
+    input[type="text"], select {
+        padding: 12px 10px;
+    }
+    
+    .btn {
+        padding: 12px 14px;
+        font-size: 0.85em;
+    }
+    
+    .table-container table {
+        min-width: 300px;
+        font-size: 0.8em;
+    }
+    
+    .table-container th,
+    .table-container td {
+        padding: 8px 4px;
+    }
+    
+    .column-checkboxes {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Landscape Mobile Adjustments */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    header {
+        padding: 8px 12px;
+    }
+    
+    header h1 {
+        font-size: 1.4em;
+        margin-bottom: 3px;
+    }
+    
+    header p {
+        font-size: 0.8em;
+        margin-bottom: 8px;
+    }
+    
+    .panel {
+        margin: 6px;
+        padding: 10px;
+    }
+    
+    .operation-section {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .results-area {
+        min-height: 60px;
+        padding: 8px;
+    }
+}
+
+/* Touch-friendly enhancements */
+@media (hover: none) and (pointer: coarse) {
+    .btn, .help-icon, .close, .operation-section h3 {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+    
+    input[type="text"], select {
+        min-height: 44px;
+        font-size: 16px;
+    }
+    
+    .table-container td, .table-container th {
+        min-height: 36px;
+        padding: 10px 8px;
+    }
 }
