@@ -46,11 +46,115 @@
 
 .concept-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 3rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+}
+
+/* Enhanced Mobile Responsiveness - Small Phones */
+@media (max-width: 480px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .concept-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        padding: 0 0.75rem !important;
+        max-width: 100% !important;
+    }
+    
+    .concept-card {
+        padding: 1.5rem 1rem !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    .page-title {
+        font-size: 1.75rem !important;
+        line-height: 1.1 !important;
+        padding: 0 0.75rem !important;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem !important;
+        padding: 0 0.75rem !important;
+    }
+    
+    .page-header {
+        padding: 80px 0 50px !important;
+    }
+    
+    /* Ensure no horizontal overflow */
+    .container {
+        padding: 0 0.75rem !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Fix any wide elements */
+    * {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Responsive fixes for visualization and tables */
+@media (max-width: 480px) {
+    .visualization-container {
+        padding: 0 0.75rem !important;
+        max-width: 100% !important;
+    }
+    
+    .view-panel {
+        margin: 0 0 1.5rem 0 !important;
+        border-radius: 8px !important;
+    }
+    
+    .table-schema {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .interactive-visualization {
+        padding: 60px 0 !important;
+    }
+    
+    .interactive-visualization h2 {
+        font-size: 1.75rem !important;
+        padding: 0 0.75rem !important;
+    }
+}
+
+/* Extra Small Phones */
+@media (max-width: 375px) {
+    .concept-grid {
+        padding: 0 0.5rem !important;
+        gap: 1rem !important;
+    }
+    
+    .concept-card {
+        padding: 1.25rem 0.75rem !important;
+    }
+    
+    .page-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .container {
+        padding: 0 0.5rem !important;
+    }
+    
+    .visualization-container {
+        padding: 0 0.5rem !important;
+    }
+    
+    .interactive-visualization h2 {
+        font-size: 1.5rem !important;
+        padding: 0 0.5rem !important;
+    }
 }
 
 .concept-card {
@@ -155,6 +259,16 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure all containers are responsive */
+.container, .content-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .view-panel {
@@ -1322,16 +1436,27 @@
 @media (max-width: 768px) {
     .page-title {
         font-size: 2rem;
+        line-height: 1.2;
+        padding: 0 1rem;
     }
     
     .page-subtitle {
         font-size: 1.1rem;
+        padding: 0 1rem;
     }
     
     .concept-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 2rem;
         padding: 0 1rem;
+    }
+    
+    .concept-card {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .page-header {
+        padding: 100px 0 60px;
     }
     
     .differences-grid,
