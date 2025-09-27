@@ -805,6 +805,58 @@ body.loading #loadingScreen {
 
 /* Small tablets and large phones */
 @media screen and (max-width: 768px) {
+    /* Navigation Mobile Styles */
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .nav-toggle {
+        display: flex !important;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: var(--white);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 2rem 0;
+        transition: left var(--transition-base);
+        box-shadow: var(--shadow-xl);
+        z-index: var(--z-dropdown);
+        gap: 0;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .nav-menu li {
+        margin: 0.5rem 0;
+        width: 90%;
+    }
+    
+    .nav-link {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 1rem;
+        font-size: 1.1rem;
+        border-radius: var(--radius-lg);
+        margin: 0.25rem 0;
+    }
+    
+    /* Dark theme mobile navigation */
+    [data-theme="dark"] .nav-menu {
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+    }
+    
+    /* Loading Screen Mobile Styles */
     .loading-screen {
         align-items: center !important;
         padding: 0 !important;
@@ -1020,6 +1072,136 @@ body.loading #loadingScreen {
     
     .progress-percentage {
         font-size: 1.2rem;
+    }
+    
+    /* Additional mobile improvements for main site */
+    .hero {
+        padding: 2rem 0;
+        min-height: 80vh;
+    }
+    
+    .hero-container {
+        padding: 0 1rem;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .hero-buttons .btn {
+        width: 100% !important;
+        max-width: 280px !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Card Grid Improvements */
+    .cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        padding: 0 1rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.5rem !important;
+        text-align: center !important;
+    }
+    
+    .project-card {
+        padding: 1.5rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    /* Section spacing */
+    .section {
+        padding: 3rem 0 !important;
+    }
+    
+    .section-title {
+        font-size: 2rem !important;
+        margin-bottom: 1rem !important;
+        text-align: center !important;
+    }
+    
+    .section-description {
+        font-size: 1rem !important;
+        text-align: center !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Touch-friendly improvements */
+    button, .btn, .nav-link, .card {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Improved tap targets */
+    .nav-toggle {
+        padding: 12px;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Better scrolling on mobile */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Prevent zoom on input focus (iOS) */
+    input, select, textarea {
+        font-size: 16px;
+    }
+}
+
+/* Extra small mobile phones (320px to 479px) */
+@media (max-width: 479px) {
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+    
+    .nav-logo h2 {
+        font-size: 1.2rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem !important;
+        line-height: 1.1 !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+    }
+    
+    .hero-buttons .btn {
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .section-title {
+        font-size: 1.75rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.25rem !important;
+    }
+    
+    .project-card {
+        padding: 1.25rem !important;
     }
 }
 
@@ -3746,6 +3928,33 @@ html, body {
     height: 70px;
 }
 
+.nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.nav-logo .company-logo {
+    height: 80px;
+    width: auto;
+    max-width: 280px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.08));
+}
+
+.nav-logo .company-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.12));
+}
+
+.nav-logo .nav-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
 .nav-logo h2 {
     font-size: var(--font-size-xl);
     font-weight: 700;
@@ -3959,8 +4168,50 @@ html, body {
 
 .hero-buttons {
     display: flex;
+    flex-direction: row;
     gap: var(--space-4);
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+/* Medium tablets - buttons can be side by side if space allows */
+@media (min-width: 600px) and (max-width: 768px) {
+    .hero-buttons {
+        flex-direction: row !important;
+        gap: var(--space-3) !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    
+    .hero-buttons .btn {
+        flex: 0 0 auto !important;
+        min-width: 140px !important;
+    }
+}
+
+/* Ensure buttons stay side by side on tablets and up */
+@media (min-width: 769px) {
+    .hero-buttons {
+        flex-direction: row !important;
+        gap: var(--space-4) !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-top: var(--space-6) !important;
+    }
+    
+    .hero-buttons .btn {
+        width: auto !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
+        min-width: 160px !important;
+    }
+    
+    .hero-buttons .btn-large {
+        padding: var(--space-4) var(--space-6) !important;
+        font-size: var(--font-size-lg) !important;
+    }
 }
 
 .hero-visual {
@@ -5111,6 +5362,16 @@ section {
 }
 
 /* ===========================
+   Tablet/Medium Screen Design
+   =========================== */
+@media (max-width: 768px) {
+    .nav-logo .company-logo {
+        height: 70px;
+        max-width: 240px;
+    }
+}
+
+/* ===========================
    Small Mobile Design
    =========================== */
 @media (max-width: 480px) {
@@ -5127,6 +5388,16 @@ section {
         position: fixed;
     }
 
+    .nav-logo .company-logo {
+        height: 60px;
+        max-width: 200px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+    }
+    
+    .nav-logo .nav-title {
+        font-size: var(--font-size-lg);
+    }
+    
     .nav-logo h2 {
         font-size: var(--font-size-lg);
     }
@@ -5621,6 +5892,16 @@ section {
     
     .section-header h2 {
         font-size: var(--font-size-xl);
+    }
+    
+    .nav-logo .company-logo {
+        height: 50px;
+        max-width: 240px;
+        filter: drop-shadow(0 1px 4px rgba(0,0,0,0.1));
+    }
+    
+    .nav-logo .nav-title {
+        font-size: var(--font-size-base);
     }
     
     .nav-logo h2 {

@@ -647,10 +647,14 @@ function performDifference() {
 function displayResult(result, operationType, description, operationClass = '') {
     const resultsContainer = document.getElementById('resultsDisplay');
     
-    // Remove placeholder if it exists
+    // Remove placeholder or empty state if it exists
     const placeholder = resultsContainer.querySelector('.placeholder');
+    const emptyState = resultsContainer.querySelector('.results-empty-state');
     if (placeholder) {
         placeholder.remove();
+    }
+    if (emptyState) {
+        emptyState.remove();
     }
 
     const resultDiv = document.createElement('div');
@@ -816,7 +820,13 @@ function extractTableData(resultDiv) {
 // Clear results
 function clearResults() {
     const resultsContainer = document.getElementById('resultsDisplay');
-    resultsContainer.innerHTML = '<p class="placeholder">Results will appear here after performing operations</p>';
+    resultsContainer.innerHTML = `
+        <div class="results-empty-state">
+            <div class="empty-icon">📊</div>
+            <div class="empty-text">No operation results yet</div>
+            <div class="empty-hint">Create tables and perform relational algebra operations to see results here</div>
+        </div>
+    `;
     operationCounter = 0;
 }
 
@@ -1248,6 +1258,134 @@ function explainOperation(operationType) {
                 <p><strong>Example:</strong> π(Name, Age)(Students) - Shows only Name and Age columns</p>
                 <p><strong>Note:</strong> Duplicate rows are automatically removed from the result</p>
             `
+        },
+        join: {
+            title: "JOIN Operation (⋈)",
+            content: `
+                <p><strong>Purpose:</strong> Combine rows from two tables based on matching values</p>
+                <p><strong>Syntax:</strong> Table1 ⋈ Table2 on condition</p>
+                <p><strong>Example:</strong> Students ⋈ Grades on Students.ID = Grades.StudentID</p>
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>Compares each row from Table1 with each row from Table2</li>
+                    <li>If the join condition is true, combines the rows</li>
+                    <li>Result contains columns from both tables</li>
+                </ul>
+                <p><strong>Condition format:</strong> TableName.ColumnName = TableName.ColumnName</p>
+            `
+        },
+        union: {
+            title: "UNION Operation (∪)",
+            content: `
+                <p><strong>Purpose:</strong> Combine all rows from two compatible tables</p>
+                <p><strong>Syntax:</strong> Table1 ∪ Table2</p>
+                <p><strong>Example:</strong> Students ∪ Alumni - All students and alumni records</p>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                    <li>Both tables must have the same number of columns</li>
+                    <li>Column types should be compatible</li>
+                    <li>Duplicate rows are automatically removed</li>
+                </ul>
+                <p><strong>Result:</strong> Contains unique rows from both tables</p>
+            `
+        },
+        difference: {
+            title: "DIFFERENCE Operation (−)",
+            content: `
+                <p><strong>Purpose:</strong> Find rows in first table that are NOT in second table</p>
+                <p><strong>Syntax:</strong> Table1 − Table2</p>
+                <p><strong>Example:</strong> AllStudents − GraduatedStudents = CurrentStudents</p>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                    <li>Both tables must have the same structure</li>
+                    <li>Same number of columns with compatible types</li>
+                </ul>
+                <p><strong>Result:</strong> Rows that exist in Table1 but not in Table2</p>
+            `
+        },
+        intersection: {
+            title: "INTERSECTION Operation (∩)",
+            content: `
+                <p><strong>Purpose:</strong> Find rows that exist in BOTH tables</p>
+                <p><strong>Syntax:</strong> Table1 ∩ Table2</p>
+                <p><strong>Example:</strong> MathStudents ∩ PhysicsStudents = Students taking both subjects</p>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                    <li>Both tables must have identical structure</li>
+                    <li>Same columns in same order</li>
+                </ul>
+                <p><strong>Result:</strong> Only rows that appear in both tables</p>
+                <p><strong>Use case:</strong> Finding common elements between datasets</p>
+            `
+        },
+        cartesian: {
+            title: "CARTESIAN PRODUCT Operation (×)",
+            content: `
+                <p><strong>Purpose:</strong> Create all possible combinations of rows from two tables</p>
+                <p><strong>Syntax:</strong> Table1 × Table2</p>
+                <p><strong>Example:</strong> Students × Courses = All possible student-course pairs</p>
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>Combines every row from Table1 with every row from Table2</li>
+                    <li>Result has columns from both tables</li>
+                    <li>If Table1 has m rows and Table2 has n rows, result has m×n rows</li>
+                </ul>
+                <p><strong>⚠️ Warning:</strong> Can create very large results! Use carefully.</p>
+            `
+        },
+        rename: {
+            title: "RENAME Operation (ρ)",
+            content: `
+                <p><strong>Purpose:</strong> Change table name or column names without affecting data</p>
+                <p><strong>Syntax:</strong> ρ(NewName)(Table) or ρ(NewCol1, NewCol2, ...)(Table)</p>
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li>ρ(Learners)(Students) - Rename table to "Learners"</li>
+                    <li>ρ(StudentID, StudentName)(Students) - Rename columns</li>
+                </ul>
+                <p><strong>Use cases:</strong></p>
+                <ul>
+                    <li>Resolve naming conflicts in joins</li>
+                    <li>Make column names more descriptive</li>
+                    <li>Prepare tables for other operations</li>
+                </ul>
+            `
+        },
+        distinct: {
+            title: "DISTINCT Operation",
+            content: `
+                <p><strong>Purpose:</strong> Remove duplicate rows from a table</p>
+                <p><strong>Syntax:</strong> DISTINCT(Table)</p>
+                <p><strong>Example:</strong> DISTINCT(StudentCities) - Unique cities where students live</p>
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>Examines all rows in the table</li>
+                    <li>Keeps only one copy of each unique row</li>
+                    <li>Compares entire rows, not just single columns</li>
+                </ul>
+                <p><strong>Result:</strong> Table with no duplicate rows</p>
+                <p><strong>Note:</strong> Very useful for data cleaning and analysis</p>
+            `
+        },
+        division: {
+            title: "DIVISION Operation (÷)",
+            content: `
+                <p><strong>Purpose:</strong> Advanced operation for "for all" type queries</p>
+                <p><strong>Syntax:</strong> Table1 ÷ Table2</p>
+                <p><strong>Example:</strong> StudentCourses ÷ RequiredCourses = Students who took ALL required courses</p>
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>Finds tuples in dividend related to ALL tuples in divisor</li>
+                    <li>Used for queries like "find X that are related to ALL Y"</li>
+                    <li>Complex operation with specific requirements</li>
+                </ul>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                    <li>Divisor columns must be subset of dividend columns</li>
+                    <li>Proper schema compatibility needed</li>
+                </ul>
+                <p><strong>Advanced:</strong> Most complex relational algebra operation</p>
+            `
         }
     };
     
@@ -1288,3 +1426,365 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// New Relational Algebra Operations
+
+// INTERSECTION operation (∩)
+function performIntersection() {
+    const table1Name = document.getElementById('intersectTable1').value;
+    const table2Name = document.getElementById('intersectTable2').value;
+    
+    if (!table1Name || !table2Name) {
+        showToast('Please select both tables for intersection', 'error');
+        return;
+    }
+    
+    if (table1Name === table2Name) {
+        showToast('Please select different tables', 'error');
+        return;
+    }
+    
+    const table1 = relations.find(r => r.name === table1Name);
+    const table2 = relations.find(r => r.name === table2Name);
+    
+    try {
+        const result = Relation.intersection(table1, table2);
+        displayResult(result, `Intersection: ${table1Name} ∩ ${table2Name}`);
+        showToast('Intersection operation completed successfully!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Add intersection method to Relation class
+Relation.intersection = function(relation1, relation2) {
+    if (relation1.columns.length !== relation2.columns.length) {
+        throw new Error('Relations must have the same number of columns for intersection');
+    }
+
+    const result = new Relation(`${relation1.name} ∩ ${relation2.name}`, [...relation1.columns]);
+    
+    // Create set of rows in relation2 for quick lookup
+    const relation2Rows = new Set(relation2.rows.map(row => JSON.stringify(row)));
+
+    // Add rows from relation1 that also exist in relation2
+    for (const row of relation1.rows) {
+        const rowKey = JSON.stringify(row);
+        if (relation2Rows.has(rowKey)) {
+            result.addRow(row);
+        }
+    }
+
+    return result;
+};
+
+// CARTESIAN PRODUCT operation (×)
+function performCartesianProduct() {
+    const table1Name = document.getElementById('crossTable1').value;
+    const table2Name = document.getElementById('crossTable2').value;
+    
+    if (!table1Name || !table2Name) {
+        showToast('Please select both tables for cartesian product', 'error');
+        return;
+    }
+    
+    const table1 = relations.find(r => r.name === table1Name);
+    const table2 = relations.find(r => r.name === table2Name);
+    
+    // Warn about large result size
+    const resultSize = table1.rows.length * table2.rows.length;
+    if (resultSize > 100) {
+        if (!confirm(`This will create ${resultSize} rows. Continue?`)) {
+            return;
+        }
+    }
+    
+    try {
+        const result = Relation.cartesianProduct(table1, table2);
+        displayResult(result, `Cartesian Product: ${table1Name} × ${table2Name}`);
+        showToast('Cartesian product completed successfully!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Add cartesian product method to Relation class
+Relation.cartesianProduct = function(relation1, relation2) {
+    // Combine column names with table prefixes to avoid conflicts
+    const newColumns = [
+        ...relation1.columns.map(col => `${relation1.name}.${col}`),
+        ...relation2.columns.map(col => `${relation2.name}.${col}`)
+    ];
+    
+    const result = new Relation(`${relation1.name} × ${relation2.name}`, newColumns);
+    
+    // Generate all combinations
+    for (const row1 of relation1.rows) {
+        for (const row2 of relation2.rows) {
+            result.addRow([...row1, ...row2]);
+        }
+    }
+
+    return result;
+};
+
+// RENAME operation (ρ)
+function performRename() {
+    const tableName = document.getElementById('renameTable').value;
+    const newTableName = document.getElementById('newTableName').value.trim();
+    
+    if (!tableName) {
+        showToast('Please select a table to rename', 'error');
+        return;
+    }
+    
+    const table = relations.find(r => r.name === tableName);
+    
+    try {
+        // Get new column names if any
+        const columnRenames = [];
+        const renameInputs = document.querySelectorAll('.column-rename-item input');
+        renameInputs.forEach((input, index) => {
+            const newName = input.value.trim();
+            columnRenames.push(newName || table.columns[index]);
+        });
+        
+        const result = table.rename(newTableName || tableName, columnRenames.length > 0 ? columnRenames : null);
+        displayResult(result, `Rename: ρ(${newTableName || tableName})(${tableName})`);
+        showToast('Rename operation completed successfully!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Add rename method to Relation class
+Relation.prototype.rename = function(newTableName, newColumnNames = null) {
+    const columns = newColumnNames || this.columns;
+    const result = new Relation(newTableName, [...columns]);
+    result.rows = this.rows.map(row => [...row]);
+    return result;
+};
+
+function updateRenameOptions() {
+    const tableName = document.getElementById('renameTable').value;
+    const renameOptions = document.getElementById('renameOptions');
+    const columnRenameList = document.getElementById('columnRenameList');
+    
+    if (!tableName) {
+        renameOptions.style.display = 'none';
+        return;
+    }
+    
+    const table = relations.find(r => r.name === tableName);
+    renameOptions.style.display = 'block';
+    document.getElementById('newTableName').value = '';
+    
+    // Generate column rename inputs
+    columnRenameList.innerHTML = '';
+    table.columns.forEach((col, index) => {
+        const div = document.createElement('div');
+        div.className = 'column-rename-item';
+        div.innerHTML = `
+            <label>${col}:</label>
+            <input type="text" placeholder="New name for ${col}" />
+        `;
+        columnRenameList.appendChild(div);
+    });
+}
+
+// DISTINCT operation
+function performDistinct() {
+    const tableName = document.getElementById('distinctTable').value;
+    
+    if (!tableName) {
+        showToast('Please select a table for distinct operation', 'error');
+        return;
+    }
+    
+    const table = relations.find(r => r.name === tableName);
+    
+    try {
+        const result = table.distinct();
+        displayResult(result, `Distinct: DISTINCT(${tableName})`);
+        showToast('Distinct operation completed successfully!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Add distinct method to Relation class
+Relation.prototype.distinct = function() {
+    const result = new Relation(`DISTINCT(${this.name})`, [...this.columns]);
+    const uniqueRows = new Set();
+    
+    for (const row of this.rows) {
+        const rowKey = JSON.stringify(row);
+        if (!uniqueRows.has(rowKey)) {
+            uniqueRows.add(rowKey);
+            result.addRow([...row]);
+        }
+    }
+    
+    return result;
+};
+
+// DIVISION operation (÷)
+function performDivision() {
+    const table1Name = document.getElementById('divideTable1').value;
+    const table2Name = document.getElementById('divideTable2').value;
+    
+    if (!table1Name || !table2Name) {
+        showToast('Please select both tables for division operation', 'error');
+        return;
+    }
+    
+    const table1 = relations.find(r => r.name === table1Name);
+    const table2 = relations.find(r => r.name === table2Name);
+    
+    try {
+        const result = Relation.division(table1, table2);
+        displayResult(result, `Division: ${table1Name} ÷ ${table2Name}`);
+        showToast('Division operation completed successfully!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Add division method to Relation class (simplified version)
+Relation.division = function(dividend, divisor) {
+    // For simplicity, we'll implement a basic division
+    // In real relational algebra, division is more complex
+    if (divisor.columns.length >= dividend.columns.length) {
+        throw new Error('Divisor cannot have more columns than dividend');
+    }
+    
+    // Find common columns
+    const commonCols = divisor.columns.filter(col => dividend.columns.includes(col));
+    if (commonCols.length === 0) {
+        throw new Error('No common columns found for division');
+    }
+    
+    // Get remaining columns from dividend
+    const resultCols = dividend.columns.filter(col => !commonCols.includes(col));
+    if (resultCols.length === 0) {
+        throw new Error('No remaining columns for division result');
+    }
+    
+    const result = new Relation(`${dividend.name} ÷ ${divisor.name}`, resultCols);
+    
+    // Simplified division logic
+    const divisorRows = new Set(divisor.rows.map(row => JSON.stringify(row)));
+    
+    // Group dividend rows by non-common columns
+    const groups = new Map();
+    for (const row of dividend.rows) {
+        const key = resultCols.map(col => {
+            const index = dividend.columns.indexOf(col);
+            return row[index];
+        });
+        const keyStr = JSON.stringify(key);
+        
+        if (!groups.has(keyStr)) {
+            groups.set(keyStr, []);
+        }
+        groups.get(keyStr).push(row);
+    }
+    
+    // Check which groups contain all divisor rows
+    for (const [keyStr, groupRows] of groups) {
+        const groupCommonValues = new Set();
+        for (const row of groupRows) {
+            const commonValues = commonCols.map(col => {
+                const index = dividend.columns.indexOf(col);
+                return row[index];
+            });
+            groupCommonValues.add(JSON.stringify(commonValues));
+        }
+        
+        // If this group contains all divisor values, include in result
+        let containsAll = true;
+        for (const divisorRow of divisor.rows) {
+            if (!groupCommonValues.has(JSON.stringify(divisorRow))) {
+                containsAll = false;
+                break;
+            }
+        }
+        
+        if (containsAll) {
+            result.addRow(JSON.parse(keyStr));
+        }
+    }
+    
+    return result;
+};
+
+// Helper function for updating table selects
+
+// Update all table selects with new operations
+function updateAllTableSelects() {
+    const tableNames = relations.map(r => r.name);
+    const selectors = [
+        'selectTable', 'projectTable', 'joinTable1', 'joinTable2',
+        'unionTable1', 'unionTable2', 'diffTable1', 'diffTable2',
+        'intersectTable1', 'intersectTable2', 'crossTable1', 'crossTable2',
+        'renameTable', 'distinctTable', 'divideTable1', 'divideTable2'
+    ];
+    
+    selectors.forEach(id => {
+        const select = document.getElementById(id);
+        if (select) {
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">Select Table</option>';
+            
+            tableNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
+        }
+    });
+}
+
+// Mobile responsive functionality (layout only)
+function initializeMobileFeatures() {
+    // Add collapsible functionality for mobile screens only
+    document.querySelectorAll('.operation-section h3').forEach(header => {
+        header.addEventListener('click', function() {
+            // Only enable collapse on mobile screens (480px and below)
+            if (window.innerWidth <= 480) {
+                const section = this.parentElement;
+                section.classList.toggle('collapsed');
+            }
+        });
+    });
+    
+    // Reset collapse state when resizing to desktop
+    function handleResize() {
+        if (window.innerWidth > 480) {
+            document.querySelectorAll('.operation-section').forEach(section => {
+                section.classList.remove('collapsed');
+            });
+        }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize mobile features
+    initializeMobileFeatures();
+    
+    // Override the original updateTableSelects function
+    const originalUpdateTableSelects = window.updateTableSelects;
+    window.updateTableSelects = function() {
+        if (originalUpdateTableSelects) {
+            originalUpdateTableSelects();
+        }
+        updateAllTableSelects();
+    };
+});
