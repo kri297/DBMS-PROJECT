@@ -405,6 +405,20 @@
             background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
             background-position: 0 0, 0 0, 0 0, 0 0;
             transform-origin: 0 0;
+            overflow: hidden;
+            /* Enhanced mobile viewport handling */
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y pinch-zoom;
+        }
+
+        /* Mobile-specific canvas improvements */
+        @media (max-width: 900px) {
+            .canvas {
+                /* Smaller grid on mobile for better performance */
+                background-size: 15px 15px, 15px 15px, 75px 75px, 75px 75px;
+                /* Prevent iOS bounce scrolling */
+                overscroll-behavior: contain;
+            }
         }
 
         /* SVG Canvas for connections */
@@ -1750,27 +1764,103 @@
             }
         }
 
-        /* Touch-friendly enhancements */
+        /* Enhanced Touch-friendly Mobile Support */
         @media (pointer: coarse) {
+            /* Larger touch targets for mobile */
             .tool-item {
-                min-height: 50px;
+                min-height: 60px;
+                min-width: 80px;
+                padding: 12px 8px;
                 touch-action: manipulation;
+                font-size: 11px;
+                border-radius: 8px;
+                margin: 4px;
+            }
+            
+            .tool-item.selected {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+            
+            .tool-item .icon {
+                font-size: 20px;
+                margin-bottom: 6px;
             }
             
             .zoom-controls button {
-                min-width: 36px;
-                min-height: 36px;
+                min-width: 48px;
+                min-height: 48px;
+                font-size: 16px;
                 touch-action: manipulation;
+                border-radius: 8px;
+                margin: 2px;
             }
             
             .btn {
-                min-height: 40px;
+                min-height: 48px;
+                min-width: 48px;
+                padding: 12px 16px;
                 touch-action: manipulation;
+                font-size: 14px;
             }
             
             .context-menu-item {
-                min-height: 44px;
+                min-height: 48px;
+                padding: 12px 16px;
                 touch-action: manipulation;
+                font-size: 14px;
+            }
+
+            /* Larger diagram elements for mobile */
+            .diagram-element.attribute {
+                width: 90px !important;
+                height: 90px !important;
+                min-width: 90px !important;
+                max-width: 90px !important;
+                font-size: 10px;
+                border-width: 3px;
+            }
+
+            .diagram-element.relationship,
+            .diagram-element.weak-relationship {
+                width: 100px !important;
+                height: 100px !important;
+                min-width: 100px !important;
+                max-width: 100px !important;
+                font-size: 10px;
+                border-width: 3px;
+            }
+
+            .diagram-element.entity,
+            .diagram-element.weak-entity {
+                min-width: 120px;
+                min-height: 80px;
+                font-size: 12px;
+                padding: 12px;
+                border-width: 3px;
+            }
+
+            /* Mobile status messages */
+            .status-message {
+                font-size: 14px;
+                padding: 12px 16px;
+                bottom: 80px; /* Space for mobile UI */
+            }
+
+            /* Mobile tutorial adjustments */
+            .tutorial-content {
+                width: 95%;
+                max-width: none;
+                margin: 5px;
+                border-radius: 12px;
+            }
+
+            .tutorial-step {
+                padding: 16px;
+                margin: 12px 0;
+                border-radius: 8px;
             }
         }
 
@@ -1970,6 +2060,7 @@
                     <div class="section-header">⚙️ Controls</div>
                     <div class="section-content">
                         <button class="btn" id="connectBtn">🔗 Connect Elements</button>
+                        <button class="btn" onclick="testCardinality()">🔢 Test Cardinality</button>
                         <button class="btn" onclick="erBuilder.generateSchema()">📋 Generate Schema</button>
                         <button class="btn" onclick="erBuilder.validateDiagram()">✅ Validate Diagram</button>
                         <button class="btn" onclick="erBuilder.clearAll()">🗑️ Clear All</button>
@@ -2252,6 +2343,11 @@
             }
 
             show(x, y, connection) {
+                console.log('ConnectionContextMenu.show called with:', connection);
+                console.log('Connection element type:', connection.tagName);
+                console.log('Connection data-connection-id:', connection.getAttribute('data-connection-id'));
+                console.log('Connection classes:', connection.className);
+                
                 this.currentConnection = connection;
                 this.menu.style.left = x + 'px';
                 this.menu.style.top = y + 'px';
@@ -2316,21 +2412,53 @@
             }
 
             updateConnectionCardinality(cardinality) {
+                console.log('updateConnectionCardinality called with:', cardinality);
                 if (this.currentConnection && window.erBuilder) {
-                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    // Try to get connection ID from current element or its parent group
+                    let connectionId = this.currentConnection.getAttribute('data-connection-id');
+                    
+                    if (!connectionId) {
+                        // If current element doesn't have ID, look for parent group
+                        const parentGroup = this.currentConnection.closest('[data-connection-id]');
+                        if (parentGroup) {
+                            connectionId = parentGroup.getAttribute('data-connection-id');
+                            console.log('Found connection ID in parent group:', connectionId);
+                        }
+                    }
+                    
+                    if (!connectionId) {
+                        // Last resort - find all connection groups and use the most recent one
+                        const allGroups = document.querySelectorAll('[data-connection-id]');
+                        if (allGroups.length > 0) {
+                            connectionId = allGroups[allGroups.length - 1].getAttribute('data-connection-id');
+                            console.log('Using most recent connection ID:', connectionId);
+                        }
+                    }
+                    
+                    console.log('Final connection ID:', connectionId);
+                    
                     if (connectionId) {
                         // Parse cardinality (e.g., "M:N" -> start: "M", end: "N")
                         const parts = cardinality.split(':');
+                        console.log('Cardinality parts:', parts);
+                        
                         if (parts.length === 2) {
                             const startCard = parts[0].trim();
                             const endCard = parts[1].trim();
+                            console.log('Parsed cardinality:', { startCard, endCard });
                             
                             // Update the connection data
+                            console.log('Calling erBuilder.setCardinality with:', connectionId, startCard, endCard);
                             window.erBuilder.setCardinality(connectionId, startCard, endCard);
                         } else {
+                            console.error('Invalid cardinality format:', cardinality);
                             window.erBuilder.updateStatus('Invalid cardinality format. Use format like "1:N" or "M:N"', 'error');
                         }
+                    } else {
+                        console.error('No connection ID found anywhere');
                     }
+                } else {
+                    console.error('Missing currentConnection or erBuilder in updateConnectionCardinality');
                 }
             }
 
@@ -2386,8 +2514,8 @@
                             </select>
                         </div>
                         <div class="modal-buttons">
-                            <button class="btn primary" onclick="connectionContextMenu.applyProperties()">✅ Apply</button>
-                            <button class="btn secondary" onclick="connectionContextMenu.closePropertiesModal()">❌ Cancel</button>
+                            <button class="btn primary" onclick="window.connectionContextMenu.applyProperties()">✅ Apply</button>
+                            <button class="btn secondary" onclick="window.connectionContextMenu.closePropertiesModal()">❌ Cancel</button>
                         </div>
                     </div>
                 `;
@@ -2396,36 +2524,57 @@
             }
 
             applyProperties() {
-                const cardinality = document.getElementById('cardinality-select').value;
-                const participation = document.getElementById('participation-select').value;
-                const label = document.getElementById('connection-label').value;
-                const lineStyle = document.getElementById('line-style-select').value;
-
-                if (this.currentConnection && window.erBuilder) {
-                    const connectionId = this.currentConnection.getAttribute('data-connection-id');
-                    
-                    // Apply cardinality
-                    if (cardinality) {
-                        this.updateConnectionCardinality(cardinality);
-                    }
-
-                    // Apply label
-                    if (label) {
-                        this.updateConnectionLabel(label);
-                    }
-
-                    // Apply line style
-                    if (lineStyle !== 'solid') {
-                        this.currentConnection.style.strokeDasharray = 
-                            lineStyle === 'dashed' ? '10,5' : '3,3';
-                    } else {
-                        this.currentConnection.style.strokeDasharray = '';
-                    }
-
-                    window.erBuilder.updateStatus('Connection properties updated!', 'success');
-                    window.erBuilder.saveState('Update connection properties');
+                console.log('=== APPLY PROPERTIES START ===');
+                
+                const cardinalitySelect = document.getElementById('cardinality-select');
+                if (!cardinalitySelect) {
+                    console.error('Cardinality select not found!');
+                    return;
                 }
-
+                
+                const cardinality = cardinalitySelect.value;
+                console.log('Selected cardinality:', cardinality);
+                
+                if (!cardinality) {
+                    console.error('No cardinality selected!');
+                    return;
+                }
+                
+                // DIRECT APPROACH: Update the most recent connection
+                if (window.erBuilder && window.erBuilder.connections.size > 0) {
+                    // Get the last connection (most recently created/selected)
+                    const connectionEntries = Array.from(window.erBuilder.connections.entries());
+                    const lastConnection = connectionEntries[connectionEntries.length - 1];
+                    const [connectionId, connectionData] = lastConnection;
+                    
+                    console.log('Updating connection:', connectionId, 'with cardinality:', cardinality);
+                    
+                    // Parse cardinality
+                    const parts = cardinality.split(':');
+                    if (parts.length === 2) {
+                        const startCard = parts[0].trim();
+                        const endCard = parts[1].trim();
+                        
+                        // Update connection data
+                        connectionData.cardinality.start = startCard;
+                        connectionData.cardinality.end = endCard;
+                        
+                        console.log('Updated connection data:', connectionData.cardinality);
+                        
+                        // Force visual update
+                        window.erBuilder.updateConnections();
+                        
+                        // Show success message
+                        window.erBuilder.updateStatus(`Cardinality updated to ${startCard}:${endCard}`, 'success');
+                        
+                        console.log('=== CARDINALITY UPDATE COMPLETE ===');
+                    } else {
+                        console.error('Invalid cardinality format:', cardinality);
+                    }
+                } else {
+                    console.error('No connections found or erBuilder missing');
+                }
+                
                 this.closePropertiesModal();
             }
 
@@ -2451,14 +2600,48 @@
                 this.isDragging = false;
                 this.dragOffset = { x: 0, y: 0 };
                 
+                // Mobile-specific properties
+                this.isMobile = window.innerWidth <= 900;
+                this.touchDevice = 'ontouchstart' in window;
+                this.performanceMode = this.isMobile; // Enable performance optimizations on mobile
+                
                 // Undo/Redo system
                 this.history = [];
                 this.historyIndex = -1;
-                this.maxHistorySize = 50;
+                this.maxHistorySize = this.performanceMode ? 25 : 50; // Reduce history on mobile
 
+                // Performance optimizations for mobile
+                this.optimizeForMobile();
+                
                 this.initializeEventListeners();
                 this.saveState('Initial state');
-                this.updateStatus('Advanced ER Builder Pro initialized - Start by dragging elements to the canvas');
+                
+                const message = this.isMobile ? 
+                    'Mobile ER Builder initialized - Tap tools then canvas to add elements' :
+                    'Advanced ER Builder Pro initialized - Start by dragging elements to the canvas';
+                this.updateStatus(message);
+            }
+
+            optimizeForMobile() {
+                if (!this.performanceMode) return;
+
+                // Reduce animation complexity on mobile
+                document.documentElement.style.setProperty('--animation-duration', '0.2s');
+                
+                // Optimize canvas rendering
+                if (this.canvas) {
+                    this.canvas.style.willChange = 'transform';
+                }
+                
+                // Reduce SVG complexity
+                if (this.svgCanvas) {
+                    this.svgCanvas.style.shapeRendering = 'optimizeSpeed';
+                }
+
+                // Throttle updates on mobile
+                this.throttleUpdates = true;
+                this.lastUpdate = 0;
+                this.updateInterval = 16; // ~60fps
             }
 
             initializeEventListeners() {
@@ -2474,7 +2657,16 @@
                 });
 
                 // Connect button
-                document.getElementById('connectBtn').addEventListener('click', () => this.toggleConnect());
+                const connectBtn = document.getElementById('connectBtn');
+                if (connectBtn) {
+                    connectBtn.addEventListener('click', () => {
+                        console.log('Connect button clicked');
+                        this.toggleConnect();
+                    });
+                    console.log('Connect button event listener added');
+                } else {
+                    console.error('Connect button not found!');
+                }
 
                 // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -2485,31 +2677,51 @@
 
             handleDragStart(e) {
                 const elementType = e.target.getAttribute('data-type');
+                console.log('Drag started for element type:', elementType);
                 e.dataTransfer.setData('text/plain', elementType);
                 e.dataTransfer.effectAllowed = 'copy';
+            }
+
+            // Enhanced coordinate calculation for mobile
+            getCanvasCoordinates(clientX, clientY) {
+                const rect = this.canvas.getBoundingClientRect();
+                
+                // Base coordinates
+                let x = clientX - rect.left;
+                let y = clientY - rect.top;
+                
+                // Account for mobile viewport scaling
+                const scale = window.devicePixelRatio || 1;
+                if (window.innerWidth <= 900) {
+                    // Mobile-specific coordinate adjustments
+                    x = x / scale;
+                    y = y / scale;
+                }
+                
+                // Adjust for current zoom and pan
+                if (window.currentZoom && window.translateX !== undefined && window.translateY !== undefined) {
+                    x = (x - window.translateX) / window.currentZoom;
+                    y = (y - window.translateY) / window.currentZoom;
+                }
+                
+                // Ensure elements are within visible canvas area with mobile-friendly margins
+                const margin = window.innerWidth <= 900 ? 40 : 20;
+                x = Math.max(margin, Math.min(x, rect.width - 120));
+                y = Math.max(margin, Math.min(y, rect.height - 120));
+                
+                return { x, y };
             }
 
             handleCanvasDrop(e) {
                 e.preventDefault();
                 const elementType = e.dataTransfer.getData('text/plain');
+                console.log('Drop event triggered, element type:', elementType);
                 if (elementType) {
-                    const rect = this.canvas.getBoundingClientRect();
-                    
-                    // Account for zoom and pan transformations
-                    let x = e.clientX - rect.left;
-                    let y = e.clientY - rect.top;
-                    
-                    // Adjust for current zoom and pan
-                    if (window.currentZoom && window.translateX !== undefined && window.translateY !== undefined) {
-                        x = (x - window.translateX) / window.currentZoom;
-                        y = (y - window.translateY) / window.currentZoom;
-                    }
-                    
-                    // Ensure elements are within visible canvas area
-                    x = Math.max(20, Math.min(x, rect.width - 100));
-                    y = Math.max(20, Math.min(y, rect.height - 100));
-                    
-                    this.createElement(elementType, x, y);
+                    const coords = this.getCanvasCoordinates(e.clientX, e.clientY);
+                    console.log('Creating element at coordinates:', coords);
+                    this.createElement(elementType, coords.x, coords.y);
+                } else {
+                    console.log('No element type data found in drop event');
                 }
             }
 
@@ -2811,13 +3023,27 @@
                     connectBtn.textContent = '❌ Cancel Connect';
                     connectBtn.classList.add('active');
                     this.canvas.style.cursor = 'crosshair';
-                    this.updateStatus('Connection mode: Click two elements to connect them');
+                    
+                    // Show mobile connection indicator for touch devices
+                    if (window.innerWidth <= 900) {
+                        showMobileConnectionMode();
+                        this.updateStatus('Tap two elements to connect them');
+                    } else {
+                        this.updateStatus('Connection mode: Click two elements to connect them');
+                    }
                 } else {
                     connectBtn.textContent = '🔗 Connect Elements';
                     connectBtn.classList.remove('active');
                     this.canvas.style.cursor = 'default';
                     this.connectStart = null;
-                    this.updateStatus('Connection mode disabled');
+                    
+                    // Hide mobile connection indicator
+                    if (window.innerWidth <= 900) {
+                        hideMobileConnectionMode();
+                        this.updateStatus('Connection mode disabled');
+                    } else {
+                        this.updateStatus('Connection mode disabled');
+                    }
                 }
             }
 
@@ -2957,6 +3183,7 @@
                     startLabel.setAttribute('data-label-for', connection.id);
                     startLabel.setAttribute('data-label-type', 'start');
                     startLabel.textContent = connection.cardinality.start;
+                    console.log('Setting start label text to:', connection.cardinality.start);
                     
                     const endLabelBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     endLabelBg.setAttribute('cx', points.endX - (points.endX - points.startX) * 0.25);
@@ -2972,6 +3199,7 @@
                     endLabel.setAttribute('data-label-for', connection.id);
                     endLabel.setAttribute('data-label-type', 'end');
                     endLabel.textContent = connection.cardinality.end;
+                    console.log('Setting end label text to:', connection.cardinality.end);
                     
                     // Enhanced participation constraints
                     if (connection.participation.start === 'total') {
@@ -3080,14 +3308,21 @@
             }
 
             updateConnections() {
+                console.log('=== UPDATE CONNECTIONS START ===');
+                console.log('Total connections to render:', this.connections.size);
+                
                 // Clear existing connections
                 const existingConnections = this.svgCanvas.querySelectorAll('.connection-group');
+                console.log('Removing', existingConnections.length, 'existing connection groups');
                 existingConnections.forEach(group => group.remove());
                 
                 // Re-render all connections
-                this.connections.forEach(connection => {
+                this.connections.forEach((connection, id) => {
+                    console.log('Rendering connection:', id, 'with cardinality:', connection.cardinality);
                     this.renderConnection(connection);
                 });
+                
+                console.log('=== UPDATE CONNECTIONS COMPLETE ===');
             }
 
             showContextMenu(x, y, element) {
@@ -3150,12 +3385,44 @@
             }
 
             setCardinality(connectionId, startCard, endCard) {
+                console.log('ERBuilder.setCardinality called with:', { connectionId, startCard, endCard });
                 const connection = this.connections.get(connectionId);
+                console.log('Found connection in map:', connection);
+                
                 if (connection) {
+                    console.log('Updating connection cardinality from:', connection.cardinality);
                     connection.cardinality.start = startCard;
                     connection.cardinality.end = endCard;
+                    console.log('Updated connection cardinality to:', connection.cardinality);
+                    
+                    // Force immediate visual update
                     this.updateConnections();
-                    this.updateStatus(`Updated cardinality to ${startCard}:${endCard}`);
+                    
+                    // Also try to directly update the existing SVG labels
+                    const startLabel = this.svgCanvas.querySelector(`[data-label-for="${connectionId}"][data-label-type="start"]`);
+                    const endLabel = this.svgCanvas.querySelector(`[data-label-for="${connectionId}"][data-label-type="end"]`);
+                    
+                    if (startLabel) {
+                        console.log('Updating start label from', startLabel.textContent, 'to', startCard);
+                        startLabel.textContent = startCard;
+                    }
+                    if (endLabel) {
+                        console.log('Updating end label from', endLabel.textContent, 'to', endCard);
+                        endLabel.textContent = endCard;
+                    }
+                    
+                    this.updateStatus(`Updated cardinality to ${startCard}:${endCard}`, 'success');
+                    console.log('Cardinality update completed');
+                } else {
+                    console.error('Connection not found in connections map for ID:', connectionId);
+                    console.log('Available connections:', Array.from(this.connections.keys()));
+                    
+                    // Try to find connection by SVG element
+                    const allConnectionGroups = this.svgCanvas.querySelectorAll('.connection-group');
+                    console.log('Available SVG connection groups:', allConnectionGroups.length);
+                    allConnectionGroups.forEach(group => {
+                        console.log('Group ID:', group.getAttribute('data-connection-id'));
+                    });
                 }
             }
 
@@ -3795,6 +4062,57 @@
                 document.getElementById('elementCount').textContent = `Elements: ${this.elements.size}`;
             }
 
+            // Mobile Performance Optimizations
+            throttledUpdate(callback) {
+                if (!this.throttleUpdates) {
+                    return callback();
+                }
+
+                const now = Date.now();
+                if (now - this.lastUpdate >= this.updateInterval) {
+                    this.lastUpdate = now;
+                    return callback();
+                }
+            }
+
+            updateElementConnections(elementId) {
+                if (this.performanceMode) {
+                    // Batch connection updates on mobile for better performance
+                    if (!this.pendingConnectionUpdates) {
+                        this.pendingConnectionUpdates = new Set();
+                    }
+                    this.pendingConnectionUpdates.add(elementId);
+                    
+                    if (!this.connectionUpdateTimeout) {
+                        this.connectionUpdateTimeout = setTimeout(() => {
+                            this.flushConnectionUpdates();
+                        }, 50);
+                    }
+                } else {
+                    // Immediate update on desktop
+                    this.immediateUpdateElementConnections(elementId);
+                }
+            }
+
+            flushConnectionUpdates() {
+                if (this.pendingConnectionUpdates) {
+                    this.pendingConnectionUpdates.forEach(elementId => {
+                        this.immediateUpdateElementConnections(elementId);
+                    });
+                    this.pendingConnectionUpdates.clear();
+                }
+                this.connectionUpdateTimeout = null;
+            }
+
+            immediateUpdateElementConnections(elementId) {
+                // Update all connections for the given element
+                this.connections.forEach((connection, connectionId) => {
+                    if (connection.start === elementId || connection.end === elementId) {
+                        this.updateConnectionPath(connectionId);
+                    }
+                });
+            }
+
             // Undo/Redo System
             saveState(description) {
                 // Remove future history if we're not at the end
@@ -4033,7 +4351,21 @@
             window.isPanning = false;
         });
 
-        // Touch support for mobile devices
+        // Enhanced Touch support for mobile devices
+        let touchState = {
+            isPanning: false,
+            isDragging: false,
+            isZooming: false,
+            startX: 0,
+            startY: 0,
+            lastTouchTime: 0,
+            dragElement: null,
+            initialDistance: 0,
+            initialZoom: 1,
+            selectedTool: null
+        };
+
+        // Mobile toolbar interaction
         document.addEventListener('touchstart', (e) => {
             if (e.target.closest('#canvas')) {
                 // Close mobile toolbar when user starts interacting with canvas
@@ -4043,32 +4375,112 @@
             }
         }, { passive: true });
 
-        // Touch events for pan and zoom
-        let initialDistance = 0;
-        let initialZoom = 1;
-        
+        // Enhanced touch event handling
         document.addEventListener('touchstart', (e) => {
+            const now = Date.now();
+            const touch = e.touches[0];
+            const target = e.target;
+
             if (e.touches.length === 2) {
                 // Two-finger gesture for zoom
                 const touch1 = e.touches[0];
                 const touch2 = e.touches[1];
-                initialDistance = Math.sqrt(
+                touchState.initialDistance = Math.sqrt(
                     Math.pow(touch2.clientX - touch1.clientX, 2) +
                     Math.pow(touch2.clientY - touch1.clientY, 2)
                 );
-                initialZoom = window.currentZoom || 1;
+                touchState.initialZoom = window.currentZoom || 1;
+                touchState.isZooming = true;
                 e.preventDefault();
-            } else if (e.touches.length === 1 && e.target.closest('#canvas')) {
-                // Single finger pan
-                const touch = e.touches[0];
-                window.isPanning = true;
-                window.startX = touch.clientX - (window.translateX || 0);
-                window.startY = touch.clientY - (window.translateY || 0);
+                return;
+            }
+
+            // Handle toolbar tool selection
+            if (target.closest('.tool-item')) {
+                const toolItem = target.closest('.tool-item');
+                const toolType = toolItem.getAttribute('data-type');
+                touchState.selectedTool = toolType;
+                
+                // Visual feedback
+                document.querySelectorAll('.tool-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                toolItem.classList.add('selected');
+                
+                // Update status
+                if (erBuilder) {
+                    erBuilder.updateStatus(`Selected: ${toolType}. Tap on canvas to place.`, 'info');
+                }
+                e.preventDefault();
+                return;
+            }
+
+            // Handle diagram element interaction
+            if (target.closest('.diagram-element')) {
+                const element = target.closest('.diagram-element');
+                touchState.isDragging = true;
+                touchState.dragElement = element;
+                touchState.startX = touch.clientX;
+                touchState.startY = touch.clientY;
+                
+                // Select element
+                if (erBuilder) {
+                    erBuilder.selectElement(element);
+                }
+                e.preventDefault();
+                return;
+            }
+
+            // Handle canvas interaction
+            if (target.closest('#canvas')) {
+                const rect = erBuilder.canvas.getBoundingClientRect();
+                let x = touch.clientX - rect.left;
+                let y = touch.clientY - rect.top;
+
+                // Adjust for zoom and pan
+                if (window.currentZoom && window.translateX !== undefined && window.translateY !== undefined) {
+                    x = (x - window.translateX) / window.currentZoom;
+                    y = (y - window.translateY) / window.currentZoom;
+                }
+
+                // Double tap detection for element creation
+                if (now - touchState.lastTouchTime < 300) {
+                    // Double tap - create element if tool selected
+                    if (touchState.selectedTool && erBuilder) {
+                        erBuilder.createElement(touchState.selectedTool, x, y);
+                        touchState.selectedTool = null;
+                        document.querySelectorAll('.tool-item').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+                        e.preventDefault();
+                        return;
+                    }
+                } else {
+                    // Single tap - create element if tool selected
+                    if (touchState.selectedTool && erBuilder) {
+                        erBuilder.createElement(touchState.selectedTool, x, y);
+                        touchState.selectedTool = null;
+                        document.querySelectorAll('.tool-item').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+                        e.preventDefault();
+                        return;
+                    } else {
+                        // Start panning
+                        touchState.isPanning = true;
+                        touchState.startX = touch.clientX - (window.translateX || 0);
+                        touchState.startY = touch.clientY - (window.translateY || 0);
+                    }
+                }
+                
+                touchState.lastTouchTime = now;
             }
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
+            const touch = e.touches[0];
+
+            if (e.touches.length === 2 && touchState.isZooming) {
                 // Two-finger zoom
                 const touch1 = e.touches[0];
                 const touch2 = e.touches[1];
@@ -4076,15 +4488,40 @@
                     Math.pow(touch2.clientX - touch1.clientX, 2) +
                     Math.pow(touch2.clientY - touch1.clientY, 2)
                 );
-                const zoomFactor = currentDistance / initialDistance;
-                window.currentZoom = Math.max(0.3, Math.min(3, initialZoom * zoomFactor));
+                const zoomFactor = currentDistance / touchState.initialDistance;
+                window.currentZoom = Math.max(0.3, Math.min(3, touchState.initialZoom * zoomFactor));
                 updateZoom();
                 e.preventDefault();
-            } else if (e.touches.length === 1 && window.isPanning) {
+                return;
+            }
+
+            if (touchState.isDragging && touchState.dragElement) {
+                // Drag element
+                const deltaX = touch.clientX - touchState.startX;
+                const deltaY = touch.clientY - touchState.startY;
+                
+                const element = touchState.dragElement;
+                const currentLeft = parseInt(element.style.left) || 0;
+                const currentTop = parseInt(element.style.top) || 0;
+                
+                element.style.left = (currentLeft + deltaX / (window.currentZoom || 1)) + 'px';
+                element.style.top = (currentTop + deltaY / (window.currentZoom || 1)) + 'px';
+                
+                touchState.startX = touch.clientX;
+                touchState.startY = touch.clientY;
+                
+                // Update connections if element has any
+                if (erBuilder) {
+                    erBuilder.updateElementConnections(element.id);
+                }
+                e.preventDefault();
+                return;
+            }
+
+            if (touchState.isPanning && e.touches.length === 1) {
                 // Single finger pan
-                const touch = e.touches[0];
-                window.translateX = touch.clientX - window.startX;
-                window.translateY = touch.clientY - window.startY;
+                window.translateX = touch.clientX - touchState.startX;
+                window.translateY = touch.clientY - touchState.startY;
                 updateZoom();
                 e.preventDefault();
             }
@@ -4092,7 +4529,10 @@
 
         document.addEventListener('touchend', (e) => {
             if (e.touches.length === 0) {
-                window.isPanning = false;
+                touchState.isPanning = false;
+                touchState.isDragging = false;
+                touchState.isZooming = false;
+                touchState.dragElement = null;
             }
         }, { passive: true });
         
@@ -4477,6 +4917,9 @@
             erBuilder = new AdvancedERBuilder();
             window.erBuilder = erBuilder; // Make it globally accessible
             console.log('Advanced ER Builder Pro initialized successfully!');
+            console.log('Canvas element:', document.getElementById('canvas'));
+            console.log('SVG Canvas element:', document.getElementById('svgCanvas'));
+            console.log('Connect button element:', document.getElementById('connectBtn'));
             
             // Initialize button states
             updateUndoRedoButtons();
@@ -4660,6 +5103,315 @@
             Delete Connection
         </div>
     </div>
+
+    <!-- Mobile Help Overlay -->
+    <div id="mobile-help-overlay" class="mobile-help-overlay">
+        <div class="mobile-help-content">
+            <div class="mobile-help-header">
+                <h3>📱 Mobile Guide</h3>
+                <button class="mobile-help-close" onclick="closeMobileHelp()">×</button>
+            </div>
+            <div class="mobile-help-body">
+                <div class="help-section">
+                    <h4>🎯 Adding Elements</h4>
+                    <p>1. Tap a tool in the toolbar to select it<br>
+                    2. Tap anywhere on the canvas to place it<br>
+                    3. Double-tap for quick placement</p>
+                </div>
+                <div class="help-section">
+                    <h4>✋ Moving Elements</h4>
+                    <p>• Touch and drag any element to move it<br>
+                    • Connections update automatically</p>
+                </div>
+                <div class="help-section">
+                    <h4>🔗 Connecting Elements</h4>
+                    <p>• Use the "Connect" button for easier connections<br>
+                    • Tap first element, then tap second element<br>
+                    • Long press connections to edit properties</p>
+                </div>
+                <div class="help-section">
+                    <h4>🔍 Navigation</h4>
+                    <p>• Pinch to zoom in/out<br>
+                    • Use two fingers to pan around<br>
+                    • Tap ☰ to toggle toolbar</p>
+                </div>
+            </div>
+            <button class="mobile-help-got-it" onclick="closeMobileHelp()">Got it! 👍</button>
+        </div>
+    </div>
+
+    <!-- Mobile Connection Mode Indicator -->
+    <div id="mobile-connection-indicator" class="mobile-connection-indicator">
+        <div class="connection-indicator-content">
+            <span class="indicator-icon">🔗</span>
+            <span class="indicator-text">Connection Mode: Tap elements to connect</span>
+            <button class="indicator-close" onclick="cancelMobileConnection()">×</button>
+        </div>
+    </div>
+
+    <style>
+        /* Mobile Help Overlay Styles */
+        .mobile-help-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .mobile-help-overlay.active {
+            display: flex;
+        }
+
+        .mobile-help-content {
+            background: white;
+            border-radius: 16px;
+            margin: 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUpMobile 0.3s ease-out;
+        }
+
+        @keyframes slideUpMobile {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .mobile-help-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-help-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .mobile-help-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .mobile-help-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-help-body {
+            padding: 20px;
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .help-section:last-child {
+            border-bottom: none;
+        }
+
+        .help-section h4 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .help-section p {
+            margin: 0;
+            line-height: 1.6;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mobile-help-got-it {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 20px 20px;
+            width: calc(100% - 40px);
+            transition: transform 0.2s;
+        }
+
+        .mobile-help-got-it:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Connection Indicator */
+        .mobile-connection-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: none;
+        }
+
+        .mobile-connection-indicator.active {
+            display: block;
+            animation: slideDownMobile 0.3s ease-out;
+        }
+
+        @keyframes slideDownMobile {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        .connection-indicator-content {
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .indicator-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hide mobile elements on desktop */
+        @media (min-width: 901px) {
+            .mobile-help-overlay,
+            .mobile-connection-indicator {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        // Mobile Help Functions
+        function showMobileHelp() {
+            const overlay = document.getElementById('mobile-help-overlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        }
+
+        function closeMobileHelp() {
+            const overlay = document.getElementById('mobile-help-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            // Save that user has seen the help
+            localStorage.setItem('er_mobile_help_seen', 'true');
+        }
+
+        function showMobileConnectionMode() {
+            const indicator = document.getElementById('mobile-connection-indicator');
+            if (indicator) {
+                indicator.classList.add('active');
+            }
+        }
+
+        function hideMobileConnectionMode() {
+            const indicator = document.getElementById('mobile-connection-indicator');
+            if (indicator) {
+                indicator.classList.remove('active');
+            }
+        }
+
+        function cancelMobileConnection() {
+            hideMobileConnectionMode();
+            // Reset connection mode
+            if (window.erBuilder && window.erBuilder.isConnecting) {
+                window.erBuilder.isConnecting = false;
+                document.getElementById('connectBtn').classList.remove('active');
+            }
+        }
+
+        // Show mobile help on first visit for mobile devices
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth <= 900 && !localStorage.getItem('er_mobile_help_seen')) {
+                setTimeout(() => {
+                    showMobileHelp();
+                }, 1000);
+            }
+        });
+        
+        // Test function for cardinality updates
+        function testCardinality() {
+            console.log('=== TEST CARDINALITY BUTTON CLICKED ===');
+            if (window.erBuilder && window.erBuilder.connections.size > 0) {
+                const connectionEntries = Array.from(window.erBuilder.connections.entries());
+                const [connectionId, connectionData] = connectionEntries[connectionEntries.length - 1];
+                
+                console.log('Testing with connection:', connectionId);
+                console.log('Current cardinality:', connectionData.cardinality);
+                
+                // Change to M:N cardinality for testing
+                connectionData.cardinality.start = 'M';
+                connectionData.cardinality.end = 'N';
+                
+                console.log('Updated cardinality:', connectionData.cardinality);
+                
+                // Force visual update
+                window.erBuilder.updateConnections();
+                
+                window.erBuilder.updateStatus('Test cardinality updated to M:N', 'success');
+            } else {
+                alert('Create at least one connection first!');
+            }
+        }
+    </script>
 
 </body>
 </html>
