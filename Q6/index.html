@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Query Simulator - DBMS Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="../index.html" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="logo">
+                        <i class="fas fa-terminal"></i>
+                        <h1>SQL Query Simulator</h1>
+                    </div>
+                </div>
+                <div class="header-buttons">
+                    <button onclick="showTutorial()" class="btn btn-tutorial">
+                        <i class="fas fa-book"></i> Tutorial
+                    </button>
+                    <button onclick="loadSampleData()" class="btn btn-demo">
+                        <i class="fas fa-magic"></i> Sample Data
+                    </button>
+                    <button onclick="clearAll()" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Tables Section -->
+            <section class="section tables-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-table"></i> Database Tables</h2>
+                    <button onclick="showCreateTableModal()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Table
+                    </button>
+                </div>
+                <div class="tables-container" id="tablesContainer">
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-database"></i>
+                        <p>No tables created yet. Click "Create Table" or "Load Sample Data" to get started.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Query Section -->
+            <section class="section query-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-code"></i> SQL Query Editor</h2>
+                </div>
+                <div class="query-editor">
+                    <div class="query-tabs">
+                        <button class="tab active" onclick="switchTab('basic')">Basic Queries</button>
+                        <button class="tab" onclick="switchTab('aggregate')">Aggregates</button>
+                        <button class="tab" onclick="switchTab('set')">Set Operations</button>
+                        <button class="tab" onclick="switchTab('nested')">Nested Queries</button>
+                    </div>
+                    
+                    <div class="query-input-container">
+                        <textarea id="queryInput" placeholder="Enter your SQL query here...
+Example: SELECT * FROM employees WHERE salary > 50000"></textarea>
+                        <div class="query-buttons">
+                            <button onclick="executeQuery()" class="btn btn-execute">
+                                <i class="fas fa-play"></i> Execute Query
+                            </button>
+                            <button onclick="formatQuery()" class="btn btn-format">
+                                <i class="fas fa-align-left"></i> Format
+                            </button>
+                            <button onclick="clearQuery()" class="btn btn-clear-query">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Query Templates -->
+                    <div class="query-templates" id="queryTemplates">
+                        <h4>Quick Templates:</h4>
+                        <div class="templates-grid" id="templatesGrid">
+                            <!-- Templates will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="section results-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-table"></i> Query Results</h2>
+                    <div class="result-actions">
+                        <span id="resultCount"></span>
+                        <button onclick="exportResults()" class="btn btn-export" id="exportBtn" style="display: none;">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="results-container" id="resultsContainer">
+                    <div class="empty-result">
+                        <i class="fas fa-search"></i>
+                        <p>Execute a query to see results here</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Query History -->
+            <section class="section history-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Query History</h2>
+                    <button onclick="clearHistory()" class="btn btn-small">Clear History</button>
+                </div>
+                <div class="history-container" id="historyContainer">
+                    <p class="empty-history">No queries executed yet</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Table Modal -->
+    <div id="createTableModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createTableModal')">&times;</span>
+            <h2><i class="fas fa-plus-circle"></i> Create New Table</h2>
+            <div class="form-group">
+                <label for="tableName">Table Name:</label>
+                <input type="text" id="tableName" placeholder="e.g., employees, products">
+            </div>
+            <div class="form-group">
+                <label for="tableColumns">Columns (comma-separated):</label>
+                <input type="text" id="tableColumns" placeholder="e.g., id, name, salary, department">
+            </div>
+            <div class="form-group">
+                <label>Initial Data (JSON format - optional):</label>
+                <textarea id="tableData" placeholder='[{"id": 1, "name": "John", "salary": 50000}]'></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="createTable()" class="btn btn-primary">Create Table</button>
+                <button onclick="closeModal('createTableModal')" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Modal -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeModal('tutorialModal')">&times;</span>
+            <h2><i class="fas fa-book"></i> SQL Query Simulator Tutorial</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-section">
+                    <h3>📊 Basic Queries</h3>
+                    <pre>SELECT * FROM employees                    -- Select all columns
+SELECT name, salary FROM employees          -- Select specific columns
+SELECT * FROM employees WHERE salary > 50000 -- Filter with WHERE
+SELECT * FROM employees ORDER BY salary DESC -- Sort results</pre>
+                </div>
+                <div class="tutorial-section">
+                    <h3>📈 Aggregate Functions</h3>
+                    <pre>SELECT COUNT(*) FROM employees              -- Count rows
+SELECT SUM(salary) FROM employees           -- Sum values
+SELECT AVG(salary) FROM employees           -- Average value
+SELECT department, COUNT(*) FROM employees GROUP BY department
+SELECT department, AVG(salary) FROM employees GROUP BY department HAVING AVG(salary) > 50000</pre>
+                </div>
+                <div class="tutorial-section">
+                    <h3>🔗 Set Operations</h3>
+                    <pre>SELECT * FROM table1 UNION SELECT * FROM table2        -- Combine (unique)
+SELECT * FROM table1 INTERSECT SELECT * FROM table2    -- Common rows
+SELECT * FROM table1 EXCEPT SELECT * FROM table2       -- Difference</pre>
+                </div>
+                <div class="tutorial-section">
+                    <h3>🔍 Nested Queries</h3>
+                    <pre>SELECT * FROM employees WHERE salary > (SELECT AVG(salary) FROM employees)
+SELECT * FROM employees WHERE department IN (SELECT department FROM departments WHERE location = 'NYC')</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Data Modal -->
+    <div id="addDataModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addDataModal')">&times;</span>
+            <h2><i class="fas fa-plus"></i> Add Row to <span id="addDataTableName"></span></h2>
+            <div id="addDataForm"></div>
+            <div class="modal-buttons">
+                <button onclick="addRow()" class="btn btn-primary">Add Row</button>
+                <button onclick="closeModal('addDataModal')" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
