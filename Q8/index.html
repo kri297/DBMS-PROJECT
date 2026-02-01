@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadlock & Recovery Visualizer - DBMS Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="../index.html" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="logo">
+                        <i class="fas fa-lock"></i>
+                        <h1>Deadlock & Recovery</h1>
+                    </div>
+                </div>
+                <div class="header-buttons">
+                    <button onclick="showTutorial()" class="btn btn-tutorial">
+                        <i class="fas fa-book"></i> Tutorial
+                    </button>
+                    <button onclick="loadPresetScenario('simple')" class="btn btn-demo">
+                        <i class="fas fa-magic"></i> Demo
+                    </button>
+                    <button onclick="resetAll()" class="btn btn-reset">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Resource Allocation Graph Section -->
+            <section class="section graph-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-project-diagram"></i> Resource Allocation Graph (RAG)</h2>
+                    <div class="graph-controls">
+                        <button onclick="addProcess()" class="btn btn-small btn-add">
+                            <i class="fas fa-plus"></i> Add Process
+                        </button>
+                        <button onclick="addResource()" class="btn btn-small btn-add">
+                            <i class="fas fa-plus"></i> Add Resource
+                        </button>
+                        <button onclick="detectDeadlock()" class="btn btn-detect">
+                            <i class="fas fa-search"></i> Detect Deadlock
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="graph-container">
+                    <div class="graph-canvas" id="graphCanvas">
+                        <svg id="graphSvg"></svg>
+                        <div class="graph-nodes" id="graphNodes"></div>
+                    </div>
+                    
+                    <div class="graph-legend">
+                        <div class="legend-item">
+                            <div class="legend-circle process"></div>
+                            <span>Process</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-square resource"></div>
+                            <span>Resource</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-arrow request"></div>
+                            <span>Request Edge</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-arrow allocation"></div>
+                            <span>Allocation Edge</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle deadlock"></div>
+                            <span>In Deadlock</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edge-controls">
+                    <h3>Add Edge</h3>
+                    <div class="edge-form">
+                        <select id="edgeFrom">
+                            <option value="">From...</option>
+                        </select>
+                        <select id="edgeType">
+                            <option value="request">→ Requests</option>
+                            <option value="allocation">← Holds</option>
+                        </select>
+                        <select id="edgeTo">
+                            <option value="">To...</option>
+                        </select>
+                        <button onclick="addEdge()" class="btn btn-primary">Add Edge</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deadlock Detection Result -->
+            <section class="section detection-section" id="detectionSection" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Deadlock Detection Result</h2>
+                </div>
+                <div id="detectionResult"></div>
+            </section>
+
+            <!-- Banker's Algorithm Section -->
+            <section class="section bankers-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-university"></i> Banker's Algorithm - Safe State Checker</h2>
+                    <button onclick="loadBankersDemo()" class="btn btn-small btn-demo">
+                        <i class="fas fa-play"></i> Load Demo
+                    </button>
+                </div>
+                
+                <div class="bankers-container">
+                    <div class="bankers-input">
+                        <div class="input-group">
+                            <h3>Configuration</h3>
+                            <div class="form-row">
+                                <label>Number of Processes:</label>
+                                <input type="number" id="numProcesses" value="5" min="1" max="10">
+                            </div>
+                            <div class="form-row">
+                                <label>Number of Resources:</label>
+                                <input type="number" id="numResources" value="3" min="1" max="5">
+                            </div>
+                            <button onclick="initBankers()" class="btn btn-primary">Initialize</button>
+                        </div>
+
+                        <div class="matrices-container" id="matricesContainer" style="display: none;">
+                            <div class="matrix-group">
+                                <h4>Available Resources</h4>
+                                <div id="availableMatrix" class="matrix"></div>
+                            </div>
+                            
+                            <div class="matrix-group">
+                                <h4>Maximum Need Matrix</h4>
+                                <div id="maxMatrix" class="matrix"></div>
+                            </div>
+                            
+                            <div class="matrix-group">
+                                <h4>Allocation Matrix</h4>
+                                <div id="allocationMatrix" class="matrix"></div>
+                            </div>
+                            
+                            <div class="matrix-group">
+                                <h4>Need Matrix (Max - Allocation)</h4>
+                                <div id="needMatrix" class="matrix readonly"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bankers-actions" id="bankersActions" style="display: none;">
+                        <button onclick="checkSafeState()" class="btn btn-execute">
+                            <i class="fas fa-check-circle"></i> Check Safe State
+                        </button>
+                        <button onclick="requestResource()" class="btn btn-request">
+                            <i class="fas fa-hand-paper"></i> Simulate Request
+                        </button>
+                    </div>
+                    
+                    <div class="bankers-result" id="bankersResult"></div>
+                </div>
+            </section>
+
+            <!-- Deadlock Recovery Section -->
+            <section class="section recovery-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-first-aid"></i> Deadlock Recovery Strategies</h2>
+                </div>
+                
+                <div class="recovery-container">
+                    <div class="recovery-card" onclick="demonstrateRecovery('abort-all')">
+                        <div class="recovery-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <h3>Abort All Processes</h3>
+                        <p>Terminate all deadlocked processes. Simple but costly - all work is lost.</p>
+                        <button class="btn btn-small">Demo</button>
+                    </div>
+                    
+                    <div class="recovery-card" onclick="demonstrateRecovery('abort-one')">
+                        <div class="recovery-icon">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <h3>Abort One at a Time</h3>
+                        <p>Abort processes one by one until deadlock is resolved. Choose based on priority/cost.</p>
+                        <button class="btn btn-small">Demo</button>
+                    </div>
+                    
+                    <div class="recovery-card" onclick="demonstrateRecovery('preempt')">
+                        <div class="recovery-icon">
+                            <i class="fas fa-hand-holding"></i>
+                        </div>
+                        <h3>Resource Preemption</h3>
+                        <p>Take resources from some processes and give them to others until deadlock breaks.</p>
+                        <button class="btn btn-small">Demo</button>
+                    </div>
+                    
+                    <div class="recovery-card" onclick="demonstrateRecovery('rollback')">
+                        <div class="recovery-icon">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <h3>Rollback to Checkpoint</h3>
+                        <p>Roll back processes to a safe checkpoint state and restart from there.</p>
+                        <button class="btn btn-small">Demo</button>
+                    </div>
+                </div>
+
+                <div class="recovery-demo" id="recoveryDemo" style="display: none;">
+                    <h3>Recovery Demonstration</h3>
+                    <div class="recovery-animation" id="recoveryAnimation"></div>
+                    <div class="recovery-log" id="recoveryLog"></div>
+                </div>
+            </section>
+
+            <!-- Deadlock Prevention Info -->
+            <section class="section prevention-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-shield-alt"></i> Deadlock Prevention & Avoidance</h2>
+                </div>
+                
+                <div class="prevention-grid">
+                    <div class="prevention-card">
+                        <h3><i class="fas fa-hand-paper"></i> Mutual Exclusion</h3>
+                        <p>Allow resource sharing where possible. Some resources (like read-only files) don't need exclusive access.</p>
+                    </div>
+                    <div class="prevention-card">
+                        <h3><i class="fas fa-hand-holding"></i> Hold and Wait</h3>
+                        <p>Require processes to request all resources at once before execution begins.</p>
+                    </div>
+                    <div class="prevention-card">
+                        <h3><i class="fas fa-ban"></i> No Preemption</h3>
+                        <p>Allow the system to forcibly take resources from processes when necessary.</p>
+                    </div>
+                    <div class="prevention-card">
+                        <h3><i class="fas fa-sync"></i> Circular Wait</h3>
+                        <p>Impose ordering on resource types and require processes to request resources in order.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Tutorial Modal -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeModal('tutorialModal')">&times;</span>
+            <h2><i class="fas fa-book"></i> Deadlock Concepts Tutorial</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-section">
+                    <h3>🔒 What is a Deadlock?</h3>
+                    <p>A deadlock occurs when two or more processes are waiting indefinitely for resources held by each other. None can proceed because each is waiting for the other to release resources.</p>
+                </div>
+                <div class="tutorial-section">
+                    <h3>📊 Resource Allocation Graph</h3>
+                    <p><strong>Nodes:</strong> Circles represent processes (P1, P2...), Squares represent resources (R1, R2...)</p>
+                    <p><strong>Request Edge:</strong> Arrow from Process to Resource (P→R) means P is waiting for R</p>
+                    <p><strong>Allocation Edge:</strong> Arrow from Resource to Process (R→P) means R is held by P</p>
+                    <p><strong>Deadlock:</strong> Exists if there's a cycle in the graph</p>
+                </div>
+                <div class="tutorial-section">
+                    <h3>🏦 Banker's Algorithm</h3>
+                    <p>A deadlock avoidance algorithm that checks if granting a resource request would leave the system in a safe state.</p>
+                    <p><strong>Safe State:</strong> A sequence of processes exists where each can finish with available resources</p>
+                    <p><strong>Unsafe State:</strong> No such sequence exists - potential for deadlock</p>
+                </div>
+                <div class="tutorial-section">
+                    <h3>🚨 Necessary Conditions for Deadlock</h3>
+                    <ol>
+                        <li><strong>Mutual Exclusion:</strong> Resources cannot be shared</li>
+                        <li><strong>Hold and Wait:</strong> Process holds resources while waiting for more</li>
+                        <li><strong>No Preemption:</strong> Resources cannot be forcibly taken</li>
+                        <li><strong>Circular Wait:</strong> Circular chain of processes waiting for each other</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Resource Modal -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('requestModal')">&times;</span>
+            <h2><i class="fas fa-hand-paper"></i> Simulate Resource Request</h2>
+            <div class="form-group">
+                <label>Process:</label>
+                <select id="requestProcess"></select>
+            </div>
+            <div class="form-group">
+                <label>Request Vector:</label>
+                <div id="requestVector" class="matrix-row"></div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="processRequest()" class="btn btn-primary">Submit Request</button>
+                <button onclick="closeModal('requestModal')" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
