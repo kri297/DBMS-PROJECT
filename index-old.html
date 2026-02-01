@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>DBMS Learning Platform - Complete Interactive Guide</title>
+    <meta name="description" content="Comprehensive Database Management Systems learning platform with interactive tools for ER diagrams, relational algebra, transactions, and DBMS fundamentals.">
+    <meta name="keywords" content="DBMS, Database, ER Diagram, Relational Algebra, Transaction Management, SQL, Database Design">
+    <meta name="author" content="DBMS Learning Platform">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="DBMS Learning Platform - Interactive Database Tools">
+    <meta property="og:description" content="Master Database Management Systems with hands-on interactive tools and comprehensive learning modules.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="">
+    <meta property="twitter:title" content="DBMS Learning Platform">
+    <meta property="twitter:description" content="Interactive DBMS learning with ER diagrams, relational algebra, and transaction management tools.">
+
+    <link rel="stylesheet" href="styles.css?v=20250926141000">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Particle.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Immediate Background Fix -->
+    <script>
+        (function() {
+            // Immediately apply dark background to prevent any white flash
+            document.documentElement.style.background = 'linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #252d42 100%)';
+            document.body.style.background = 'linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #252d42 100%)';
+            document.documentElement.style.margin = '0';
+            document.documentElement.style.padding = '0';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            
+            if (window.innerWidth <= 768) {
+                document.documentElement.style.setProperty('--mobile-loading-columns', '1fr');
+                document.documentElement.style.setProperty('--mobile-loading-rows', 'auto 1fr');
+                console.log('📱 Mobile detected - applying responsive fixes');
+            }
+        })();
+    </script>
+    
+    <!-- Force Updated Styles - Override Cache -->
+    <style>
+        /* Force larger elements */
+        .logo-hexagon {
+            width: 140px !important;
+            height: 140px !important;
+            font-size: 3.5rem !important;
+        }
+        
+        .brand-title {
+            font-size: 2.8rem !important;
+            margin-bottom: 1rem !important;
+            line-height: 1.2 !important;
+        }
+        
+        .brand-subtitle {
+            font-size: 1.1rem !important;
+            letter-spacing: 2px !important;
+            margin-bottom: 2rem !important;
+        }
+        
+        .profile-card {
+            max-width: 400px !important;
+            min-height: 500px !important;
+            padding: 2.5rem 2rem !important;
+        }
+        
+        .loading-main-panel {
+            max-width: 700px !important;
+            min-height: 500px !important;
+            padding: 3rem 2.5rem !important;
+        }
+        
+        .loading-container {
+            gap: 4rem !important;
+            padding: 3rem !important;
+        }
+        
+        .progress-bar-wrapper {
+            height: 12px !important;
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .progress-label {
+            font-size: 1.3rem !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Profile Card Content Sizing */
+        .student-name {
+            font-size: 1.4rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .student-role {
+            font-size: 1rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .detail-label {
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+        }
+        
+        .detail-icon {
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 1.1rem !important;
+        }
+        
+        .detail-row {
+            padding: 0.75rem 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .avatar-frame {
+            width: 70px !important;
+            height: 70px !important;
+            font-size: 1.8rem !important;
+        }
+        
+        @media (max-width: 768px) {
+            #loadingScreen {
+                grid-template-columns: var(--mobile-loading-columns, 1fr) !important;
+                grid-template-rows: var(--mobile-loading-rows, auto 1fr) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen - Complete Redesign -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-container">
+            <!-- Left Panel - Main Content -->
+            <div class="loading-main-panel">
+            <!-- Animated Background -->
+            <div class="dynamic-bg">
+                <div class="wave-animation"></div>
+                <div class="floating-particles"></div>
+            </div>
+            
+            <!-- Central Logo -->
+            <div class="central-branding">
+                <div class="brand-logo">
+                    <div class="logo-hexagon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="logo-pulse"></div>
+                </div>
+                <h1 class="brand-title">DBMS Learning Platform</h1>
+                <p class="brand-subtitle">Advanced Database Management System</p>
+            </div>
+            
+            <!-- Loading Progress -->
+            <div class="loading-progress-section">
+                <div class="progress-container">
+                    <div class="progress-label">System Initialization</div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar loading-progress"></div>
+                        <div class="progress-glow"></div>
+                    </div>
+                    <div class="progress-percentage loading-percentage">0%</div>
+                </div>
+                
+                <!-- Status Messages -->
+                <div class="loading-status">
+                    <div class="status-item active">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Loading modules...</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Preparing interface...</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Ready to learn!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <!-- Right Panel - Student Profile -->
+            <div class="student-profile-panel">
+                <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="avatar-frame">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="profile-info">
+                        <h2 class="student-name">Krish Mishra</h2>
+                        <span class="student-role">Computer Science Student</span>
+                    </div>
+                </div>
+                
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-id-badge"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Student ID</span>
+                            <span class="detail-value">590015053</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Batch</span>
+                            <span class="detail-value">B1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Course</span>
+                            <span class="detail-value">Database Management</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Session</span>
+                            <span class="detail-value">2025-26</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="Q1/assets/logo-removebg-preview.png" alt="Company Logo" class="company-logo">
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#modules" class="nav-link">Modules</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="hero-particles"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🚀 Interactive Learning Platform</span>
+                </div>
+                <h1 class="hero-title">Master Database Management Systems</h1>
+                <p class="hero-subtitle">
+                    Comprehensive interactive learning platform featuring 8 essential DBMS modules: 
+                    Fundamentals, ER Diagram Builder, Relational Algebra, Transaction Management, 
+                    SQL Simulator, Deadlock Recovery, and more!
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Interactive Modules</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Hands-on Learning</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Practice Problems</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#modules" class="btn btn-primary btn-large">
+                        <i class="fas fa-rocket"></i> Start Learning
+                    </a>
+                    <button class="btn btn-secondary btn-large" onclick="playIntroVideo()">
+                        <i class="fas fa-play"></i> Watch Demo
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-cards">
+                    <div class="hero-card" data-module="fundamentals">
+                        <div class="card-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>DBMS Fundamentals</h3>
+                        <p>Architecture & Concepts</p>
+                    </div>
+                    <div class="hero-card" data-module="er-builder">
+                        <div class="card-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3>ER Diagram Builder</h3>
+                        <p>Visual Database Design</p>
+                    </div>
+                    <div class="hero-card" data-module="relational">
+                        <div class="card-icon">
+                            <i class="fas fa-table"></i>
+                        </div>
+                        <h3>Relational Algebra</h3>
+                        <p>Query Operations</p>
+                    </div>
+                    <div class="hero-card" data-module="sql">
+                        <div class="card-icon">
+                            <i class="fas fa-terminal"></i>
+                        </div>
+                        <h3>SQL Simulator</h3>
+                        <p>Query Practice</p>
+                    </div>
+                    <div class="hero-card" data-module="transactions">
+                        <div class="card-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3>Transaction Management</h3>
+                        <p>ACID Properties</p>
+                    </div>
+                    <div class="hero-card" data-module="deadlock">
+                        <div class="card-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3>Deadlock & Recovery</h3>
+                        <p>Banker's Algorithm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Modules Section -->
+    <section id="modules" class="modules">
+        <div class="container">
+            <div class="section-header">
+                <h2>Interactive Learning Modules</h2>
+                <p>Explore each module through hands-on interactive tools designed to reinforce theoretical concepts</p>
+            </div>
+            
+            <div class="modules-grid">
+                <!-- Module 1: DBMS Fundamentals -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="100" data-module-path="Q1/home.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="module-badge">Foundation</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>DBMS Fundamentals</h3>
+                        <p>Master the core concepts including three-schema architecture, schema vs instance, and advantages of database management systems.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Three-Schema Architecture</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-copy"></i>
+                                <span>Schema vs Instance</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-star"></i>
+                                <span>DBMS Advantages</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Learning</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q1/home.html')">
+                            <i class="fas fa-rocket"></i>
+                            <span>Explore Fundamentals</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 2: ER Diagram Builder -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="200" data-module-path="Q2/advanced-er-builder.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="module-badge">Interactive</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>Advanced ER Diagram Builder</h3>
+                        <p>Professional drag-and-drop ER/EER diagram builder with automatic schema generation and SQL export capabilities.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-mouse-pointer"></i>
+                                <span>Drag & Drop Interface</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-code"></i>
+                                <span>SQL Generation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-save"></i>
+                                <span>Save/Load Diagrams</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Building</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q2/advanced-er-builder.html')">
+                            <i class="fas fa-magic"></i>
+                            <span>Build ER Diagrams</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 3: Relational Algebra -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="300" data-module-path="Q3/index.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-table"></i>
+                        </div>
+                        <div class="module-badge">Simulator</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>Relational Algebra Visualizer</h3>
+                        <p>Interactive simulator for relational algebra operations including SELECT, PROJECT, JOIN, UNION, and DIFFERENCE with real-time visualization.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-filter"></i>
+                                <span>SELECT Operations</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-link"></i>
+                                <span>JOIN Operations</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Real-time Results</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Practicing</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q3/index.html')">
+                            <i class="fas fa-brain"></i>
+                            <span>Practice Algebra</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 4: Transaction Management -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="400" data-module-path="Q4/index.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="module-badge">Advanced</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>Transaction Management Simulator</h3>
+                        <p>Comprehensive simulator demonstrating transaction states, ACID properties, concurrency issues, and privilege management systems.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>ACID Properties</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Concurrency Control</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Privilege Management</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Simulation</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q4/index.html')">
+                            <i class="fas fa-bolt"></i>
+                            <span>Master Transactions</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 5: Relational Algebra Visualizer (Q5) -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="500" data-module-path="Q5/home.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="module-badge">Core Concepts</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>DBMS Fundamentals Visualizer</h3>
+                        <p>Interactive exploration of core DBMS concepts including Three-Schema Architecture, Schema vs Instance, and advantages over file systems.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Three-Schema Architecture</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Schema vs Instance</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>DBMS Advantages</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Learning</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q5/home.html')">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Explore Fundamentals</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 6: SQL Query Simulator -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="600" data-module-path="Q6/index.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-terminal"></i>
+                        </div>
+                        <div class="module-badge">SQL</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>SQL Query Simulator</h3>
+                        <p>Execute SQL queries on in-memory tables. Practice SELECT, WHERE, ORDER BY, aggregate functions, set operations, and nested queries.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-search"></i>
+                                <span>Basic Queries & Filtering</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calculator"></i>
+                                <span>Aggregates & GROUP BY</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Nested Subqueries</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Querying</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q6/index.html')">
+                            <i class="fas fa-code"></i>
+                            <span>Practice SQL</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 7: Normalization Assistant -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="700" data-module-path="Q7/index.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="module-badge">Normalization</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>Normalization Assistant</h3>
+                        <p>Learn database normalization step-by-step. Define relations, add functional dependencies, and decompose to 1NF, 2NF, 3NF, and BCNF.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-key"></i>
+                                <span>Candidate Keys</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span>BCNF Decomposition</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calculator"></i>
+                                <span>Closure Calculator</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Learn Normalization</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q7/index.html')">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Start Normalizing</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Module 8: Deadlock & Recovery Visualizer -->
+                <div class="module-card" data-aos="fade-up" data-aos-delay="800" data-module-path="Q8/index.html">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="module-badge">Deadlock</div>
+                    </div>
+                    <div class="module-content">
+                        <h3>Deadlock & Recovery Visualizer</h3>
+                        <p>Visualize resource allocation graphs, detect deadlock cycles, implement Banker's Algorithm, and explore recovery strategies.</p>
+                        <div class="module-features">
+                            <div class="feature-item">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Resource Allocation Graph</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-university"></i>
+                                <span>Banker's Algorithm</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-first-aid"></i>
+                                <span>Recovery Strategies</span>
+                            </div>
+                        </div>
+                        <div class="module-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">Start Simulation</span>
+                        </div>
+                    </div>
+                    <div class="module-actions">
+                        <button class="btn btn-primary btn-module" onclick="openModule('Q8/index.html')">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Detect Deadlocks</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Platform Features</h2>
+                <p>Designed for comprehensive learning with modern web technologies</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Responsive Design</h3>
+                    <p>Works seamlessly across desktop, tablet, and mobile devices with adaptive layouts.</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Interactive Learning</h3>
+                    <p>Hands-on tools and simulators that make complex concepts easy to understand.</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-save"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Save your work and track progress across all learning modules automatically.</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Export Capabilities</h3>
+                    <p>Export diagrams, SQL code, and learning materials in multiple formats.</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Theme Support</h3>
+                    <p>Dark and light themes for comfortable learning in any environment.</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Fast & Modern</h3>
+                    <p>Built with modern web technologies for optimal performance and user experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text" data-aos="fade-right">
+                    <h2>About This Platform</h2>
+                    <p>
+                        The DBMS Learning Platform is a comprehensive educational tool designed to make database management 
+                        concepts accessible through interactive learning. Each module is carefully crafted to provide 
+                        hands-on experience with real-world database scenarios.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <h3>8</h3>
+                            <p>Core Modules</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>100%</h3>
+                            <p>Interactive</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>0</h3>
+                            <p>Cost</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual" data-aos="fade-left">
+                    <div class="tech-stack">
+                        <h3>Built With</h3>
+                        <div class="tech-items">
+                            <div class="tech-item">
+                                <i class="fab fa-html5"></i>
+                                <span>HTML5</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fab fa-css3-alt"></i>
+                                <span>CSS3</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fab fa-js"></i>
+                                <span>JavaScript</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fas fa-database"></i>
+                                <span>SQL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-database"></i> DBMS Learning Hub</h3>
+                    <p>Interactive platform for mastering database management systems through hands-on learning.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/kri297" class="social-link" target="_blank" rel="noopener noreferrer" title="GitHub Profile"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/krish-mishra297/" class="social-link" target="_blank" rel="noopener noreferrer" title="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
+                        <a href="mailto:krishmishra121301@gmail.com" class="social-link" title="Send Email"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Learning Modules</h4>
+                    <ul>
+                        <li><a href="Q1/home.html" target="_blank" rel="noopener noreferrer">Q1: DBMS Fundamentals</a></li>
+                        <li><a href="Q2/advanced-er-builder.html" target="_blank" rel="noopener noreferrer">Q2/Q3: ER Diagram Builder</a></li>
+                        <li><a href="Q7/index.html" target="_blank" rel="noopener noreferrer">Q4: Normalization</a></li>
+                        <li><a href="Q3/index.html" target="_blank" rel="noopener noreferrer">Q5: Relational Algebra</a></li>
+                        <li><a href="Q6/index.html" target="_blank" rel="noopener noreferrer">Q6: SQL Simulator</a></li>
+                        <li><a href="Q4/index.html" target="_blank" rel="noopener noreferrer">Q7: Transaction Management</a></li>
+                        <li><a href="Q8/index.html" target="_blank" rel="noopener noreferrer">Q8: Deadlock & Recovery</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#" onclick="showHelp()">Help & Support</a></li>
+                        <li><a href="#" onclick="showKeyboardShortcuts()">Shortcuts</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Actions</h4>
+                    <div class="footer-actions">
+                        <button class="btn btn-outline btn-small" onclick="resetAllProgress()">
+                            <i class="fas fa-refresh"></i> Reset Progress
+                        </button>
+                        <button class="btn btn-outline btn-small" onclick="exportAllData()">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Krish Mishra - DBMS Learning Platform. Built for educational purposes.</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showPrivacyPolicy()">Privacy</a>
+                    <a href="#" onclick="showTerms()">Terms</a>
+                    <a href="#" onclick="showLicense()">License</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('helpModal')">&times;</span>
+            <h2>Platform Help & Support</h2>
+            <div class="help-sections">
+                <div class="help-section">
+                    <h3>Getting Started</h3>
+                    <p>Choose any module from the learning modules section. Each module is self-contained and can be completed independently.</p>
+                </div>
+                <div class="help-section">
+                    <h3>Navigation</h3>
+                    <p>Use the navigation menu to jump between sections, or use keyboard shortcuts for quick access.</p>
+                </div>
+                <div class="help-section">
+                    <h3>Progress Tracking</h3>
+                    <p>Your progress is automatically saved in your browser. Use the export function to backup your work.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=2025092521"></script>
+    
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    </script>
+</body>
+</html>

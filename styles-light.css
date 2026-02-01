@@ -95,6 +95,14 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
+}
+
+/* Mobile container fix */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 16px;
+    }
 }
 
 /* ===========================
@@ -710,6 +718,44 @@ body {
     .quick-grid {
         grid-template-columns: 1fr;
     }
+    
+    .quick-access {
+        padding: 60px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-grid {
+        gap: 12px;
+    }
+    
+    .quick-card {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .quick-icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+    }
+    
+    .quick-info h3 {
+        font-size: 0.95rem;
+    }
+    
+    .quick-info p {
+        font-size: 0.8rem;
+    }
+    
+    .quick-access h2 {
+        font-size: 1.75rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
 }
 
 /* ===========================
@@ -858,6 +904,10 @@ body {
     .module-card {
         padding: 24px;
     }
+    
+    .modules {
+        padding: 60px 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -866,25 +916,33 @@ body {
     }
     
     .module-card {
-        padding: 20px;
+        padding: 18px;
     }
     
     .module-icon {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
     }
     
     .module-icon i {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
     
     .module-badge {
-        padding: 4px 10px;
-        font-size: 0.7rem;
+        padding: 4px 8px;
+        font-size: 0.65rem;
     }
     
     .module-card h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+    
+    .module-card p {
+        font-size: 0.85rem;
+    }
+    
+    .modules h2 {
+        font-size: 1.75rem;
     }
 }
 
@@ -1056,10 +1114,12 @@ body {
     margin-bottom: 18px;
 }
 
-.footer-logo-img {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
+.footer-logo i {
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .footer-author {
