@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Management Simulator</title>
+    <title>Transaction Management Simulator - DBMS Learning Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Welcome Modal -->
@@ -45,10 +47,20 @@
 
     <div class="container">
         <header>
-            <h1>Transaction Management Simulator</h1>
-            <p>Interactive demonstration of database transaction concepts</p>
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="../index.html" class="btn-back" title="Back to Main">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="logo">
+                        <i class="fas fa-exchange-alt"></i>
+                        <h1>Transaction Management Simulator</h1>
+                    </div>
+                </div>
+            </div>
+            <p class="header-subtitle">Interactive demonstration of database transaction concepts</p>
             <button onclick="showWelcomeModal()" class="help-button" title="Show help and tour">
-                <span class="help-icon">❓</span> Help & Tour
+                <i class="fas fa-question-circle"></i> Help & Tour
             </button>
         </header>
 
