@@ -857,6 +857,16 @@ body {
 /* ===========================
    Responsive Design
    =========================== */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 20px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
@@ -898,6 +908,45 @@ body {
     .verification-items {
         flex-direction: column;
     }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .decomposition-tables {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 12px;
+    }
+    
+    .logo h1 {
+        font-size: 1.2rem;
+    }
+    
+    .btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .card-body {
+        padding: 16px;
+    }
+    
+    .input {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+    
+    .table-cell {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -906,12 +955,67 @@ body {
     }
     
     .card-body {
-        padding: 16px;
+        padding: 12px;
     }
     
     .norm-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+    
+    .header-right {
+        gap: 8px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .fd-input-row {
+        gap: 8px;
+    }
+    
+    .nf-badge {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    .header {
+        padding: 10px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .card {
+        border-radius: 8px;
+    }
+    
+    .card-body {
+        padding: 10px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+    }
+    
+    .input {
+        min-height: 44px;
+    }
+    
+    .table-cell {
+        padding: 12px;
+    }
+    
+    .fd-item {
+        padding: 12px;
     }
 }
 
