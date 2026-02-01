@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normalization Assistant - DBMS Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="../index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="logo">
+                    <i class="fas fa-layer-group"></i>
+                    <h1>Normalization Assistant</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="tutorialBtn" class="btn btn-outline">
+                    <i class="fas fa-book"></i>
+                    <span>Tutorial</span>
+                </button>
+                <button id="demoBtn" class="btn btn-primary">
+                    <i class="fas fa-magic"></i>
+                    <span>Load Demo</span>
+                </button>
+                <button id="resetBtn" class="btn btn-danger">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="card input-section">
+                <div class="card-header">
+                    <h2><i class="fas fa-keyboard"></i> Define Relation</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="relationName">Relation Name</label>
+                        <input type="text" id="relationName" class="input" placeholder="e.g., StudentCourse">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attributes">Attributes (comma-separated)</label>
+                        <input type="text" id="attributes" class="input" placeholder="e.g., StudentID, StudentName, CourseID, CourseName">
+                        <small>Enter all attributes of your relation</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Functional Dependencies</label>
+                        <div class="fd-container">
+                            <div id="fdList" class="fd-list">
+                                <p class="empty-state">No functional dependencies added yet</p>
+                            </div>
+                            <div class="fd-input-row">
+                                <input type="text" id="fdLhs" class="input" placeholder="LHS (e.g., StudentID)">
+                                <span class="arrow">→</span>
+                                <input type="text" id="fdRhs" class="input" placeholder="RHS (e.g., StudentName)">
+                                <button id="addFdBtn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <small>Example: StudentID → StudentName means StudentID determines StudentName</small>
+                        </div>
+                    </div>
+                    
+                    <button id="analyzeBtn" class="btn btn-primary btn-large btn-block">
+                        <i class="fas fa-search-plus"></i>
+                        Analyze Relation
+                    </button>
+                </div>
+            </section>
+
+            <!-- Attribute Closure Section -->
+            <section class="card" id="closureSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-calculator"></i> Attribute Closure</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select attributes to compute closure</label>
+                        <div id="closureAttributes" class="checkbox-group"></div>
+                    </div>
+                    <button id="computeClosureBtn" class="btn btn-secondary">
+                        <i class="fas fa-play"></i>
+                        Compute Closure
+                    </button>
+                    <div id="closureResult" class="result-box"></div>
+                </div>
+            </section>
+
+            <!-- Candidate Keys Section -->
+            <section class="card" id="keysSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-key"></i> Candidate Keys</h2>
+                </div>
+                <div class="card-body">
+                    <div id="candidateKeys" class="keys-display">
+                        <p class="empty-state">Analyze the relation to find candidate keys</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Normalization Steps -->
+            <section class="card" id="normSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-layer-group"></i> Normalization Analysis</h2>
+                </div>
+                <div class="card-body">
+                    <div class="norm-steps">
+                        <!-- 1NF -->
+                        <div class="norm-step" id="step1NF">
+                            <div class="norm-header">
+                                <div class="norm-badge">1NF</div>
+                                <h3>First Normal Form</h3>
+                                <span class="norm-status pending">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            </div>
+                            <p class="norm-rule">All attributes must have atomic (indivisible) values.</p>
+                            <div class="norm-result"></div>
+                        </div>
+                        
+                        <!-- 2NF -->
+                        <div class="norm-step" id="step2NF">
+                            <div class="norm-header">
+                                <div class="norm-badge">2NF</div>
+                                <h3>Second Normal Form</h3>
+                                <span class="norm-status pending">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            </div>
+                            <p class="norm-rule">No partial dependency of non-prime attributes on candidate key.</p>
+                            <div class="norm-result"></div>
+                        </div>
+                        
+                        <!-- 3NF -->
+                        <div class="norm-step" id="step3NF">
+                            <div class="norm-header">
+                                <div class="norm-badge">3NF</div>
+                                <h3>Third Normal Form</h3>
+                                <span class="norm-status pending">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            </div>
+                            <p class="norm-rule">No transitive dependency of non-prime attributes.</p>
+                            <div class="norm-result"></div>
+                        </div>
+                        
+                        <!-- BCNF -->
+                        <div class="norm-step" id="stepBCNF">
+                            <div class="norm-header">
+                                <div class="norm-badge">BCNF</div>
+                                <h3>Boyce-Codd Normal Form</h3>
+                                <span class="norm-status pending">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            </div>
+                            <p class="norm-rule">For every FD X → Y, X must be a superkey.</p>
+                            <div class="norm-result"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Decomposition Result -->
+            <section class="card" id="decompositionSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-puzzle-piece"></i> BCNF Decomposition</h2>
+                </div>
+                <div class="card-body">
+                    <div id="decomposedTables" class="decomposed-grid"></div>
+                    
+                    <div class="verification-box">
+                        <h3><i class="fas fa-check-double"></i> Verification</h3>
+                        <div class="verification-items">
+                            <div id="losslessCheck" class="check-item pending">
+                                <i class="fas fa-clock"></i>
+                                <span>Lossless Join Property</span>
+                            </div>
+                            <div id="depPreserveCheck" class="check-item pending">
+                                <i class="fas fa-clock"></i>
+                                <span>Dependency Preservation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Tutorial Modal -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-book"></i> Normalization Tutorial</h2>
+                <button class="modal-close" onclick="closeModal('tutorialModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-section">
+                    <h3>📚 What is Normalization?</h3>
+                    <p>Normalization is a database design technique that reduces data redundancy and eliminates undesirable characteristics like Insertion, Update, and Deletion Anomalies.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>🔑 Key Concepts</h3>
+                    <ul>
+                        <li><strong>Functional Dependency (X → Y):</strong> Value of X uniquely determines value of Y</li>
+                        <li><strong>Candidate Key:</strong> Minimal set of attributes that can uniquely identify a tuple</li>
+                        <li><strong>Prime Attribute:</strong> Attribute that is part of any candidate key</li>
+                        <li><strong>Superkey:</strong> Set of attributes that contains a candidate key</li>
+                    </ul>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>📊 Normal Forms</h3>
+                    <div class="nf-cards">
+                        <div class="nf-card">
+                            <span class="nf-badge">1NF</span>
+                            <p>All attributes are atomic (no multi-valued attributes)</p>
+                        </div>
+                        <div class="nf-card">
+                            <span class="nf-badge">2NF</span>
+                            <p>1NF + No partial dependencies on candidate key</p>
+                        </div>
+                        <div class="nf-card">
+                            <span class="nf-badge">3NF</span>
+                            <p>2NF + No transitive dependencies</p>
+                        </div>
+                        <div class="nf-card">
+                            <span class="nf-badge">BCNF</span>
+                            <p>Every determinant is a superkey</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>📝 How to Use</h3>
+                    <ol>
+                        <li>Enter your relation name and attributes</li>
+                        <li>Add functional dependencies one by one</li>
+                        <li>Click "Analyze Relation" to see normalization status</li>
+                        <li>View the BCNF decomposition if needed</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
