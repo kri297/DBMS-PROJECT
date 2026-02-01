@@ -646,6 +646,12 @@ header p {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+    .main-content {
+        gap: 20px;
+    }
+}
+
 @media (max-width: 900px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -660,6 +666,44 @@ header p {
         flex: 1;
         min-width: 250px;
     }
+    
+    .container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .header-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .sidebar .section {
+        min-width: 100%;
+    }
+    
+    .quick-queries {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
@@ -668,15 +712,74 @@ header p {
     }
     
     header {
-        padding: 20px;
+        padding: 15px;
     }
     
-    .header-content {
-        flex-direction: column;
-        text-align: center;
+    .header-buttons .btn span {
+        display: none;
+    }
+    
+    .editor-section textarea {
+        font-size: 13px;
+        min-height: 120px;
+    }
+    
+    .results-table {
+        font-size: 12px;
+    }
+    
+    .results-table th,
+    .results-table td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.1rem;
     }
     
     .header-buttons {
-        justify-content: center;
+        gap: 8px;
+    }
+    
+    .section h3 {
+        font-size: 0.9rem;
+    }
+    
+    .quick-query-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    header {
+        padding: 12px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .container {
+        padding: 8px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+    }
+    
+    .quick-query-btn {
+        min-height: 44px;
+    }
+    
+    .results-table th,
+    .results-table td {
+        padding: 12px;
     }
 }
