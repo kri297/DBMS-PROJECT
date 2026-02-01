@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schema vs Instance | DBMS Fundamentals</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/schema-instance.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home.html"><h2><i class="fas fa-database"></i> DBMS Fundamentals</h2></a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../home.html" class="nav-link">Home</a></li>
+                <li><a href="three-schema.html" class="nav-link">Three-Schema Architecture</a></li>
+                <li><a href="schema-instance.html" class="nav-link active">Schema vs Instance</a></li>
+                <li><a href="advantages.html" class="nav-link">DBMS Advantages</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-nav">
+                <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                <span><i class="fas fa-chevron-right"></i></span>
+                <span>Schema vs Instance</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Schema vs Instance Section -->
+            <section class="section" id="schema-instance-section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-number">01</div>
+                    <div class="section-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2>Schema vs Instance</h2>
+                        <p>Understanding the difference with live interactive examples and real-time updates</p>
+                        <div class="section-badge">
+                            <i class="fas fa-hands-helping"></i>
+                            Interactive Demo
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vs-banner" data-aos="zoom-in">
+                    <div class="vs-item">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>SCHEMA</span>
+                        <small>Structure (Constant)</small>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="vs-item">
+                        <i class="fas fa-database"></i>
+                        <span>INSTANCE</span>
+                        <small>Data (Dynamic)</small>
+                    </div>
+                </div>
+
+                <div class="schema-instance-container">
+                    <div class="comparison-box">
+                        <div class="concept-card schema-card">
+                            <div class="concept-header">
+                                <i class="fas fa-project-diagram"></i>
+                                <h3>Schema (Structure)</h3>
+                            </div>
+                            <div class="concept-content">
+                                <p class="concept-definition">
+                                    The overall design or structure of the database. It rarely changes.
+                                </p>
+                                <div class="schema-example">
+                                    <h4>Database Schema Example</h4>
+                                    <div class="table-definition">
+                                        <div class="table-name">EMPLOYEE</div>
+                                        <table class="schema-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Column Name</th>
+                                                    <th>Data Type</th>
+                                                    <th>Constraints</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>EmpID</td>
+                                                    <td>INTEGER</td>
+                                                    <td>PRIMARY KEY</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>VARCHAR(50)</td>
+                                                    <td>NOT NULL</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Salary</td>
+                                                    <td>DECIMAL(10,2)</td>
+                                                    <td>NOT NULL</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>DeptID</td>
+                                                    <td>INTEGER</td>
+                                                    <td>FOREIGN KEY</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="concept-card instance-card">
+                            <div class="concept-header">
+                                <i class="fas fa-table"></i>
+                                <h3>Instance (Data)</h3>
+                            </div>
+                            <div class="concept-content">
+                                <p class="concept-definition">
+                                    The actual data stored in the database at a particular moment. It changes frequently.
+                                </p>
+                                <div class="instance-example">
+                                    <h4>Current Database Instance</h4>
+                                    <div class="table-definition">
+                                        <div class="instance-timestamp">
+                                            <i class="fas fa-clock"></i>
+                                            <span id="instanceTime">Loading...</span>
+                                        </div>
+                                        <table class="instance-table" id="instanceTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>EmpID</th>
+                                                    <th>Name</th>
+                                                    <th>Salary</th>
+                                                    <th>DeptID</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="instanceTableBody">
+                                                <tr>
+                                                    <td>101</td>
+                                                    <td>John Doe</td>
+                                                    <td>$50,000</td>
+                                                    <td>1</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>102</td>
+                                                    <td>Jane Smith</td>
+                                                    <td>$60,000</td>
+                                                    <td>2</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>103</td>
+                                                    <td>Bob Johnson</td>
+                                                    <td>$55,000</td>
+                                                    <td>1</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo" data-aos="fade-up">
+                        <div class="demo-header">
+                            <div class="demo-title">
+                                <i class="fas fa-play-circle"></i>
+                                <h3>Try It Yourself</h3>
+                            </div>
+                            <div class="demo-badge pulsing">
+                                <i class="fas fa-circle"></i>
+                                Live Demo
+                            </div>
+                        </div>
+                        <p class="demo-description">
+                            <i class="fas fa-lightbulb"></i>
+                            Add new employee records to see how the <strong>instance changes dynamically</strong> while the <strong>schema remains constant</strong>
+                        </p>
+                        <form class="instance-form" id="instanceForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="empId">Employee ID</label>
+                                    <input type="number" id="empId" placeholder="e.g., 104" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="empName">Name</label>
+                                    <input type="text" id="empName" placeholder="e.g., Alice Brown" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="empSalary">Salary</label>
+                                    <input type="number" id="empSalary" placeholder="e.g., 65000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="empDept">Department ID</label>
+                                    <input type="number" id="empDept" placeholder="e.g., 2" required>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add Employee
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="resetInstance">
+                                    <i class="fas fa-redo"></i>
+                                    Reset Instance
+                                </button>
+                            </div>
+                        </form>
+                        <div class="demo-note">
+                            <i class="fas fa-info-circle"></i>
+                            <p><strong>Note:</strong> The schema (structure) remains constant while the instance (data) changes dynamically.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation to Next Topic -->
+            <section class="next-topic">
+                <div class="next-card" data-aos="fade-up">
+                    <div class="next-content">
+                        <span class="next-label">Up Next</span>
+                        <h3>DBMS Advantages</h3>
+                        <p>Discover why DBMS is superior to traditional file systems</p>
+                    </div>
+                    <a href="advantages.html" class="next-btn">
+                        Continue Learning <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 DBMS Learning Platform. Created for educational purposes.</p>
+                <div class="footer-links">
+                    <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                    <a href="../../index.html"><i class="fas fa-arrow-left"></i> Main Platform</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/schema-instance.js"></script>
+</body>
+</html>
