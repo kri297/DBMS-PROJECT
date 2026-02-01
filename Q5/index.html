@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBMS Fundamentals Visualizer - Interactive Learning Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="nav-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
+                </a>
+                <h1 class="nav-title">DBMS Fundamentals Visualizer</h1>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-circle circle-1"></div>
+            <div class="hero-circle circle-2"></div>
+            <div class="hero-circle circle-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up">
+                <div class="hero-icon-wrapper">
+                    <div class="hero-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="icon-rings">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
+                    </div>
+                </div>
+                <h1 class="hero-title">
+                    <span class="gradient-text">DBMS Fundamentals</span>
+                    <span class="subtitle-accent">Visualizer</span>
+                </h1>
+                <p class="hero-subtitle">
+                    <i class="fas fa-rocket"></i>
+                    Master database concepts through interactive visualization and hands-on practice
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Architecture Layers</div>
+                        </div>
+                    </div>
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">8+</div>
+                            <div class="stat-label">Key Advantages</div>
+                        </div>
+                    </div>
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Interactive</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-scroll" data-aos="fade-up" data-aos-delay="400">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Scroll to explore</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Three-Schema Architecture Section -->
+            <section class="section" id="architecture-section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-number">01</div>
+                    <div class="section-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2>Three-Schema Architecture</h2>
+                        <p>Interactive visualization of DBMS architecture layers with data flow</p>
+                        <div class="section-badge">
+                            <i class="fas fa-bolt"></i>
+                            Core Concept
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="architecture-intro" data-aos="fade-up">
+                    <p class="intro-text">
+                        The Three-Schema Architecture provides <strong>data abstraction</strong> and <strong>data independence</strong> 
+                        by separating the database into three distinct levels. Click on each layer to explore!
+                    </p>
+                </div>
+
+                <div class="architecture-container">
+                    <div class="architecture-visual" data-aos="fade-right">
+                        <!-- Data Flow Connectors -->
+                        <div class="data-flow-line flow-1" id="flow1"></div>
+                        <div class="data-flow-line flow-2" id="flow2"></div>
+                        
+                        <div class="schema-layer external-layer" id="externalLayer" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="layer-badge">Level 1</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h3>External Level</h3>
+                                    <span class="layer-subtitle">View Level - User Interface</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>How different users see and interact with the data</p>
+                                </div>
+                                <div class="view-examples">
+                                    <div class="view-box">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <span>Student Portal</span>
+                                    </div>
+                                    <div class="view-box">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Faculty Dashboard</span>
+                                    </div>
+                                    <div class="view-box">
+                                        <i class="fas fa-user-shield"></i>
+                                        <span>Admin Console</span>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Customized Views</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Data Security</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> User-Specific</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="schema-layer conceptual-layer" id="conceptualLayer" data-aos="zoom-in" data-aos-delay="200">
+                            <div class="layer-badge">Level 2</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <div>
+                                    <h3>Conceptual Level</h3>
+                                    <span class="layer-subtitle">Logical Level - Complete Database</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>Complete logical structure of the entire database</p>
+                                </div>
+                                <div class="schema-diagram">
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>STUDENT</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-key"></i> ID</span>
+                                            <span>Name</span>
+                                            <span>Age</span>
+                                            <span>Dept</span>
+                                        </div>
+                                    </div>
+                                    <div class="relationship-line"></div>
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>COURSE</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-key"></i> Code</span>
+                                            <span>Title</span>
+                                            <span>Credits</span>
+                                        </div>
+                                    </div>
+                                    <div class="relationship-line"></div>
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>ENROLLMENT</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-link"></i> StudentID</span>
+                                            <span><i class="fas fa-link"></i> CourseCode</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Entity Relationships</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Constraints</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Complete Schema</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="schema-layer internal-layer" id="internalLayer" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="layer-badge">Level 3</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-hard-drive"></i>
+                                </div>
+                                <div>
+                                    <h3>Internal Level</h3>
+                                    <span class="layer-subtitle">Physical Level - Storage Details</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>Physical storage structures and optimization mechanisms</p>
+                                </div>
+                                <div class="storage-info">
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-sitemap"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>B+ Tree Indexes</strong>
+                                            <span>Fast data retrieval</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Data Files</strong>
+                                            <span>Heap/Sequential files</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-th"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Storage Blocks</strong>
+                                            <span>4KB-64KB pages</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-compress"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Compression</strong>
+                                            <span>Space optimization</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Physical Storage</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Indexing</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Optimization</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="architecture-controls" data-aos="fade-left">
+                        <div class="controls-header">
+                            <i class="fas fa-sliders-h"></i>
+                            <h4>Interactive Controls</h4>
+                        </div>
+                        <p class="controls-description">
+                            <i class="fas fa-hand-pointer"></i>
+                            Click to explore each architectural layer
+                        </p>
+                        
+                        <div class="control-buttons">
+                            <button class="control-btn active" data-layer="external">
+                                <div class="btn-icon"><i class="fas fa-users"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">External</span>
+                                    <span class="btn-subtitle">View Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn" data-layer="conceptual">
+                                <div class="btn-icon"><i class="fas fa-sitemap"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Conceptual</span>
+                                    <span class="btn-subtitle">Logical Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn" data-layer="internal">
+                                <div class="btn-icon"><i class="fas fa-hard-drive"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Internal</span>
+                                    <span class="btn-subtitle">Physical Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn special-btn" data-layer="all">
+                                <div class="btn-icon"><i class="fas fa-layer-group"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">View All</span>
+                                    <span class="btn-subtitle">Complete Architecture</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-expand"></i></div>
+                            </button>
+                        </div>
+                        
+                        <div class="layer-info-card" id="layerInfo">
+                            <div class="info-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h5>External Level</h5>
+                            </div>
+                            <div class="info-content">
+                                <ul>
+                                    <li><i class="fas fa-check-circle"></i> User-specific views of the database</li>
+                                    <li><i class="fas fa-check-circle"></i> Data abstraction and security</li>
+                                    <li><i class="fas fa-check-circle"></i> Different perspectives for different users</li>
+                                    <li><i class="fas fa-check-circle"></i> Hides complexity from end users</li>
+                                    <li><i class="fas fa-check-circle"></i> Customized data presentation</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="data-independence-box">
+                            <div class="independence-header">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Data Independence</strong>
+                            </div>
+                            <div class="independence-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span><strong>Logical:</strong> Change conceptual schema without affecting external views</span>
+                            </div>
+                            <div class="independence-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span><strong>Physical:</strong> Change internal schema without affecting conceptual</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Schema vs Instance Section -->
+            <section class="section" id="schema-instance-section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-number">02</div>
+                    <div class="section-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2>Schema vs Instance</h2>
+                        <p>Understanding the difference with live interactive examples and real-time updates</p>
+                        <div class="section-badge">
+                            <i class="fas fa-hands-helping"></i>
+                            Interactive Demo
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vs-banner" data-aos="zoom-in">
+                    <div class="vs-item">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>SCHEMA</span>
+                        <small>Structure (Constant)</small>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="vs-item">
+                        <i class="fas fa-database"></i>
+                        <span>INSTANCE</span>
+                        <small>Data (Dynamic)</small>
+                    </div>
+                </div>
+
+                <div class="schema-instance-container">
+                    <div class="comparison-box">
+                        <div class="concept-card schema-card">
+                            <div class="concept-header">
+                                <i class="fas fa-project-diagram"></i>
+                                <h3>Schema (Structure)</h3>
+                            </div>
+                            <div class="concept-content">
+                                <p class="concept-definition">
+                                    The overall design or structure of the database. It rarely changes.
+                                </p>
+                                <div class="schema-example">
+                                    <h4>Database Schema Example</h4>
+                                    <div class="table-definition">
+                                        <div class="table-name">EMPLOYEE</div>
+                                        <table class="schema-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Column Name</th>
+                                                    <th>Data Type</th>
+                                                    <th>Constraints</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>EmpID</td>
+                                                    <td>INTEGER</td>
+                                                    <td>PRIMARY KEY</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>VARCHAR(50)</td>
+                                                    <td>NOT NULL</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Salary</td>
+                                                    <td>DECIMAL(10,2)</td>
+                                                    <td>NOT NULL</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>DeptID</td>
+                                                    <td>INTEGER</td>
+                                                    <td>FOREIGN KEY</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="concept-card instance-card">
+                            <div class="concept-header">
+                                <i class="fas fa-table"></i>
+                                <h3>Instance (Data)</h3>
+                            </div>
+                            <div class="concept-content">
+                                <p class="concept-definition">
+                                    The actual data stored in the database at a particular moment. It changes frequently.
+                                </p>
+                                <div class="instance-example">
+                                    <h4>Current Database Instance</h4>
+                                    <div class="table-definition">
+                                        <div class="instance-timestamp">
+                                            <i class="fas fa-clock"></i>
+                                            <span id="instanceTime">Loading...</span>
+                                        </div>
+                                        <table class="instance-table" id="instanceTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>EmpID</th>
+                                                    <th>Name</th>
+                                                    <th>Salary</th>
+                                                    <th>DeptID</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="instanceTableBody">
+                                                <tr>
+                                                    <td>101</td>
+                                                    <td>John Doe</td>
+                                                    <td>$50,000</td>
+                                                    <td>1</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>102</td>
+                                                    <td>Jane Smith</td>
+                                                    <td>$60,000</td>
+                                                    <td>2</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>103</td>
+                                                    <td>Bob Johnson</td>
+                                                    <td>$55,000</td>
+                                                    <td>1</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo" data-aos="fade-up">
+                        <div class="demo-header">
+                            <div class="demo-title">
+                                <i class="fas fa-play-circle"></i>
+                                <h3>Try It Yourself</h3>
+                            </div>
+                            <div class="demo-badge pulsing">
+                                <i class="fas fa-circle"></i>
+                                Live Demo
+                            </div>
+                        </div>
+                        <p class="demo-description">
+                            <i class="fas fa-lightbulb"></i>
+                            Add new employee records to see how the <strong>instance changes dynamically</strong> while the <strong>schema remains constant</strong>
+                        </p>
+                        <form class="instance-form" id="instanceForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="empId">Employee ID</label>
+                                    <input type="number" id="empId" placeholder="e.g., 104" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="empName">Name</label>
+                                    <input type="text" id="empName" placeholder="e.g., Alice Brown" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="empSalary">Salary</label>
+                                    <input type="number" id="empSalary" placeholder="e.g., 65000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="empDept">Department ID</label>
+                                    <input type="number" id="empDept" placeholder="e.g., 2" required>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add Employee
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="resetInstance">
+                                    <i class="fas fa-redo"></i>
+                                    Reset Instance
+                                </button>
+                            </div>
+                        </form>
+                        <div class="demo-note">
+                            <i class="fas fa-info-circle"></i>
+                            <p><strong>Note:</strong> The schema (structure) remains constant while the instance (data) changes dynamically.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DBMS Advantages Section -->
+            <section class="section" id="advantages-section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-number">03</div>
+                    <div class="section-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2>Why DBMS Over File Systems?</h2>
+                        <p>Discover the powerful advantages that make DBMS the superior choice for data management</p>
+                        <div class="section-badge">
+                            <i class="fas fa-star"></i>
+                            8+ Key Benefits
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-stats" data-aos="fade-up">
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-folder"></i></div>
+                        <div class="stat-details">
+                            <h4>File System</h4>
+                            <p>Limited capabilities</p>
+                        </div>
+                    </div>
+                    <div class="stat-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-database"></i></div>
+                        <div class="stat-details">
+                            <h4>DBMS</h4>
+                            <p>Advanced features</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-toggle">
+                    <button class="toggle-btn active" data-view="advantages">
+                        <i class="fas fa-trophy"></i>
+                        DBMS Advantages
+                    </button>
+                    <button class="toggle-btn" data-view="comparison">
+                        <i class="fas fa-balance-scale"></i>
+                        Side-by-Side Comparison
+                    </button>
+                </div>
+
+                <div class="advantages-container" id="advantagesView">
+                    <div class="advantages-grid">
+                        <div class="advantage-card" data-advantage="redundancy">
+                            <div class="advantage-icon">
+                                <i class="fas fa-copy"></i>
+                            </div>
+                            <h3>Data Redundancy Control</h3>
+                            <p>DBMS minimizes data duplication through normalization and centralized storage.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Multiple copies, wasted space</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Single source of truth, efficient storage</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="consistency">
+                            <div class="advantage-icon">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <h3>Data Consistency</h3>
+                            <p>Ensures data accuracy and validity across all applications and users.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Inconsistent updates, conflicts</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> ACID properties, transaction management</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="security">
+                            <div class="advantage-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Enhanced Security</h3>
+                            <p>Advanced authentication, authorization, and encryption mechanisms.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Basic OS-level protection</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Role-based access, encryption, auditing</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="integrity">
+                            <div class="advantage-icon">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <h3>Data Integrity</h3>
+                            <p>Maintains accuracy and reliability through constraints and validation rules.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> No built-in validation</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Constraints, triggers, referential integrity</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="concurrent">
+                            <div class="advantage-icon">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <h3>Concurrent Access</h3>
+                            <p>Multiple users can access and modify data simultaneously without conflicts.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> File locking, limited access</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Locking mechanisms, isolation levels</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="backup">
+                            <div class="advantage-icon">
+                                <i class="fas fa-save"></i>
+                            </div>
+                            <h3>Backup & Recovery</h3>
+                            <p>Automated backup procedures and point-in-time recovery capabilities.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Manual backups, data loss risk</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Automated backups, transaction logs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="independence">
+                            <div class="advantage-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h3>Data Independence</h3>
+                            <p>Separation between data and applications allows independent evolution.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Tight coupling, hard to modify</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Physical & logical independence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="advantage-card" data-advantage="query">
+                            <div class="advantage-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3>Efficient Data Access</h3>
+                            <p>Optimized query processing and indexing for fast data retrieval.</p>
+                            <div class="advantage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span><strong>File System:</strong> Sequential search, slow</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span><strong>DBMS:</strong> Query optimization, indexes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-container hidden" id="comparisonView">
+                    <div class="comparison-grid">
+                        <div class="comparison-column file-system">
+                            <div class="comparison-header">
+                                <i class="fas fa-folder"></i>
+                                <h3>Traditional File System</h3>
+                            </div>
+                            <div class="comparison-items">
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Data redundancy and duplication</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Difficult to access data</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Data isolation</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Integrity problems</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Concurrent access anomalies</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Security problems</p>
+                                </div>
+                                <div class="comparison-item negative">
+                                    <i class="fas fa-times"></i>
+                                    <p>Limited backup and recovery</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-column dbms">
+                            <div class="comparison-header">
+                                <i class="fas fa-database"></i>
+                                <h3>Database Management System</h3>
+                            </div>
+                            <div class="comparison-items">
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Controlled redundancy and consistency</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>SQL query language for easy access</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Integrated data with relationships</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Built-in constraints and validation</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Transaction management and isolation</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Advanced authentication and authorization</p>
+                                </div>
+                                <div class="comparison-item positive">
+                                    <i class="fas fa-check"></i>
+                                    <p>Automated backup and point-in-time recovery</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DBMS Learning Platform. All rights reserved.</p>
+            <p>Question 5 - DBMS Fundamentals Visualizer</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progressIndicator"></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
