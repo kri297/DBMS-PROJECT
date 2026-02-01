@@ -893,6 +893,20 @@ header p {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .bankers-container {
+        gap: 20px;
+    }
+    
+    .graph-area {
+        min-height: 350px;
+    }
+}
+
 @media (max-width: 900px) {
     .bankers-container {
         grid-template-columns: 1fr;
@@ -906,6 +920,63 @@ header p {
         flex: 1;
         justify-content: center;
     }
+    
+    .recovery-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .header-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .matrix-section {
+        padding: 15px;
+    }
+    
+    .matrix-table input {
+        width: 40px;
+        padding: 5px;
+    }
+    
+    .legend-item {
+        flex-direction: column;
+        gap: 5px;
+        font-size: 12px;
+    }
+    
+    .recovery-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .edge-form {
+        flex-direction: column;
+    }
+    
+    .edge-form select {
+        width: 100%;
+    }
 }
 
 @media (max-width: 600px) {
@@ -914,16 +985,11 @@ header p {
     }
     
     header {
-        padding: 20px;
+        padding: 15px;
     }
     
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .header-buttons {
-        justify-content: center;
+    .header-buttons .btn span {
+        display: none;
     }
     
     .tab {
@@ -933,5 +999,141 @@ header p {
     
     .tab span {
         display: none;
+    }
+    
+    .graph-area {
+        min-height: 280px;
+    }
+    
+    .graph-node {
+        width: 45px;
+        height: 45px;
+        font-size: 12px;
+    }
+    
+    .section {
+        padding: 15px;
+    }
+    
+    .section h3 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+    
+    .header-buttons {
+        gap: 8px;
+    }
+    
+    .tab-container {
+        gap: 5px;
+    }
+    
+    .tab {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .matrix-table th,
+    .matrix-table td {
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    .matrix-table input {
+        width: 35px;
+        padding: 4px;
+        font-size: 12px;
+    }
+    
+    .recovery-card {
+        padding: 15px;
+    }
+    
+    .recovery-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    header {
+        padding: 12px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .container {
+        padding: 8px;
+    }
+    
+    .graph-node {
+        width: 40px;
+        height: 40px;
+        font-size: 11px;
+    }
+    
+    .section {
+        padding: 12px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+    }
+    
+    .tab {
+        min-height: 44px;
+    }
+    
+    .graph-node {
+        min-width: 50px;
+        min-height: 50px;
+    }
+    
+    .matrix-table input {
+        min-height: 36px;
+    }
+    
+    .edge-form select {
+        min-height: 44px;
+    }
+    
+    .recovery-card {
+        padding: 20px;
+    }
+}
+
+/* Landscape mode on small devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    header {
+        padding: 10px 20px;
+    }
+    
+    .header-content {
+        flex-direction: row;
+    }
+    
+    .graph-area {
+        min-height: 200px;
+    }
+    
+    .modal-content {
+        max-height: 95vh;
+        padding: 15px;
     }
 }
