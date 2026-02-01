@@ -35,6 +35,13 @@ const modules = {
         path: 'Q4/index.html',
         description: 'ACID properties and concurrency',
         progress: 0
+    },
+    'dbms-visualizer': {
+        id: 'dbms-visualizer',
+        name: 'DBMS Fundamentals Visualizer',
+        path: 'Q5/home.html',
+        description: 'Interactive DBMS concepts exploration',
+        progress: 0
     }
 };
 
