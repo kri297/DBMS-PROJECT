@@ -3,18 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relational Algebra Visualizer</title>
+    <title>Relational Algebra Visualizer - DBMS Learning Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Relational Algebra Visualizer</h1>
-            <p>Create tables and apply relational algebra operations in real-time</p>
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="../index.html" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="logo">
+                        <i class="fas fa-calculator"></i>
+                        <h1>Relational Algebra Visualizer</h1>
+                    </div>
+                </div>
+                <p class="header-subtitle">Create tables and apply relational algebra operations in real-time</p>
+            </div>
             <div class="header-buttons">
-                <button onclick="startTutorial()" class="btn btn-tutorial">📚 Start Tutorial</button>
-                <button onclick="runQuickDemo()" class="btn btn-demo">🚀 Run Quick Demo</button>
-                <button onclick="toggleHelpMode()" class="btn btn-help" id="helpToggle">💡 Help Mode: OFF</button>
+                <button onclick="startTutorial()" class="btn btn-tutorial">
+                    <i class="fas fa-book"></i> Tutorial
+                </button>
+                <button onclick="runQuickDemo()" class="btn btn-demo">
+                    <i class="fas fa-magic"></i> Quick Demo
+                </button>
+                <button onclick="toggleHelpMode()" class="btn btn-help" id="helpToggle">
+                    <i class="fas fa-lightbulb"></i> Help Mode
+                </button>
             </div>
         </header>
 
