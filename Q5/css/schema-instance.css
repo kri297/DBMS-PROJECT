@@ -1,0 +1,145 @@
+/* Schema vs Instance Page Specific Styles */
+
+/* Fix Content Spacing */
+.main-content {
+    padding-top: 2rem !important;
+    margin-top: 0;
+}
+
+.section {
+    margin-top: 2rem;
+}
+
+/* Fix Section Number Overlap */
+.section-header {
+    position: relative;
+    padding-left: 0;
+}
+
+.section-number {
+    position: absolute;
+    top: -40px;
+    left: -30px;
+    z-index: 0;
+    opacity: 0.08 !important;
+    pointer-events: none;
+    user-select: none;
+}
+
+.section-icon,
+.section-title-group {
+    position: relative;
+    z-index: 1;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-nav a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.breadcrumb-nav a:hover {
+    color: var(--secondary-color);
+    transform: translateX(-2px);
+}
+
+.breadcrumb-nav span {
+    color: var(--text-secondary);
+}
+
+.breadcrumb-nav span:last-child {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Next Topic Navigation */
+.next-topic {
+    margin: 4rem 0 2rem;
+}
+
+.next-card {
+    background: linear-gradient(135deg, var(--card-bg), rgba(102, 126, 234, 0.05));
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.next-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+}
+
+.next-label {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.next-content h3 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.next-content p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.next-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.next-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .next-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .next-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
