@@ -978,20 +978,43 @@ body {
     
     .header-right {
         gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    
+    .header-right .btn {
+        flex: 1;
+        min-width: 45%;
+        justify-content: center;
+        text-align: center;
     }
     
     .btn {
-        padding: 8px 12px;
+        padding: 10px 12px;
         font-size: 12px;
     }
     
     .fd-input-row {
         gap: 8px;
+        flex-direction: column;
+    }
+    
+    .fd-input-row .btn {
+        width: 100%;
     }
     
     .nf-badge {
         padding: 4px 10px;
         font-size: 11px;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .card-actions .btn {
+        width: 100%;
     }
 }
 

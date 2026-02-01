@@ -1040,15 +1040,30 @@ header p {
     
     .header-buttons {
         gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .header-buttons .btn {
+        flex: 1;
+        min-width: 45%;
+        text-align: center;
+        justify-content: center;
     }
     
     .tab-container {
         gap: 5px;
+        flex-wrap: wrap;
     }
     
     .tab {
         padding: 8px 12px;
         font-size: 12px;
+        flex: 1;
+        min-width: 45%;
+        text-align: center;
+        justify-content: center;
     }
     
     .matrix-table th,
@@ -1075,6 +1090,25 @@ header p {
     .modal-content {
         padding: 20px;
         margin: 10px;
+    }
+    
+    .graph-controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .graph-controls .btn {
+        width: 100%;
+    }
+    
+    .edge-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .edge-form select,
+    .edge-form .btn {
+        width: 100%;
     }
 }
 
