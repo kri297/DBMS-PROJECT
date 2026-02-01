@@ -1,101 +1,161 @@
-# DBMS Learning Platform
+# 🗄️ DBMS Learning Platform
 
-A comprehensive interactive learning platform for Database Management Systems featuring 4 essential modules with hands-on tools and visualizers.
+A comprehensive interactive learning platform for Database Management Systems featuring **8 essential modules** with hands-on tools and visualizers.
+
+> **Created by Krish Mishra**
+
+![DBMS Platform](logo.jpg)
 
 ## 🌟 Features
 
 ### Interactive Learning Modules
-1. **DBMS Fundamentals** - Core concepts, three-schema architecture, and advantages
-2. **Advanced ER Diagram Builder** - Professional drag-and-drop ER/EER diagram tool
-3. **Relational Algebra Visualizer** - Interactive simulator for query operations  
-4. **Transaction Management Simulator** - ACID properties and concurrency control
+
+| Module | Name | Description |
+|--------|------|-------------|
+| Q1 | **DBMS Fundamentals** | Core concepts, three-schema architecture, and advantages |
+| Q2/Q3 | **Advanced ER Diagram Builder** | Professional drag-and-drop ER/EER diagram tool with SQL export |
+| Q4 | **Normalization Visualizer** | 1NF, 2NF, 3NF, BCNF decomposition with step-by-step guidance |
+| Q5 | **Relational Algebra Visualizer** | Interactive simulator for SELECT, PROJECT, JOIN operations |
+| Q6 | **SQL Simulator** | Write and execute SQL queries with visual results |
+| Q7 | **Transaction Management** | ACID properties, transaction states, and concurrency control |
+| Q8 | **Deadlock & Recovery** | Resource Allocation Graph, Banker's Algorithm, Recovery strategies |
 
 ### Platform Capabilities
-- 🎨 **Modern UI/UX** - Responsive design with dark/light themes
-- 📱 **Mobile Friendly** - Works seamlessly across all devices
+- 🎨 **Modern Light Theme UI** - Clean, professional design
+- 📱 **Mobile Responsive** - Works seamlessly across all devices
+- 🔗 **Quick Access Navigation** - All modules open in new tabs
 - 💾 **Progress Tracking** - Automatic save/load functionality
 - ⌨️ **Keyboard Shortcuts** - Professional navigation shortcuts
 - 📊 **Export/Import** - Save your work and progress
-- 🚀 **Fast Loading** - Optimized performance and loading screens
+- 🚀 **Fast Loading** - Optimized performance
 
 ## 🚀 Quick Start
 
 ### Online Access
-Visit the deployed platform at: [Your Vercel URL]
+Visit the deployed platform at: [DBMS Learning Platform](https://dbms-project-kri297.vercel.app)
 
 ### Local Development
 1. Clone or download the repository
-2. Open `index.html` in your web browser
-3. Or use a local server:
+   ```bash
+   git clone https://github.com/kri297/DBMS-PROJECT.git
+   cd DBMS-PROJECT
+   ```
+2. Start a local server:
    ```bash
    # Using Python
-   python -m http.server 8000
+   python -m http.server 8080
    
    # Using Node.js
    npx serve .
-   
-   # Using PHP
-   php -S localhost:8000
    ```
+3. Open `http://localhost:8080` in your browser
 
 ## 📁 Project Structure
 
 ```
 DBMS-Learning-Platform/
 ├── index.html              # Main landing page
-├── styles.css             # Comprehensive CSS styles
-├── script.js              # Interactive JavaScript
-├── package.json           # Project configuration
-├── vercel.json           # Vercel deployment config
-├── README.md             # This file
-├── Q1/                   # DBMS Fundamentals Module
+├── styles-light.css        # Modern light theme styles
+├── script.js               # Main page JavaScript
+├── logo.jpg                # Platform logo
+├── package.json            # Project configuration
+├── vercel.json             # Vercel deployment config
+├── README.md               # This file
+│
+├── Q1/                     # DBMS Fundamentals Module
 │   ├── home.html
 │   ├── css/
 │   ├── js/
 │   └── pages/
-├── Q2/                   # ER Diagram Builder Module
+│
+├── Q2/                     # ER Diagram Builder Module
 │   ├── advanced-er-builder.html
 │   └── README.md
-├── Q3/                   # Relational Algebra Module
+│
+├── Q3/                     # Relational Algebra Module
 │   ├── index.html
 │   ├── script.js
 │   ├── styles.css
 │   └── README.md
-└── Q4/                   # Transaction Management Module
+│
+├── Q4/                     # Transaction Management Module
+│   ├── index.html
+│   ├── script.js
+│   ├── styles.css
+│   └── README.md
+│
+├── Q5/                     # DBMS Fundamentals Extended
+│   ├── home.html
+│   ├── index.html
+│   ├── css/
+│   ├── js/
+│   └── pages/
+│
+├── Q6/                     # SQL Simulator Module
+│   ├── index.html
+│   ├── script.js
+│   ├── styles.css
+│   └── README.md
+│
+├── Q7/                     # Normalization Module
+│   ├── index.html
+│   ├── script.js
+│   ├── styles.css
+│   └── README.md
+│
+└── Q8/                     # Deadlock & Recovery Module
     ├── index.html
     ├── script.js
     ├── styles.css
     └── README.md
 ```
 
-## 🎯 Learning Modules
+## 🎯 Learning Modules Detail
 
-### Module 1: DBMS Fundamentals
+### Module Q1: DBMS Fundamentals
 - Three-Schema Architecture visualization
 - Schema vs Instance concepts
 - DBMS advantages and features
 - Interactive navigation system
 
-### Module 2: ER Diagram Builder
+### Module Q2/Q3: ER Diagram Builder
 - Drag-and-drop entity creation
 - Relationship management with cardinalities
 - Automatic SQL schema generation
 - Save/load diagram functionality
 - Professional diagramming tools
 
-### Module 3: Relational Algebra Visualizer
+### Module Q4: Normalization Visualizer
+- Step-by-step normalization process
+- 1NF, 2NF, 3NF, BCNF explanations
+- Functional dependency analysis
+- Interactive decomposition demos
+
+### Module Q5: Relational Algebra Visualizer
 - Create custom relations (tables)
 - Apply SELECT, PROJECT, JOIN operations
 - UNION and DIFFERENCE operations
 - Real-time result visualization
-- Interactive tutorial system
 
-### Module 4: Transaction Management Simulator
+### Module Q6: SQL Simulator
+- Interactive SQL query editor
+- Sample database with demo tables
+- Query execution with visual results
+- Supports SELECT, INSERT, UPDATE, DELETE
+
+### Module Q7: Transaction Management Simulator
 - Transaction state visualization
 - ACID properties demonstration
 - Concurrency control examples
 - Dirty read scenarios
 - Privilege management system
+
+### Module Q8: Deadlock & Recovery
+- **Resource Allocation Graph (RAG)** - Visual deadlock detection
+- **Banker's Algorithm** - Safe state analysis
+- **Deadlock Detection** - Cycle detection with DFS
+- **Recovery Strategies** - Process termination, resource preemption
+- **Prevention Techniques** - Mutual exclusion, hold and wait
 
 ## 🔧 Technologies Used
 
@@ -103,30 +163,24 @@ DBMS-Learning-Platform/
 - **Styling**: CSS Grid, Flexbox, Custom Properties
 - **Icons**: Font Awesome 6.0
 - **Fonts**: Google Fonts (Inter)
-- **Animations**: CSS animations + AOS library
+- **Animations**: CSS animations with keyframes
 - **Deployment**: Vercel static hosting
 
 ## 🎨 Design Features
 
-- **Responsive Design**: Mobile-first approach with breakpoints
-- **Dark/Light Themes**: Toggle between themes with persistence
+- **Light Theme Design**: Clean, professional appearance
+- **Responsive Layout**: Mobile-first approach with breakpoints
 - **Smooth Animations**: Professional transitions and effects
 - **Accessible**: Keyboard navigation and screen reader support
-- **Modern UI**: Glass-morphism effects and gradient designs
+- **Modern UI**: Gradient designs and subtle shadows
 
 ## ⌨️ Keyboard Shortcuts
 
-- `Ctrl + T` - Toggle dark/light theme
-- `Ctrl + H` - Show help modal
-- `Ctrl + 1-4` - Quick access to modules
-- `Esc` - Close modals or menus
-
-## 🔒 Privacy & Data
-
-- All data stored locally in browser
-- No server-side data collection
-- Progress tracking is client-side only
-- Export/import functionality for data backup
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + H` | Show help modal |
+| `Ctrl + 1-8` | Quick access to modules |
+| `Esc` | Close modals or menus |
 
 ## 🚀 Deployment
 
@@ -135,41 +189,38 @@ DBMS-Learning-Platform/
 2. Connect to Vercel
 3. Deploy automatically
 
-### Manual Deployment
-1. Upload all files to your web server
-2. Ensure proper MIME types are configured
-3. All paths are relative for easy hosting
-
-## 🤝 Contributing
-
-This is an educational project. Feel free to:
-- Report issues or bugs
-- Suggest improvements
-- Create educational content
-- Share with students and educators
-
-## 📄 License
-
-Educational Use License - See LICENSE file for details
+### GitHub Repository
+```
+https://github.com/kri297/DBMS-PROJECT
+```
 
 ## 🎓 Educational Use
 
 Perfect for:
-- Database course curricula
-- Self-learning DBMS concepts
-- Interactive classroom demonstrations
-- Homework and assignment tools
-- Professional development training
+- 📚 Database course curricula
+- 🎯 Self-learning DBMS concepts
+- 🖥️ Interactive classroom demonstrations
+- 📝 Homework and assignment tools
+- 💼 Professional development training
 
-## 📞 Support
+## 👨‍💻 Author
 
-For questions or issues:
-- Check the built-in help system (`Ctrl + H`)
-- Review module-specific README files
-- Use keyboard shortcuts reference (`Ctrl + Shift + ?`)
+**Krish Mishra**
+
+- GitHub: [@kri297](https://github.com/kri297)
+
+## 📄 License
+
+Educational Use License - Built for learning purposes
 
 ---
 
-**Built with ❤️ for database education**
+<div align="center">
+
+**Built with ❤️ by Krish Mishra**
 
 *Master Database Management Systems through interactive learning*
+
+© 2026 DBMS Learning Platform
+
+</div>
