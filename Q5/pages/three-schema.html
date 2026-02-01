@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three-Schema Architecture | DBMS Fundamentals</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/three-schema.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home.html"><h2><i class="fas fa-database"></i> DBMS Fundamentals</h2></a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../home.html" class="nav-link">Home</a></li>
+                <li><a href="three-schema.html" class="nav-link active">Three-Schema Architecture</a></li>
+                <li><a href="schema-instance.html" class="nav-link">Schema vs Instance</a></li>
+                <li><a href="advantages.html" class="nav-link">DBMS Advantages</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-nav">
+                <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                <span><i class="fas fa-chevron-right"></i></span>
+                <span>Three-Schema Architecture</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Three-Schema Architecture Section -->
+            <section class="section" id="architecture-section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-number">01</div>
+                    <div class="section-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2>Three-Schema Architecture</h2>
+                        <p>Interactive visualization of DBMS architecture layers with data flow</p>
+                        <div class="section-badge">
+                            <i class="fas fa-bolt"></i>
+                            Core Concept
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="architecture-intro" data-aos="fade-up">
+                    <p class="intro-text">
+                        The Three-Schema Architecture provides <strong>data abstraction</strong> and <strong>data independence</strong> 
+                        by separating the database into three distinct levels. Click on each layer to explore!
+                    </p>
+                </div>
+
+                <div class="architecture-container">
+                    <div class="architecture-visual" data-aos="fade-right">
+                        <!-- Data Flow Connectors -->
+                        <div class="data-flow-line flow-1" id="flow1"></div>
+                        <div class="data-flow-line flow-2" id="flow2"></div>
+                        
+                        <div class="schema-layer external-layer" id="externalLayer" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="layer-badge">Level 1</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h3>External Level</h3>
+                                    <span class="layer-subtitle">View Level - User Interface</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>How different users see and interact with the data</p>
+                                </div>
+                                <div class="view-examples">
+                                    <div class="view-box">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <span>Student Portal</span>
+                                    </div>
+                                    <div class="view-box">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Faculty Dashboard</span>
+                                    </div>
+                                    <div class="view-box">
+                                        <i class="fas fa-user-shield"></i>
+                                        <span>Admin Console</span>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Customized Views</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Data Security</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> User-Specific</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="schema-layer conceptual-layer" id="conceptualLayer" data-aos="zoom-in" data-aos-delay="200">
+                            <div class="layer-badge">Level 2</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <div>
+                                    <h3>Conceptual Level</h3>
+                                    <span class="layer-subtitle">Logical Level - Complete Database</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>Complete logical structure of the entire database</p>
+                                </div>
+                                <div class="schema-diagram">
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>STUDENT</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-key"></i> ID</span>
+                                            <span>Name</span>
+                                            <span>Age</span>
+                                            <span>Dept</span>
+                                        </div>
+                                    </div>
+                                    <div class="relationship-line"></div>
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>COURSE</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-key"></i> Code</span>
+                                            <span>Title</span>
+                                            <span>Credits</span>
+                                        </div>
+                                    </div>
+                                    <div class="relationship-line"></div>
+                                    <div class="schema-entity">
+                                        <div class="entity-header">
+                                            <i class="fas fa-table"></i>
+                                            <strong>ENROLLMENT</strong>
+                                        </div>
+                                        <div class="entity-attributes">
+                                            <span><i class="fas fa-link"></i> StudentID</span>
+                                            <span><i class="fas fa-link"></i> CourseCode</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Entity Relationships</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Constraints</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Complete Schema</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="schema-layer internal-layer" id="internalLayer" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="layer-badge">Level 3</div>
+                            <div class="layer-header">
+                                <div class="layer-icon-box">
+                                    <i class="fas fa-hard-drive"></i>
+                                </div>
+                                <div>
+                                    <h3>Internal Level</h3>
+                                    <span class="layer-subtitle">Physical Level - Storage Details</span>
+                                </div>
+                            </div>
+                            <div class="layer-content">
+                                <div class="layer-description">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>Physical storage structures and optimization mechanisms</p>
+                                </div>
+                                <div class="storage-info">
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-sitemap"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>B+ Tree Indexes</strong>
+                                            <span>Fast data retrieval</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Data Files</strong>
+                                            <span>Heap/Sequential files</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-th"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Storage Blocks</strong>
+                                            <span>4KB-64KB pages</span>
+                                        </div>
+                                    </div>
+                                    <div class="storage-item">
+                                        <div class="storage-icon">
+                                            <i class="fas fa-compress"></i>
+                                        </div>
+                                        <div class="storage-details">
+                                            <strong>Compression</strong>
+                                            <span>Space optimization</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-features">
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Physical Storage</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Indexing</div>
+                                    <div class="feature-tag"><i class="fas fa-check"></i> Optimization</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="architecture-controls" data-aos="fade-left">
+                        <div class="controls-header">
+                            <i class="fas fa-sliders-h"></i>
+                            <h4>Interactive Controls</h4>
+                        </div>
+                        <p class="controls-description">
+                            <i class="fas fa-hand-pointer"></i>
+                            Click to explore each architectural layer
+                        </p>
+                        
+                        <div class="control-buttons">
+                            <button class="control-btn active" data-layer="external">
+                                <div class="btn-icon"><i class="fas fa-users"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">External</span>
+                                    <span class="btn-subtitle">View Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn" data-layer="conceptual">
+                                <div class="btn-icon"><i class="fas fa-sitemap"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Conceptual</span>
+                                    <span class="btn-subtitle">Logical Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn" data-layer="internal">
+                                <div class="btn-icon"><i class="fas fa-hard-drive"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Internal</span>
+                                    <span class="btn-subtitle">Physical Level</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </button>
+                            <button class="control-btn special-btn" data-layer="all">
+                                <div class="btn-icon"><i class="fas fa-layer-group"></i></div>
+                                <div class="btn-content">
+                                    <span class="btn-title">View All</span>
+                                    <span class="btn-subtitle">Complete Architecture</span>
+                                </div>
+                                <div class="btn-arrow"><i class="fas fa-expand"></i></div>
+                            </button>
+                        </div>
+                        
+                        <div class="layer-info-card" id="layerInfo">
+                            <div class="info-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h5>External Level</h5>
+                            </div>
+                            <div class="info-content">
+                                <ul>
+                                    <li><i class="fas fa-check-circle"></i> User-specific views of the database</li>
+                                    <li><i class="fas fa-check-circle"></i> Data abstraction and security</li>
+                                    <li><i class="fas fa-check-circle"></i> Different perspectives for different users</li>
+                                    <li><i class="fas fa-check-circle"></i> Hides complexity from end users</li>
+                                    <li><i class="fas fa-check-circle"></i> Customized data presentation</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="data-independence-box">
+                            <div class="independence-header">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Data Independence</strong>
+                            </div>
+                            <div class="independence-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span><strong>Logical:</strong> Change conceptual schema without affecting external views</span>
+                            </div>
+                            <div class="independence-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span><strong>Physical:</strong> Change internal schema without affecting conceptual</span>
+                            </div>
+                        </div>
+
+                        <div class="keyboard-shortcuts">
+                            <div class="shortcuts-header">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Keyboard Shortcuts</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>←</kbd><kbd>→</kbd> Navigate layers
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>T</kbd> Toggle theme
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation to Next Topic -->
+            <section class="next-topic">
+                <div class="next-card" data-aos="fade-up">
+                    <div class="next-content">
+                        <span class="next-label">Up Next</span>
+                        <h3>Schema vs Instance</h3>
+                        <p>Learn the critical difference between database structure and actual data</p>
+                    </div>
+                    <a href="schema-instance.html" class="next-btn">
+                        Continue Learning <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 DBMS Learning Platform. Created for educational purposes.</p>
+                <div class="footer-links">
+                    <a href="../home.html"><i class="fas fa-home"></i> Home</a>
+                    <a href="../../index.html"><i class="fas fa-arrow-left"></i> Main Platform</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/three-schema.js"></script>
+</body>
+</html>
