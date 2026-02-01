@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBMS Fundamentals - Professional Learning Platform</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="btn-back" title="Back to Main">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="nav-logo">
+                <h2><i class="fas fa-database"></i> DBMS Fundamentals</h2>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="home.html" class="nav-link active">Home</a></li>
+                <li><a href="pages/three-schema.html" class="nav-link">Three-Schema Architecture</a></li>
+                <li><a href="pages/schema-instance.html" class="nav-link">Schema vs Instance</a></li>
+                <li><a href="pages/advantages.html" class="nav-link">DBMS Advantages</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-circle circle-1"></div>
+            <div class="hero-circle circle-2"></div>
+            <div class="hero-circle circle-3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content" data-aos="fade-up">
+                <div class="hero-icon-wrapper">
+                    <div class="hero-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="icon-rings">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
+                    </div>
+                </div>
+                <h1 class="hero-title">
+                    <span class="gradient-text">Master Database</span><br>
+                    <span class="subtitle-accent">Management Systems</span>
+                </h1>
+                <p class="hero-subtitle">
+                    <i class="fas fa-rocket"></i>
+                    Comprehensive learning platform for understanding core DBMS concepts, architecture, and best practices through interactive visualization and hands-on practice.
+                </p>
+                <div class="hero-buttons">
+                    <a href="pages/three-schema.html" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Learning
+                    </a>
+                    <a href="#overview" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Architecture Layers</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">8+</div>
+                            <div class="stat-label">Key Advantages</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Interactive</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll" data-aos="fade-up" data-aos-delay="400">
+            <i class="fas fa-chevron-down"></i>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section class="overview" id="overview">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Explore <span class="gradient-text">Core Concepts</span></h2>
+                <p class="section-description">Deep dive into essential database management system fundamentals</p>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Three-Schema Architecture Card -->
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-header">
+                        <div class="feature-icon architecture-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <span class="feature-badge">Architecture</span>
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Three-Schema Architecture</h3>
+                        <p class="feature-description">
+                            Understand the ANSI-SPARC three-level architecture that separates database into external, conceptual, and internal schemas for data independence.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> External Schema (User Views)</li>
+                            <li><i class="fas fa-check-circle"></i> Conceptual Schema (Logical Structure)</li>
+                            <li><i class="fas fa-check-circle"></i> Internal Schema (Physical Storage)</li>
+                            <li><i class="fas fa-check-circle"></i> Interactive Layer Visualization</li>
+                        </ul>
+                    </div>
+                    <a href="pages/three-schema.html" class="feature-link">
+                        Explore Architecture <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Schema vs Instance Card -->
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-header">
+                        <div class="feature-icon schema-icon">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <span class="feature-badge">Concepts</span>
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Schema vs Instance</h3>
+                        <p class="feature-description">
+                            Learn the critical difference between database schema (structure/blueprint) and database instance (actual data at a specific time).
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Schema Definition & Structure</li>
+                            <li><i class="fas fa-check-circle"></i> Instance Data Snapshots</li>
+                            <li><i class="fas fa-check-circle"></i> Real-time Demo with Forms</li>
+                            <li><i class="fas fa-check-circle"></i> Visual Comparisons</li>
+                        </ul>
+                    </div>
+                    <a href="pages/schema-instance.html" class="feature-link">
+                        Understand Differences <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- DBMS Advantages Card -->
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-header">
+                        <div class="feature-icon advantages-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <span class="feature-badge">Benefits</span>
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">DBMS Advantages</h3>
+                        <p class="feature-description">
+                            Discover why modern organizations use DBMS over traditional file systems, exploring key benefits and real-world applications.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Data Independence & Abstraction</li>
+                            <li><i class="fas fa-check-circle"></i> Security & Access Control</li>
+                            <li><i class="fas fa-check-circle"></i> Concurrent Access & Integrity</li>
+                            <li><i class="fas fa-check-circle"></i> Backup & Recovery Systems</li>
+                        </ul>
+                    </div>
+                    <a href="pages/advantages.html" class="feature-link">
+                        Explore Benefits <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links Section -->
+    <section class="quick-links">
+        <div class="container">
+            <div class="quick-links-grid">
+                <div class="quick-link-card" data-aos="fade-right">
+                    <i class="fas fa-book-open"></i>
+                    <h3>Learning Path</h3>
+                    <p>Structured curriculum designed for comprehensive understanding</p>
+                </div>
+                <div class="quick-link-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Interactive Demos</h3>
+                    <p>Hands-on practice with real-time visualizations</p>
+                </div>
+                <div class="quick-link-card" data-aos="fade-left" data-aos-delay="200">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Visual Learning</h3>
+                    <p>Complex concepts simplified through graphics</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Back to Main Platform -->
+    <section class="back-section">
+        <div class="container">
+            <div class="back-card" data-aos="zoom-in">
+                <div class="back-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>Return to Main Platform</h3>
+                <p>Explore other database management modules and resources</p>
+                <a href="../index.html" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 DBMS Learning Platform. Created for educational purposes.</p>
+                <div class="footer-links">
+                    <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+                    <a href="#overview"><i class="fas fa-info-circle"></i> About</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
